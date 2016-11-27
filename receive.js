@@ -1,6 +1,7 @@
 'use strict'
 
 var querystring = require('querystring')
+var filesystem = require('fs')
 var AWS = require('aws-sdk')
 var uuid = require('uuid')
 var validator = require('validator')
@@ -33,7 +34,7 @@ function response(statusCode, message, redirect) {
     headers: {
       'Content-Type': 'text/html'
     },
-    body: message
+    body: generateView(message)
   }
 
   if (redirect !== undefined) {
@@ -41,4 +42,14 @@ function response(statusCode, message, redirect) {
   }
 
   return response
+}
+
+function generateView(message) {
+  var template =  filesystem.readFileSync('template.html').toString()
+  
+  if (!template) {
+    return message
+  }
+
+  return template.replace('{{ message }}', message)
 }
