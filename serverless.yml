@@ -5,6 +5,11 @@ provider:
   runtime: nodejs4.3
   stage: dev
   region: eu-west-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:*"
+      Resource: "arn:aws:dynamodb:*:*:table/formplug-queue"
 
 functions:
   receive:
@@ -19,7 +24,7 @@ resources:
     DynamoDbTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: submissions
+        TableName: formplug-queue
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
