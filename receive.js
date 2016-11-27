@@ -1,8 +1,11 @@
 'use strict'
 
+var crypto = require('crypto')
 var querystring = require('querystring')
 var filesystem = require('fs')
+
 var AWS = require('aws-sdk')
+var dotenv = require('dotenv').config()
 var uuid = require('uuid')
 var validator = require('validator')
 
@@ -20,10 +23,11 @@ module.exports.handler = (event, context, callback) => {
   }
 
   payload.id = uuid.v4()
-  payload.data = {}
+  var data = {}
   for (var key in form) {
-    payload.data[key] = validator.trim(form[key])
+    data[key] = validator.trim(form[key])
   }
+  payload.data = encrypt(JSON.stringify(data))
 
   docClient.put({TableName: 'formplug-queue', Item: payload}, (error) => {
     if (error) {
@@ -52,6 +56,13 @@ function response(statusCode, message, redirect) {
   }
 
   return response
+}
+
+function encrypt(text) {
+  var cipher = crypto.createCipher('aes-256-ctr', process.env.ENCRYPTION_KEY)
+  var crypted = cipher.update(text, 'utf8', 'hex')
+  crypted += cipher.final('hex');
+  return crypted;
 }
 
 function generateView(message) {
