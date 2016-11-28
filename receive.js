@@ -29,7 +29,7 @@ module.exports.handler = (event, context, callback) => {
   }
   payload.data = encrypt(JSON.stringify(data))
 
-  docClient.put({TableName: 'formplug-queue', Item: payload}, (error) => {
+  docClient.put({TableName: config.TABLE_NAME, Item: payload}, (error) => {
     if (error) {
       callback(null, response(422, 'Form not sent, there was an error adding it to the database.'))
     }
