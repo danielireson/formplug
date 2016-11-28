@@ -1,11 +1,12 @@
 'use strict'
 
+var config = require('./config.json')
+
 var crypto = require('crypto')
 var querystring = require('querystring')
 var filesystem = require('fs')
 
 var AWS = require('aws-sdk')
-var config = require('./config.json')
 var uuid = require('uuid')
 var validator = require('validator')
 
