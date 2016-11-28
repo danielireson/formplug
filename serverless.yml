@@ -16,7 +16,7 @@ functions:
     handler: receive.handler
     events:
       - http:
-          path: /mail
+          path: /send
           method: post
   send:
     handler: send.handler
