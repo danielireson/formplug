@@ -5,7 +5,7 @@ var querystring = require('querystring')
 var filesystem = require('fs')
 
 var AWS = require('aws-sdk')
-var dotenv = require('dotenv').config()
+var config = require('./config.json')
 var uuid = require('uuid')
 var validator = require('validator')
 
@@ -16,7 +16,7 @@ module.exports.handler = (event, context, callback) => {
 
   if (form['_honeypot'] !== undefined && !validator.isEmpty(form['_honeypot'])) {
     callback(null, response(422, 'You shall not pass'))
-  }
+  } 
 
   if (form['_send-to'] === undefined || !validator.isEmail(form['_send-to'])) {
     callback(null, response(422, 'Form not sent, the admin has not set up a send-to address.'))
@@ -59,7 +59,7 @@ function response(statusCode, message, redirect) {
 }
 
 function encrypt(text) {
-  var cipher = crypto.createCipher('aes-256-ctr', process.env.ENCRYPTION_KEY)
+  var cipher = crypto.createCipher('aes-256-ctr', config.ENCRYPTION_KEY)
   var crypted = cipher.update(text, 'utf8', 'hex')
   crypted += cipher.final('hex');
   return crypted;

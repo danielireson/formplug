@@ -7,4 +7,4 @@ jspm_packages
 
 # Formplug
 project.txt
-.env
+config.json
