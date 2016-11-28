@@ -15,11 +15,11 @@ module.exports.handler = (event, context, callback) => {
   var payload = {}
 
   if (form['_honeypot'] !== undefined && !validator.isEmpty(form['_honeypot'])) {
-    callback(null, response(422, 'You shall not pass'))
+    callback(null, response(422, config.MSG_HONEYPOT || 'You shall not pass'))
   } 
 
   if (form['_send-to'] === undefined || !validator.isEmail(form['_send-to'])) {
-    callback(null, response(422, 'Form not sent, the admin has not set up a send-to address.'))
+    callback(null, response(422, config.MSG_MISSING_SEND_TO || 'Form not sent, the admin has not set up a send-to address.'))
   }
 
   payload.id = uuid.v4()
@@ -31,14 +31,14 @@ module.exports.handler = (event, context, callback) => {
 
   docClient.put({TableName: config.TABLE_NAME, Item: payload}, (error) => {
     if (error) {
-      callback(null, response(422, 'Form not sent, there was an error adding it to the database.'))
+      callback(null, response(422, config.MSG_DB_ERROR || 'Form not sent, there was an error adding it to the database.'))
     }
 
     if (form['_redirect-to'] !== undefined && validator.isURL(form['_redirect-to'])) {
-      callback(null, response(301, 'Form submission successfully made.', form['_redirect-to']))
+      callback(null, response(301, config.MSG_SUCCESS || 'Form submission successfully made.', form['_redirect-to']))
     }
 
-    callback(null, response(200, 'Form submission successfully made.'))
+    callback(null, response(200, config.MSG_SUCCESS || 'Form submission successfully made.'))
   })
 }
 
