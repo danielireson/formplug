@@ -3,13 +3,13 @@ service: formplug
 provider:
   name: aws
   runtime: nodejs4.3
-  stage: dev
-  region: eu-west-1
+  stage: ${file(config.json):STAGE}
+  region: ${file(config.json):REGION}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "dynamodb:*"
-      Resource: "arn:aws:dynamodb:*:*:table/formplug-queue"
+      Resource: "arn:aws:dynamodb:*:*:table/${file(config.json):TABLE_NAME}"
 
 functions:
   receive:
@@ -18,13 +18,17 @@ functions:
       - http:
           path: /mail
           method: post
+  send:
+    handler: send.handler
+    events:
+      - stream: ${file(config.json):STREAM}
 
-resources:  
+resources:
   Resources:
     DynamoDbTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: formplug-queue
+        TableName: ${file(config.json):TABLE_NAME}
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S

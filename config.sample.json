@@ -1,3 +1,7 @@
 {
-  "ENCRYPTION_KEY": ""
+  "ENCRYPTION_KEY": "",
+  "REGION": "",
+  "STAGE": "",
+  "TABLE_NAME": "",
+  "STREAM": ""
 }
