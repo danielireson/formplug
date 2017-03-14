@@ -1,6 +1,5 @@
 'use strict'
 
-var crypto = require('crypto')
 var querystring = require('querystring')
 var filesystem = require('fs')
 
@@ -9,6 +8,7 @@ var uuid = require('uuid')
 var validator = require('validator')
 
 var config = require('../config.json')
+var encryption = require('../lib/encryption')
 
 module.exports.handler = (event, context, callback) => {
   var docClient = new AWS.DynamoDB.DocumentClient()
@@ -28,7 +28,7 @@ module.exports.handler = (event, context, callback) => {
   for (var key in form) {
     data[key] = validator.trim(form[key])
   }
-  payload.data = encrypt(JSON.stringify(data))
+  payload.data = encryption.encrypt(JSON.stringify(data))
 
   docClient.put({TableName: config.TABLE_NAME, Item: payload}, (error) => {
     if (error) {
@@ -57,13 +57,6 @@ function response(statusCode, message, redirect) {
   }
 
   return response
-}
-
-function encrypt(text) {
-  var cipher = crypto.createCipher('aes-256-ctr', config.ENCRYPTION_KEY)
-  var crypted = cipher.update(text, 'utf8', 'hex')
-  crypted += cipher.final('hex');
-  return crypted;
 }
 
 function generateView(message) {
