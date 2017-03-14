@@ -1,4 +1,5 @@
 var fs = require('fs')
+var path = require('path')
 
 module.exports.response = function(statusCode, message, redirect) {
   var response = {
@@ -15,7 +16,7 @@ module.exports.response = function(statusCode, message, redirect) {
 }
 
 function generateView(message) {
-  var template =  fs.readFileSync('template.html').toString()
+  var template =  fs.readFileSync(path.resolve(__dirname, 'template.html')).toString()
   if (!template) {
     return message
   }
