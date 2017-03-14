@@ -13,3 +13,10 @@ module.exports.all = function(data, callback) {
     process.exit()
   }
 }
+
+module.exports.hasRedirect = function(data) {
+  if (data['_redirect-to'] !== undefined && validator.isURL(data['_redirect-to'])) {
+    return true
+  }
+  return false
+}
