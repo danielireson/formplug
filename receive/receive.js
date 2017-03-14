@@ -1,6 +1,6 @@
 'use strict'
 
-var config = require('./config.json')
+var config = require('../config.json')
 
 var crypto = require('crypto')
 var querystring = require('querystring')
