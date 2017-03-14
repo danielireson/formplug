@@ -9,7 +9,7 @@ module.exports.render = function(type) {
       return build(422, config.MSG_HONEYPOT || 'You shall not pass')
       break
     case 'no-admin-email':
-      return build(422, config.MSG_MISSING_SEND_TO || 'Form not sent, the admin has not set up a send-to address.')
+      return build(422, config.MSG_NO_ADMIN_EMAIL || 'Form not sent, the admin has not set up a send-to address.')
       break
     default:
       return build(500)
