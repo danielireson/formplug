@@ -1,0 +1,10 @@
+{
+  "name": "formplug-serverless",
+  "dependencies": {
+    "aws-sdk": "^2.28.0",
+    "uuid": "^3.0.1",
+    "validator": "^7.0.0"
+  },
+  "author": "Daniel Ireson",
+  "license": "MIT"
+}
