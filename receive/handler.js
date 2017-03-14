@@ -10,7 +10,7 @@ var validator = require('validator')
 var config = require('../config.json')
 var encryption = require('../lib/encryption')
 
-module.exports.handler = (event, context, callback) => {
+module.exports = (event, context, callback) => {
   var docClient = new AWS.DynamoDB.DocumentClient()
   var form = querystring.parse(event.body)
   var payload = {}

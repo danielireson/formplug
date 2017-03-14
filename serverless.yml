@@ -13,13 +13,13 @@ provider:
 
 functions:
   receive:
-    handler: receive/receive.handler
+    handler: receive/handler
     events:
       - http:
           path: /send
           method: post
   send:
-    handler: send/send.handler
+    handler: send/handler
     events:
       - stream: ${file(config.json):STREAM}
 
