@@ -6,7 +6,7 @@ var config = require('../config.json')
 var database = require('./database')
 var render = require('./render')
 
-module.exports = (event, context, callback) => {
+module.exports.handle = (event, context, callback) => {
   var form = querystring.parse(event.body)
 
   if (form['_honeypot'] !== undefined && !validator.isEmpty(form['_honeypot'])) {
