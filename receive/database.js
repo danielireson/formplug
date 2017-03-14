@@ -10,5 +10,5 @@ module.exports.put = function(data, callback) {
     id: uuid.v4(),
     data: encryption.encrypt(JSON.stringify(data))
   }
-  return docClient.put({TableName: config.TABLE_NAME, Item: payload}, callback())
+  return docClient.put({TableName: config.TABLE_NAME, Item: payload}, (error) => callback(error))
 }
