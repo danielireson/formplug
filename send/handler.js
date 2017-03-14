@@ -1,5 +1,3 @@
-'use strict'
-
 module.exports = (event, context, callback) => {
   const response = {
     statusCode: 200,

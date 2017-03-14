@@ -1,5 +1,3 @@
-'use strict'
-
 var querystring = require('querystring')
 
 var AWS = require('aws-sdk')
