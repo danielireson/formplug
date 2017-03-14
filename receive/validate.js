@@ -11,5 +11,5 @@ module.exports.all = function(data, callback) {
   if (data['_send-to'] === undefined || !validator.isEmail(data['_send-to'])) {
     callback(null, response.render('no-admin-email'))
     process.exit()
-  }  
+  }
 }
