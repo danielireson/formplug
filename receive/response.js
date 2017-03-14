@@ -3,21 +3,30 @@ var path = require('path')
 
 var config = require('../config.json')
 
-module.exports.render = function (type, redirect) {
+module.exports.render = function (type, callback) {
+  let response = build(500, 'An error has occurred.')
   switch (type) {
     case 'honeypot':
-      return build(422, config.MSG_HONEYPOT || 'You shall not pass')
+      response = build(422, config.MSG_HONEYPOT || 'You shall not pass.')
+      break
     case 'no-admin-email':
-      return build(422, config.MSG_NO_ADMIN_EMAIL || 'Form not sent, the admin has not set up a send-to address.')
+      response = build(422, config.MSG_NO_ADMIN_EMAIL || 'Form not sent, the admin has not set up a send-to address.')
+      break
     case 'error':
-      return build(500, config.MSG_ERROR || 'Form not sent, there was an error adding it to the database.')
+      response = build(500, config.MSG_ERROR || 'Form not sent, there was an error adding it to the database.')
+      break
     case 'success':
-      return build(302, config.MSG_SUCCESS || 'Form submission successfully made.')
-    case 'redirect':
-      return build(200, config.MSG_SUCCESS || 'Form submission successfully made.', redirect)
-    default:
-      return build(500)
+      response = build(302, config.MSG_SUCCESS || 'Form submission successfully made.')
+      break
   }
+  callback(null, response)
+  process.exit()
+}
+
+module.exports.redirect = function (redirect, callback) {
+  let response = build(200, config.MSG_SUCCESS || 'Form submission successfully made.', redirect)
+  callback(null, response)
+  process.exit()
 }
 
 function build (statusCode, message, redirect) {

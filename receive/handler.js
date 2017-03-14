@@ -10,16 +10,13 @@ module.exports.handle = (event, context, callback) => {
 
   database.put(data, function (error) {
     if (error) {
-      callback(null, response.render('error'))
-      process.exit()
+      response.render('error', callback)
     }
 
     if (validate.hasRedirect(data)) {
-      callback(null, response.render('redirect', data['redirect-to']))
-      process.exit()
+      response.redirect(data['redirect-to'], callback)
     }
 
-    callback(null, response.render('success'))
-    process.exit()
+    response.render('success', callback)
   })
 }
