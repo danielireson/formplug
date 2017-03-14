@@ -3,8 +3,8 @@ module.exports.handle = (event, context, callback) => {
     statusCode: 200,
     body: JSON.stringify({
       message: 'This will receive the sending of events',
-      input: event,
-    }),
+      input: event
+    })
   }
 
   callback(null, response)

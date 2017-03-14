@@ -2,7 +2,7 @@ var validator = require('validator')
 
 var response = require('./response')
 
-module.exports.all = function(data, callback) {
+module.exports.all = function (data, callback) {
   if (data['_honeypot'] !== undefined && !validator.isEmpty(data['_honeypot'])) {
     callback(null, response.render('honeypot'))
     process.exit()
@@ -14,7 +14,7 @@ module.exports.all = function(data, callback) {
   }
 }
 
-module.exports.hasRedirect = function(data) {
+module.exports.hasRedirect = function (data) {
   if (data['_redirect-to'] !== undefined && validator.isURL(data['_redirect-to'])) {
     return true
   }

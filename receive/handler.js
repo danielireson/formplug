@@ -8,7 +8,7 @@ module.exports.handle = (event, context, callback) => {
   var data = querystring.parse(event.body)
   validate.all(data, callback)
 
-  database.put(data, function(error) {
+  database.put(data, function (error) {
     if (error) {
       callback(null, response.render('error'))
       process.exit()
