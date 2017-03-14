@@ -1,7 +1,5 @@
 'use strict'
 
-var config = require('../config.json')
-
 var crypto = require('crypto')
 var querystring = require('querystring')
 var filesystem = require('fs')
@@ -9,6 +7,8 @@ var filesystem = require('fs')
 var AWS = require('aws-sdk')
 var uuid = require('uuid')
 var validator = require('validator')
+
+var config = require('../config.json')
 
 module.exports.handler = (event, context, callback) => {
   var docClient = new AWS.DynamoDB.DocumentClient()
