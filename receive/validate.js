@@ -7,7 +7,6 @@ module.exports.all = function (data, callback) {
     callback(null, response.render('honeypot'))
     process.exit()
   }
-
   if (data['_send-to'] === undefined || !validator.isEmail(data['_send-to'])) {
     callback(null, response.render('no-admin-email'))
     process.exit()
