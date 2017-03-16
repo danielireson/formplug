@@ -1,7 +1,7 @@
-var fs = require('fs')
-var path = require('path')
+const fs = require('fs')
+const path = require('path')
 
-var config = require('../config.json')
+const config = require('../config.json')
 
 module.exports.render = function (type, callback) {
   let response = buildResponse(500, 'An error has occurred.')
@@ -33,7 +33,7 @@ module.exports.redirect = function (redirect, callback) {
 }
 
 function buildResponse (statusCode, message, redirect) {
-  var response = {
+  let response = {
     statusCode: statusCode,
     headers: {
       'Content-Type': 'text/html'
@@ -47,7 +47,7 @@ function buildResponse (statusCode, message, redirect) {
 }
 
 function generateView (message) {
-  var template = fs.readFileSync(path.resolve(__dirname, 'template.html')).toString()
+  let template = fs.readFileSync(path.resolve(__dirname, 'template.html')).toString()
   if (!template) {
     return message
   }

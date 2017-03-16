@@ -1,12 +1,12 @@
-var AWS = require('aws-sdk')
-var uuid = require('uuid')
+const AWS = require('aws-sdk')
+const uuid = require('uuid')
 
-var config = require('../config.json')
-var encryption = require('../lib/encryption')
+const config = require('../config.json')
+const encryption = require('../lib/encryption')
 
 module.exports.put = function (data, callback) {
-  var docClient = new AWS.DynamoDB.DocumentClient()
-  var payload = {
+  let docClient = new AWS.DynamoDB.DocumentClient()
+  let payload = {
     id: uuid.v4(),
     data: encryption.encrypt(JSON.stringify(data))
   }

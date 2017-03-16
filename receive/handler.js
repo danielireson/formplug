@@ -1,11 +1,11 @@
-var querystring = require('querystring')
+const querystring = require('querystring')
 
-var database = require('./database')
-var validate = require('./validate')
-var response = require('./response')
+const database = require('./database')
+const validate = require('./validate')
+const response = require('./response')
 
 module.exports.handle = (event, context, callback) => {
-  var data = Object.assign(querystring.parse(event.body), event.path)
+  let data = Object.assign(querystring.parse(event.body), event.path)
   validate.all(data, callback)
   database.put(data, function (error) {
     if (error) {
