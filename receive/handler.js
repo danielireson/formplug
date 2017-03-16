@@ -5,7 +5,7 @@ var validate = require('./validate')
 var response = require('./response')
 
 module.exports.handle = (event, context, callback) => {
-  var data = querystring.parse(event.body)
+  var data = Object.assign(querystring.parse(event.body), event.path)
   validate.all(data, callback)
   database.put(data, function (error) {
     if (error) {

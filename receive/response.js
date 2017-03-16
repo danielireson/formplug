@@ -12,6 +12,9 @@ module.exports.render = function (type, callback) {
     case 'no-admin-email':
       response = buildResponse(422, config.MSG_NO_ADMIN_EMAIL || 'Form not sent, the admin has not set up a send-to address.')
       break
+    case 'bad-admin-email':
+      response = buildResponse(422, config.MSG_BAD_ADMIN_EMAIL || 'Form not sent, the admin email address is not valid.')
+      break
     case 'error':
       response = buildResponse(500, config.MSG_ERROR || 'Form not sent, there was an error adding it to the database.')
       break

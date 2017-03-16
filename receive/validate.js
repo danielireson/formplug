@@ -3,13 +3,23 @@ var validator = require('validator')
 var response = require('./response')
 
 module.exports.all = function (data, callback) {
+  checkHoneyPot(data, callback)
+  checkToParam(data, callback)
+}
+
+function checkHoneyPot (data, callback) {
   if (data['_honeypot'] !== undefined && !validator.isEmpty(data['_honeypot'])) {
-    callback(null, response.render('honeypot'))
-    process.exit()
+    response.render('honeypot', callback)
   }
-  if (data['_send-to'] === undefined || !validator.isEmail(data['_send-to'])) {
-    callback(null, response.render('no-admin-email'))
-    process.exit()
+}
+
+function checkToParam (data, callback) {
+  if (!('_to' in data)) {
+    response.render('no-admin-email', callback)
+  }
+
+  if (!validator.isEmail(data['_to'])) {
+    response.render('bad-admin-email', callback)
   }
 }
 
