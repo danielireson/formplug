@@ -1,3 +1,6 @@
 {
-  "body": "_send-to=test%40example.com&name=John%20Doe"
+  "path": {
+    "_to": "test%40example.com"
+  },
+  "body": "name=John%20Doe"
 }
