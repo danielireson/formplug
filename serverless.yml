@@ -16,6 +16,13 @@ functions:
     handler: receive/handler.handle
     events:
       - http:
+          path: /send/{_to}
+          method: post
+          request:
+            parameters:
+              paths:
+                _to: true
+      - http:
           path: /send/{_to}/{_format}
           method: post
           request:
@@ -23,6 +30,7 @@ functions:
               paths:
                 _to: true
                 _format: true
+
   send:
     handler: send/handler.handle
     events:
