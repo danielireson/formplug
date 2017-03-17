@@ -20,7 +20,7 @@ function checkToParam (data, callback) {
     response.render('no-admin-email', data, callback)
   }
 
-  if (!validator.isEmail(data['_to'])) {
+  if ('_to' in data && !validator.isEmail(data['_to'])) {
     response.render('bad-admin-email', data, callback)
   }
 }
