@@ -22,11 +22,8 @@ module.exports.render = function (type, data, callback) {
       response = buildResponse(500, config.MSG_ERROR || 'Form not sent, there was an error adding it to the database.', data)
       break
     case 'success':
-      if (validate.hasRedirect(data)) {
-        response = buildResponse(302, config.MSG_SUCCESS || 'Form submission successfully made.', data)
-      } else {
-        response = buildResponse(200, config.MSG_SUCCESS || 'Form submission successfully made.', data)
-      }
+      let successStatusCode = validate.hasRedirect(data) ? 302 : 200
+      response = buildResponse(successStatusCode, config.MSG_SUCCESS || 'Form submission successfully made.', data)
       break
   }
   callback(null, response)
@@ -61,7 +58,7 @@ function buildHtmlResponse (statusCode, message, data) {
     },
     body: generateView(message)
   }
-  if (data['_redirect'] !== undefined) {
+  if (statusCode === 302) {
     response.headers.Location = data['_redirect']
   }
   return response
