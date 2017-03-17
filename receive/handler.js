@@ -1,3 +1,5 @@
+'use strict'
+
 const querystring = require('querystring')
 
 const database = require('./database')

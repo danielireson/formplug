@@ -1,3 +1,5 @@
+'use strict'
+
 var validator = require('validator')
 
 var response = require('./response')

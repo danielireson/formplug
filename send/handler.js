@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports.handle = (event, context, callback) => {
   const response = {
     statusCode: 200,
