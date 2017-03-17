@@ -1,0 +1,7 @@
+{
+  "path": {
+    "_to": "test@example.com",
+    "_format": "json"
+  },
+  "body": "name=John%20Doe"
+}
