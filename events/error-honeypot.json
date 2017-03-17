@@ -1,6 +1,6 @@
 {
   "path": {
-    "_to": "test%40example.com"
+    "_to": "test@example.com"
   },
   "body": "_honeypot=test%40example.com"
 }

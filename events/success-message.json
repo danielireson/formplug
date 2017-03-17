@@ -1,6 +1,6 @@
 {
   "path": {
-    "_to": "test%40example.com"
+    "_to": "test@example.com"
   },
   "body": "name=John%20Doe"
 }
