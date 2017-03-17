@@ -1,5 +1,5 @@
 {
-  "path": {
+  "pathParameters": {
     "_to": "bademail.com"
   },
   "body": "name=John%20Doe"

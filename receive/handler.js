@@ -7,7 +7,7 @@ const validate = require('./validate')
 const response = require('./response')
 
 module.exports.handle = (event, context, callback) => {
-  let data = Object.assign(querystring.parse(event.body), event.path)
+  let data = Object.assign(querystring.parse(event.body), event.pathParameters)
   validate.all(data, callback)
   database.put(data, function (error) {
     if (error) {

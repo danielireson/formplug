@@ -1,5 +1,5 @@
 {
-  "path": {
+  "pathParameters": {
     "_to": "test@example.com"
   },
   "body": "name=John%20Doe&_redirect-to=http%3A%2F%2Fgoogle.com"

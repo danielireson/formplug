@@ -1,5 +1,5 @@
 {
-  "path": {
+  "pathParameters": {
     "_to": "test@example.com"
   },
   "body": "_honeypot=test%40example.com"
