@@ -30,7 +30,6 @@ module.exports.render = function (type, data, callback) {
       break
   }
   callback(null, response)
-  process.exit()
 }
 
 function buildResponse (statusCode, message, redirect) {
