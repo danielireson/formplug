@@ -3,5 +3,6 @@
   "REGION": "",
   "STAGE": "",
   "TABLE_NAME": "",
-  "STREAM": ""
+  "STREAM": "",
+  "FROM_EMAIL": ""
 }
