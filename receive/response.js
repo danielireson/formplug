@@ -13,7 +13,7 @@ module.exports.render = function (type, data, callback) {
       response = buildResponse(422, config.MSG_HONEYPOT || 'You shall not pass.')
       break
     case 'no-admin-email':
-      response = buildResponse(422, config.MSG_NO_ADMIN_EMAIL || 'Form not sent, the admin has not set up a send-to address.')
+      response = buildResponse(422, config.MSG_NO_ADMIN_EMAIL || 'Form not sent, the admin has not set up a forwarding email address.')
       break
     case 'bad-admin-email':
       response = buildResponse(422, config.MSG_BAD_ADMIN_EMAIL || 'Form not sent, the admin email address is not valid.')
