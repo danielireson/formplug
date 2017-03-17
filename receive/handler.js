@@ -9,11 +9,9 @@ module.exports.handle = (event, context, callback) => {
   validate.all(data, callback)
   database.put(data, function (error) {
     if (error) {
-      response.render('error', callback)
+      response.render('error', data, callback)
     }
-    if (validate.hasRedirect(data)) {
-      response.redirect(data['redirect-to'], callback)
-    }
-    response.render('success', callback)
+
+    response.render('success', data, callback)
   })
 }

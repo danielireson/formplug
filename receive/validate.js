@@ -9,17 +9,17 @@ module.exports.all = function (data, callback) {
 
 function checkHoneyPot (data, callback) {
   if (data['_honeypot'] !== undefined && !validator.isEmpty(data['_honeypot'])) {
-    response.render('honeypot', callback)
+    response.render('honeypot', data, callback)
   }
 }
 
 function checkToParam (data, callback) {
   if (!('_to' in data)) {
-    response.render('no-admin-email', callback)
+    response.render('no-admin-email', data, callback)
   }
 
   if (!validator.isEmail(data['_to'])) {
-    response.render('bad-admin-email', callback)
+    response.render('bad-admin-email', data, callback)
   }
 }
 

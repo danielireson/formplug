@@ -2,8 +2,9 @@ const fs = require('fs')
 const path = require('path')
 
 const config = require('../config.json')
+const validate = require('./validate')
 
-module.exports.render = function (type, callback) {
+module.exports.render = function (type, data, callback) {
   let response = buildResponse(500, 'An error has occurred.')
   switch (type) {
     case 'honeypot':
@@ -19,15 +20,13 @@ module.exports.render = function (type, callback) {
       response = buildResponse(500, config.MSG_ERROR || 'Form not sent, there was an error adding it to the database.')
       break
     case 'success':
-      response = buildResponse(302, config.MSG_SUCCESS || 'Form submission successfully made.')
+      if (validate.hasRedirect(data)) {
+        response = buildResponse(302, config.MSG_SUCCESS || 'Form submission successfully made.', data['redirect-to'])
+      } else {
+        response = buildResponse(200, config.MSG_SUCCESS || 'Form submission successfully made.')
+      }
       break
   }
-  callback(null, response)
-  process.exit()
-}
-
-module.exports.redirect = function (redirect, callback) {
-  let response = buildResponse(200, config.MSG_SUCCESS || 'Form submission successfully made.', redirect)
   callback(null, response)
   process.exit()
 }
