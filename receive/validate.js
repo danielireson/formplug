@@ -31,3 +31,10 @@ module.exports.hasRedirect = function (data) {
   }
   return false
 }
+
+module.exports.isJsonResponse = function (data) {
+  if (data['_format'] !== undefined && data['_format'].toLowerCase() === 'json') {
+    return true
+  }
+  return false
+}
