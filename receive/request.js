@@ -4,7 +4,7 @@ var validator = require('validator')
 
 var response = require('./response')
 
-module.exports.all = function (data, callback) {
+module.exports.validate = function (data, callback) {
   checkHoneyPot(data, callback)
   checkToParam(data, callback)
 }

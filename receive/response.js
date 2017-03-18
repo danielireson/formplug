@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 
 const config = require('../config.json')
-const validate = require('./validate')
+const request = require('./request')
 
 module.exports.render = function (type, data, callback) {
   let response = buildResponse(500, 'An error has occurred.', data)
@@ -22,7 +22,7 @@ module.exports.render = function (type, data, callback) {
       response = buildResponse(500, config.MSG_ERROR || 'Form not sent, there was an error adding it to the database.', data)
       break
     case 'success':
-      let successStatusCode = validate.hasRedirect(data) ? 302 : 200
+      let successStatusCode = request.hasRedirect(data) ? 302 : 200
       response = buildResponse(successStatusCode, config.MSG_SUCCESS || 'Form submission successfully made.', data)
       break
   }
@@ -30,7 +30,7 @@ module.exports.render = function (type, data, callback) {
 }
 
 function buildResponse (statusCode, message, data) {
-  if (validate.isJsonResponse(data)) {
+  if (request.isJsonResponse(data)) {
     return buildJsonResponse(statusCode, message, data)
   }
   return buildHtmlResponse(statusCode, message, data)
