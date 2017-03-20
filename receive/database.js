@@ -10,7 +10,7 @@ module.exports.put = function (data, callback) {
   let docClient = new AWS.DynamoDB.DocumentClient()
   let payload = {
     id: uuid.v4(),
-    data: encryption.encrypt(JSON.stringify(data))
+    data: encryption.encrypt(data)
   }
   return docClient.put({TableName: config.TABLE_NAME, Item: payload}, (error) => callback(error))
 }
