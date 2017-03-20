@@ -2,7 +2,7 @@
 
 const querystring = require('querystring')
 
-const database = require('./database')
+const database = require('../lib/database')
 const request = require('./request')
 const response = require('./response')
 
