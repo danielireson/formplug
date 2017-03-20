@@ -13,7 +13,6 @@ module.exports.handle = (event, context, callback) => {
     if (error) {
       response.render('error', data, callback)
     }
-
     response.render('success', data, callback)
   })
 }
