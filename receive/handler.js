@@ -11,8 +11,11 @@ module.exports.handle = (event, context, callback) => {
   request.validate(data, callback)
   database.put(data, function (error) {
     if (error) {
+      console.error('Error adding to the database for ' + data['_to'])
+      console.error(data)
       response.render('error', data, callback)
     }
+    console.log('Successfully queued for ' + data['_to'])
     response.render('success', data, callback)
   })
 }
