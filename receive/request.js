@@ -1,8 +1,8 @@
 'use strict'
 
-var validator = require('validator')
+const validator = require('validator')
 
-var response = require('./response')
+const response = require('./response')
 
 module.exports.validate = function (data, callback) {
   checkHoneyPot(data, callback)
