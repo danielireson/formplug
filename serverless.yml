@@ -1,5 +1,8 @@
 service: formplug
 
+plugins:
+  - serverless-plugin-include-dependencies
+
 provider:
   name: aws
   runtime: nodejs4.3
