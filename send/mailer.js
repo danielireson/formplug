@@ -11,7 +11,7 @@ module.exports.send = function (data, callback) {
 
 function buildEmail (data) {
   return {
-    Source: config.FROM_EMAIL,
+    Source: 'Formplug <' + config.FROM_EMAIL + '>',
     Destination: {
       ToAddresses: [
         data['_to']
