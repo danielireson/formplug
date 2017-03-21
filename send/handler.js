@@ -2,13 +2,13 @@
 
 const database = require('../lib/database')
 const encryption = require('../lib/encryption')
-const mailer = require('./mailer')
+const mail = require('./mail')
 
 module.exports.handle = (event, context, callback) => {
   let eventData = event.Records[0].dynamodb.NewImage
   let id = eventData.id.S
   let data = encryption.decrypt(eventData.data.S)
-  mailer.send(data, function (error) {
+  mail.send(data, function (error) {
     if (error) {
       console.error('Error sending email for ' + data['_to'])
       console.error(error)
