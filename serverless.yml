@@ -23,14 +23,14 @@ functions:
     handler: receive/handler.handle
     events:
       - http:
-          path: /send/{_to}
+          path: /{_to}
           method: post
           request:
             parameters:
               paths:
                 _to: true
       - http:
-          path: /send/{_to}/{_format}
+          path: /{_to}/{_format}
           method: post
           request:
             parameters:
