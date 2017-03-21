@@ -2,6 +2,7 @@
 
 const database = require('../lib/database')
 const encryption = require('../lib/encryption')
+const log = require('../lib/log')
 const mail = require('./mail')
 
 module.exports.handle = (event, context, callback) => {
@@ -11,17 +12,14 @@ module.exports.handle = (event, context, callback) => {
     let data = encryption.decrypt(eventData.data.S)
     mail.send(data, function (error) {
       if (error) {
-        console.error('Error sending email for ' + data['_to'])
-        console.error(error)
-        console.error(data)
+        log.error(['Error sending email', error, data])
       } else {
-        console.log('Successfully sent email to ' + data['_to'])
+        log.success('Successfully sent email')
         database.delete(id, function (error) {
           if (error) {
-            console.error('Error deleting from queue for ' + id)
-            console.error(error)
+            log.error(['Error deleting from queue', error, event])
           } else {
-            console.log('Successfully deleted queue item')
+            log.success('Successfully deleted queue item')
           }
         })
       }

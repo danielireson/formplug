@@ -3,6 +3,7 @@
 const querystring = require('querystring')
 
 const database = require('../lib/database')
+const log = require('../lib/log')
 const request = require('./request')
 const response = require('./response')
 
@@ -11,11 +12,10 @@ module.exports.handle = (event, context, callback) => {
   request.validate(data, callback)
   database.put(data, function (error) {
     if (error) {
-      console.error('Error adding to the database for ' + data['_to'])
-      console.error(data)
+      log.error(['Error adding to the database', data, event])
       response.render('error', data, callback)
     }
-    console.log('Successfully queued for ' + data['_to'])
+    log.success('Successfully queued email')
     response.render('success', data, callback)
   })
 }
