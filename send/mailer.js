@@ -11,7 +11,7 @@ module.exports.send = function (data, callback) {
 
 function buildEmail (data) {
   return {
-    Source: 'Formplug <' + config.FROM_EMAIL + '>',
+    Source: buildSource(),
     Destination: {
       ToAddresses: [
         data['_to']
@@ -28,6 +28,12 @@ function buildEmail (data) {
       }
     }
   }
+}
+
+function buildSource () {
+  let arnArray = config.FROM_ARN.split('/')
+  let email = arnArray[arnArray.length - 1]
+  return 'Formplug <' + email + '>'
 }
 
 function buildMessage (data) {
