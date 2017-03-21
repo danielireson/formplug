@@ -10,6 +10,10 @@ provider:
       Action:
         - "dynamodb:*"
       Resource: "arn:aws:dynamodb:*:*:table/${file(config.json):TABLE_NAME}"
+    - Effect: "Allow"
+      Action:
+        - "ses:*"
+      Resource: ${file(config.json):FROM_ARN}
 
 functions:
   receive:
