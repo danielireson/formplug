@@ -1,0 +1,6 @@
+{
+  "pathParameters": {
+    "_email": "test@example.com",
+    "_format": "json"
+  }
+}
