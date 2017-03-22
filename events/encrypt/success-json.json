@@ -1,6 +1,8 @@
 {
-  "pathParameters": {
-    "_email": "test@example.com",
+  "queryStringParameters": {
     "_format": "json"
+  },
+  "pathParameters": {
+    "_email": "test@example.com"
   }
 }

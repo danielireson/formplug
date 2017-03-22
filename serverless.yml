@@ -27,16 +27,10 @@ functions:
           method: any
           request:
             parameters:
-              paths:
-                _email: true
-      - http:
-          path: /encrypt/{_email}/{_format}
-          method: any
-          request:
-            parameters:
-              paths:
-                _email: true
+              querystrings:
                 _format: true
+              paths:
+                _email: true
   receive:
     handler: receive/handler.handle
     events:
@@ -45,16 +39,10 @@ functions:
           method: post
           request:
             parameters:
-              paths:
-                _to: true
-      - http:
-          path: /to/{_to}/{_format}
-          method: post
-          request:
-            parameters:
-              paths:
-                _to: true
+              querystrings:
                 _format: true
+              paths:
+                _to: true
   send:
     handler: send/handler.handle
     events:

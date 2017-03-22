@@ -8,7 +8,7 @@ const response = require('../lib/response')
 const request = require('./request')
 
 module.exports.handle = (event, context, callback) => {
-  let data = Object.assign(querystring.parse(event.body), event.pathParameters)
+  let data = Object.assign(querystring.parse(event.body), event.pathParameters, event.queryStringParameters)
   request.validate(data, callback)
   database.put(data, function (error) {
     if (error) {
