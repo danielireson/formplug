@@ -16,9 +16,9 @@ function checkHoneyPot (data, callback) {
 
 function checkToParam (data, callback) {
   if (!('_to' in data)) {
-    response.render('receive-no-admin-email', data, callback)
+    response.render('receive-no-email', data, callback)
   }
   if ('_to' in data && !validation.isEmail(data['_to'])) {
-    response.render('receive-bad-admin-email', data, callback)
+    response.render('receive-bad-email', data, callback)
   }
 }
