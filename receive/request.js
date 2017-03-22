@@ -10,7 +10,7 @@ module.exports.validate = function (data, callback) {
 }
 
 function checkHoneyPot (data, callback) {
-  if (data['_honeypot'] !== undefined && !validator.isEmpty(data['_honeypot'])) {
+  if ('_honeypot' in data) {
     response.render('honeypot', data, callback)
   }
 }
