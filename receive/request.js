@@ -24,14 +24,14 @@ function checkToParam (data, callback) {
 }
 
 module.exports.hasRedirect = function (data) {
-  if (data['_redirect-to'] !== undefined && validation.isURL(data['_redirect-to'])) {
+  if ('_redirect-to' in data && validation.isURL(data['_redirect-to'])) {
     return true
   }
   return false
 }
 
 module.exports.isJsonResponse = function (data) {
-  if (data['_format'] !== undefined && data['_format'].toLowerCase() === 'json') {
+  if ('_format' in data && data['_format'].toLowerCase() === 'json') {
     return true
   }
   return false
