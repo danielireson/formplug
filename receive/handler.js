@@ -4,8 +4,8 @@ const querystring = require('querystring')
 
 const database = require('../lib/database')
 const log = require('../lib/log')
+const response = require('../lib/response')
 const request = require('./request')
-const response = require('./response')
 
 module.exports.handle = (event, context, callback) => {
   let data = Object.assign(querystring.parse(event.body), event.pathParameters)
