@@ -4,7 +4,7 @@ const querystring = require('querystring')
 
 const database = require('../lib/database')
 const log = require('../lib/log')
-const response = require('../lib/response')
+const route = require('../lib/route')
 const request = require('./request')
 
 module.exports.handle = (event, context, callback) => {
@@ -13,9 +13,9 @@ module.exports.handle = (event, context, callback) => {
   database.put(data, function (error) {
     if (error) {
       log.error(['Error adding to the database', data, event])
-      response.render('receive-error', data, callback)
+      route.render('receive-error', data, callback)
     }
     log.success('Successfully queued email')
-    response.render('receive-success', data, callback)
+    route.render('receive-success', data, callback)
   })
 }

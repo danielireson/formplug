@@ -1,7 +1,7 @@
 'use strict'
 
 const validation = require('../lib/validation')
-const response = require('../lib/response')
+const route = require('../lib/route')
 
 module.exports.validate = function (data, callback) {
   checkHoneyPot(data, callback)
@@ -10,15 +10,15 @@ module.exports.validate = function (data, callback) {
 
 function checkHoneyPot (data, callback) {
   if ('_honeypot' in data) {
-    response.render('receive-honeypot', data, callback)
+    route.render('receive-honeypot', data, callback)
   }
 }
 
 function checkToParam (data, callback) {
   if (!('_to' in data)) {
-    response.render('receive-no-email', data, callback)
+    route.render('receive-no-email', data, callback)
   }
   if ('_to' in data && !validation.isEmail(data['_to'])) {
-    response.render('receive-bad-email', data, callback)
+    route.render('receive-bad-email', data, callback)
   }
 }
