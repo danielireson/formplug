@@ -19,6 +19,24 @@ provider:
       Resource: ${file(config.json):FROM_ARN}
 
 functions:
+  encrypt:
+    handler: encrypt/handler.handle
+    events:
+      - http:
+          path: /encrypt/{_email}
+          method: any
+          request:
+            parameters:
+              paths:
+                _email: true
+      - http:
+          path: /encrypt/{_email}/{_format}
+          method: any
+          request:
+            parameters:
+              paths:
+                _email: true
+                _format: true
   receive:
     handler: receive/handler.handle
     events:
@@ -37,7 +55,6 @@ functions:
               paths:
                 _to: true
                 _format: true
-
   send:
     handler: send/handler.handle
     events:
