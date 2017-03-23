@@ -1,8 +1,8 @@
 'use strict'
 
-const database = require('../lib/database')
-const encryption = require('../lib/encryption')
-const log = require('../lib/log')
+const database = require('../lib/storage/database')
+const encryption = require('../lib/storage/encryption')
+const log = require('../lib/utility/log')
 const mail = require('./mail')
 
 module.exports.handle = (event, context, callback) => {

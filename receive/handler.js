@@ -2,9 +2,9 @@
 
 const querystring = require('querystring')
 
-const database = require('../lib/database')
-const log = require('../lib/log')
-const route = require('../lib/route')
+const database = require('../lib/storage/database')
+const log = require('../lib/utility/log')
+const route = require('../lib/http/route')
 const request = require('./request')
 
 module.exports.handle = (event, context, callback) => {
