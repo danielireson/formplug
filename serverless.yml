@@ -24,7 +24,7 @@ functions:
     events:
       - http:
           path: /encrypt/{_email}
-          method: any
+          method: get
           request:
             parameters:
               querystrings:
