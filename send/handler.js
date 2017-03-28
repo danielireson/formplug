@@ -13,11 +13,13 @@ module.exports.handle = (event, context, callback) => {
     mail.send(data, function (error) {
       if (error) {
         log.error(['Error sending email', error, data])
+        return false
       } else {
         log.success('Successfully sent email')
         database.delete(id, function (error) {
           if (error) {
             log.error(['Error deleting from queue', error, event])
+            return false
           } else {
             log.success('Successfully deleted queue item')
           }
