@@ -14,6 +14,7 @@ module.exports.handle = (event, context, callback) => {
     if (error) {
       log.error(['Error adding to the database', data, event])
       route.render('receive-error', data, callback)
+      return false
     }
     log.success('Successfully queued email')
     route.render('receive-success', data, callback)
