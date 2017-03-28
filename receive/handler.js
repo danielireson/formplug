@@ -9,7 +9,7 @@ const request = require('./request')
 
 module.exports.handle = (event, context, callback) => {
   let data = Object.assign({}, querystring.parse(event.body), event.pathParameters, event.queryStringParameters)
-  request.validate(data, callback)
+  if (!request.isValid(data, callback)) return false
   database.put(data, function (error) {
     if (error) {
       log.error(['Error adding to the database', data, event])
