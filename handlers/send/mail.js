@@ -3,7 +3,7 @@
 const AWS = require('aws-sdk')
 const sesClient = new AWS.SES()
 
-const config = require('../config.json')
+const config = require('../../config.json')
 
 module.exports.send = function (data, callback) {
   return sesClient.sendEmail(buildEmail(data), (error) => callback(error))

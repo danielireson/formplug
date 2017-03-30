@@ -1,7 +1,7 @@
 'use strict'
 
-const validation = require('../lib/http/validation')
-const route = require('../lib/http/route')
+const validation = require('../../lib/http/validation')
+const route = require('../../lib/http/route')
 
 module.exports.isValid = function (data, callback) {
   return checkHoneyPot(data, callback) && checkToParam(data, callback)

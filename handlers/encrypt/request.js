@@ -1,7 +1,7 @@
 'use strict'
 
-const validation = require('../lib/http/validation')
-const route = require('../lib/http/route')
+const validation = require('../../lib/http/validation')
+const route = require('../../lib/http/route')
 
 module.exports.validate = function (data, callback) {
   if (!('_email' in data)) {

@@ -1,7 +1,7 @@
 'use strict'
 
-const encryption = require('../lib/storage/encryption')
-const route = require('../lib/http/route')
+const encryption = require('../../lib/storage/encryption')
+const route = require('../../lib/http/route')
 const request = require('./request')
 
 module.exports.handle = (event, context, callback) => {

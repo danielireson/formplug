@@ -20,7 +20,7 @@ provider:
 
 functions:
   encrypt:
-    handler: encrypt/handler.handle
+    handler: handlers/encrypt/handler.handle
     events:
       - http:
           path: /encrypt/{_email}
@@ -32,7 +32,7 @@ functions:
               paths:
                 _email: true
   receive:
-    handler: receive/handler.handle
+    handler: handlers/receive/handler.handle
     events:
       - http:
           path: /to/{_to}
@@ -44,7 +44,7 @@ functions:
               paths:
                 _to: true
   send:
-    handler: send/handler.handle
+    handler: handlers/send/handler.handle
     events:
       - stream: 
           arn: ${file(config.json):STREAM}

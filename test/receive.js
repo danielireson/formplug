@@ -7,7 +7,7 @@ const sinon = require('sinon')
 
 const database = require('../lib/storage/database')
 const route = require('../lib/http/route')
-const receive = require('../receive/handler')
+const receive = require('../handlers/receive/handler')
 
 const eventReceiveSuccess = require('../events/receive-success.json')
 const eventReceiveSuccessJson = require('../events/receive-success-json.json')
