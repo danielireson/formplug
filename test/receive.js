@@ -8,8 +8,8 @@ const sinon = require('sinon')
 const database = require('../lib/storage/database')
 const route = require('../lib/http/route')
 const response = require('../lib/http/response')
-const receive = require('../handlers/receive/handler')
-const request = require('../handlers/receive/request')
+const receiveHandler = require('../handlers/receive/handler')
+const receiveRequest = require('../handlers/receive/request')
 
 const eventReceiveSuccess = require('../events/receive-success.json')
 const eventReceiveSuccessJson = require('../events/receive-success-json.json')
@@ -49,9 +49,9 @@ describe('receive', function () {
 })
 
 function responseAssert (type, event, spy) {
-  let data = request.getParams(event)
+  let data = receiveRequest.getParams(event)
   let routeDetails = route.getRouteDetails(type, data)
-  receive.handle(event, {}, sinon.stub())
+  receiveHandler.handle(event, {}, sinon.stub())
   assert(spy.calledOnce)
   let result = spy.firstCall.returnValue
   assert.equal(result.statusCode, routeDetails.statusCode)
