@@ -13,9 +13,9 @@ const receiveRequest = require('../handlers/receive/request')
 
 const eventReceiveSuccess = require('../events/receive-success.json')
 const eventReceiveSuccessJson = require('../events/receive-success-json.json')
-const eventBadEmail = require('../events/receive-bad-email.json')
-const eventNoEmail = require('../events/receive-no-email.json')
-const eventHoneypot = require('../events/receive-honeypot.json')
+const eventReceiveBadEmail = require('../events/receive-bad-email.json')
+const eventReceiveNoEmail = require('../events/receive-no-email.json')
+const eventReceiveHoneypot = require('../events/receive-honeypot.json')
 
 describe('receive', function () {
   var spy, stub
@@ -37,13 +37,13 @@ describe('receive', function () {
   })
   describe('error', function () {
     it('bad email', function () {
-      responseAssert('receive-bad-email', eventBadEmail, spy)
+      responseAssert('receive-bad-email', eventReceiveBadEmail, spy)
     })
     it('no email', function () {
-      responseAssert('receive-no-email', eventNoEmail, spy)
+      responseAssert('receive-no-email', eventReceiveNoEmail, spy)
     })
     it('honeypot', function () {
-      responseAssert('receive-honeypot', eventHoneypot, spy)
+      responseAssert('receive-honeypot', eventReceiveHoneypot, spy)
     })
   })
 })
