@@ -1,7 +1,13 @@
 'use strict'
 
+const querystring = require('querystring')
+
 const validation = require('../../lib/http/validation')
 const route = require('../../lib/http/route')
+
+module.exports.getParams = function (event) {
+  return Object.assign({}, querystring.parse(event.body), event.pathParameters, event.queryStringParameters)
+}
 
 module.exports.isValid = function (data, callback) {
   return checkHoneyPot(data, callback) && checkToParam(data, callback)
