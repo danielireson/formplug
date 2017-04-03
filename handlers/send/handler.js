@@ -2,8 +2,8 @@
 
 const database = require('../../lib/storage/database')
 const log = require('../../lib/utility/log')
+const mail = require('../../lib/mail/mail')
 const request = require('./request')
-const mail = require('./mail')
 
 module.exports.handle = (event, context, callback) => {
   if (event.Records[0].eventName === 'INSERT') {
