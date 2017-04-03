@@ -1,6 +1,6 @@
 'use strict'
 
-const encryption = require('../../lib/storage/encryption')
+const encryption = require('../../lib/database/encryption')
 const route = require('../../lib/http/route')
 const request = require('./request')
 

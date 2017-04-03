@@ -1,6 +1,6 @@
 'use strict'
 
-const database = require('../../lib/storage/database')
+const database = require('../../lib/database/database')
 const log = require('../../lib/utility/log')
 const mail = require('../../lib/mail/mail')
 const request = require('./request')

@@ -5,8 +5,8 @@ const afterEach = require('mocha').afterEach
 const assert = require('chai').assert
 const sinon = require('sinon')
 
-const database = require('../lib/storage/database')
-const encryption = require('../lib/storage/encryption')
+const database = require('../lib/database/database')
+const encryption = require('../lib/database/encryption')
 const route = require('../lib/http/route')
 const response = require('../lib/http/response')
 const encryptHandler = require('../handlers/encrypt/handler')
