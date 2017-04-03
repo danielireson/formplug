@@ -9,17 +9,35 @@ const database = require('../lib/storage/database')
 const encryption = require('../lib/storage/encryption')
 const route = require('../lib/http/route')
 const response = require('../lib/http/response')
+const encryptHandler = require('../handlers/encrypt/handler')
 const receiveHandler = require('../handlers/receive/handler')
 const receiveRequest = require('../handlers/receive/request')
-const encryptHandler = require('../handlers/encrypt/handler')
 
+const eventEncryptSuccess = require('../events/encrypt-success.json')
+const eventEncryptSuccessJson = require('../events/encrypt-success-json.json')
 const eventReceiveSuccess = require('../events/receive-success.json')
 const eventReceiveSuccessJson = require('../events/receive-success-json.json')
 const eventReceiveBadEmail = require('../events/receive-bad-email.json')
 const eventReceiveNoEmail = require('../events/receive-no-email.json')
 const eventReceiveHoneypot = require('../events/receive-honeypot.json')
-const eventEncryptSuccess = require('../events/encrypt-success.json')
-const eventEncryptSuccessJson = require('../events/encrypt-success-json.json')
+
+describe('encrypt', function () {
+  var spy
+  beforeEach(function () {
+    spy = sinon.spy(response, 'build')
+  })
+  afterEach(function () {
+    spy.restore()
+  })
+  describe('success', function () {
+    it('html', function () {
+      responseAssert('encrypt-success', eventEncryptSuccess, spy)
+    })
+    it('json', function () {
+      responseAssert('encrypt-success', eventEncryptSuccessJson, spy)
+    })
+  })
+})
 
 describe('receive', function () {
   var spy, stub
@@ -48,24 +66,6 @@ describe('receive', function () {
     })
     it('honeypot', function () {
       responseAssert('receive-honeypot', eventReceiveHoneypot, spy)
-    })
-  })
-})
-
-describe('encrypt', function () {
-  var spy
-  beforeEach(function () {
-    spy = sinon.spy(response, 'build')
-  })
-  afterEach(function () {
-    spy.restore()
-  })
-  describe('success', function () {
-    it('html', function () {
-      responseAssert('encrypt-success', eventEncryptSuccess, spy)
-    })
-    it('json', function () {
-      responseAssert('encrypt-success', eventEncryptSuccessJson, spy)
     })
   })
 })
