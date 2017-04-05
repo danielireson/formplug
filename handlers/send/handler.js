@@ -14,7 +14,7 @@ module.exports.handle = (event, context, callback) => {
       .then(() => database.delete(params.id))
       .then(() => log.success('Successfully deleted queue item'))
       .catch(function (error) {
-        route.renderError('Error sending email', error, params.data)
+        route.renderError('Error sending email', params.data, error)
       })
   }
 }
