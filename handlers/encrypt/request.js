@@ -11,9 +11,9 @@ module.exports.getParams = function (event) {
 
 module.exports.validate = function (data, callback) {
   if (!('_email' in data)) {
-    route.render('no-encrypt-email', data, callback)
+    route.renderHttp('no-encrypt-email', data, callback)
   }
   if ('_email' in data && !validation.isEmail(data['_email'])) {
-    route.render('bad-encrypt-email', data, callback)
+    route.renderHttp('bad-encrypt-email', data, callback)
   }
 }
