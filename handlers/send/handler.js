@@ -9,21 +9,12 @@ const request = require('./request')
 module.exports.handle = (event, context, callback) => {
   if (event.Records[0].eventName === 'INSERT') {
     let params = request.getParams(event)
-    mail.send(params.data, function (error) {
-      if (error) {
+    mail.send(params.data)
+      .then(() => log.success('Successfully sent email'))
+      .then(() => database.delete(params.id))
+      .then(() => log.success('Successfully deleted queue item'))
+      .catch(function (error) {
         route.renderError('Error sending email', error, params.data)
-        return false
-      } else {
-        log.success('Successfully sent email')
-        database.delete(params.id, function (error) {
-          if (error) {
-            route.renderError('Error deleting from queue', error, event)
-            return false
-          } else {
-            log.success('Successfully deleted queue item')
-          }
-        })
-      }
-    })
+      })
   }
 }

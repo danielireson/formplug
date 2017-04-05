@@ -8,13 +8,11 @@ const request = require('./request')
 module.exports.handle = (event, context, callback) => {
   let data = request.getParams(event)
   if (!request.isValid(data, callback)) return false
-  database.put(data, function (error) {
-    if (error) {
-      log.error(['Error adding to the database', data, event])
+  database.put(data)
+    .then(() => log.success('Successfully queued email'))
+    .then(() => route.renderHttp('receive-success', data, callback))
+    .catch(function (error) {
+      log.error(['Error adding to the database', data, error])
       route.renderHttp('receive-error', data, callback)
-      return false
-    }
-    log.success('Successfully queued email')
-    route.renderHttp('receive-success', data, callback)
-  })
+    })
 }

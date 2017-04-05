@@ -44,7 +44,7 @@ describe('receive', function () {
   var spy, stub
   beforeEach(function () {
     spy = sinon.spy(response, 'build')
-    stub = sinon.stub(database, 'put').callsFake((data, callback) => callback())
+    stub = sinon.stub(database, 'put').returns(Promise.resolve())
   })
   afterEach(function () {
     spy.restore()
