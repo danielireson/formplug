@@ -6,7 +6,8 @@ const request = require('./request')
 
 module.exports.handle = (event, context, callback) => {
   let data = request.getParams(event)
-  request.validate(data, callback)
-  data['_encrypted'] = encryption.encrypt(data['_email'])
-  route.render('encrypt-success', data, callback)
+  if (request.isValid(data, callback)) {
+    data['_encrypted'] = encryption.encrypt(data['_email'])
+    route.render('encrypt-success', data, callback)
+  }
 }
