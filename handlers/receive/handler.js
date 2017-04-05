@@ -10,10 +10,10 @@ module.exports.handle = (event, context, callback) => {
   if (request.isValid(data, callback)) {
     database.put(data)
       .then(() => log.success('Successfully queued email'))
-      .then(() => route.renderHttp('receive-success', data, callback))
+      .then(() => route.render('receive-success', data, callback))
       .catch(function (error) {
         log.error(['Error adding to the database', data, error])
-        route.renderHttp('receive-error', data, callback)
+        route.render('receive-error', data, callback)
       })
   }
 }

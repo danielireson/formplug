@@ -8,5 +8,5 @@ module.exports.handle = (event, context, callback) => {
   let data = request.getParams(event)
   request.validate(data, callback)
   data['_encrypted'] = encryption.encrypt(data['_email'])
-  route.renderHttp('encrypt-success', data, callback)
+  route.render('encrypt-success', data, callback)
 }

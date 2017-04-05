@@ -15,7 +15,7 @@ module.exports.isValid = function (data, callback) {
 
 function checkHoneyPot (data, callback) {
   if ('_honeypot' in data) {
-    route.renderHttp('receive-honeypot', data, callback)
+    route.render('receive-honeypot', data, callback)
     return false
   }
   return true
@@ -23,11 +23,11 @@ function checkHoneyPot (data, callback) {
 
 function checkToParam (data, callback) {
   if (!('_to' in data)) {
-    route.renderHttp('receive-no-email', data, callback)
+    route.render('receive-no-email', data, callback)
     return false
   }
   if ('_to' in data && !validation.isEmail(data['_to'])) {
-    route.renderHttp('receive-bad-email', data, callback)
+    route.render('receive-bad-email', data, callback)
     return false
   }
   return true
