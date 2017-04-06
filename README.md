@@ -1,5 +1,5 @@
 # Formplug
-A form backend for static sites. Formplug is built using the Serverless Framework and runs on AWS Lambda. It uses API Gateway for routes, DynamoDB as a queue and SES to send emails.
+A form backend for static sites. Formplug is built using the Serverless Framework and runs on AWS Lambda. It uses API Gateway for routes, DynamoDB as a queue and SES to send emails. It has been heavily inspired by [Formspree](https://formspree.io/).
 
 ## Usage
 ### HTML forms
@@ -38,3 +38,4 @@ https://apigatewayurl.com/to/johndoe@example.com?_format=json
 4. You need to now get the *STREAM_ARN* from AWS. Log into your [AWS Console](https://aws.amazon.com) and head to the DynamoDB dashboard. Click on the name of the table that was just created and on the right hand side a panel should slide in that shows the *Latest stream ARN*. You should copy this ARN and paste it as the value of *STREAM_ARN* in *config.json*.
 5. You need to now setup an email address that can be used to send email from, this is also done on the AWS Console. Head to the SES dashboard and on the left hand side select *Email Addresses* from underneath *Identity Management*. Hit the blue *Verify a New Email Address* button, enter your desired email and click the verification link in your inbox. After verification, the email's *Identity ARN* is visible after clicking on the email on the *Email Addresses* page. Copy this value and paste it to the *FROM_ARN* field in *config.json*. Unfortunately AWS puts new SES accounts under limits which prevents emails being sent to email addresses that haven't been verified. Check out the relevant [AWS SES documentation](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html) for more information. The limits can be lifted easily by opening a support ticket as outlined in the docs, but this takes them a few hours to approve.
 6. Run *serverless deploy* from the terminal again to upload the updated config file. Formplug should now be up and running. You should see your API Gateway endpoint to POST to in the terminal after the Serverless deployment has finished.
+
