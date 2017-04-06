@@ -47,7 +47,7 @@ functions:
     handler: handlers/send/handler.handle
     events:
       - stream: 
-          arn: ${file(config.json):STREAM}
+          arn: ${file(config.json):STREAM_ARN}
           batchSize: 1
 
 resources:

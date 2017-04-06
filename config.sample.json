@@ -3,6 +3,6 @@
   "REGION": "",
   "STAGE": "",
   "TABLE_NAME": "",
-  "STREAM": "",
+  "STREAM_ARN": "",
   "FROM_ARN"
 }
