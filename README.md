@@ -13,7 +13,9 @@ Set a HTML form action to your Formplug endpoint and POST data will be forwarded
     <input type="submit" value="send">
 </form>
 ```
-Fields *_honeypot* and *_redirect-to* are optional. The *_honeypot* field is a spam prevention field and should be hidden for regular website users. If *_honeypot* is not empty the request will be ignored. If provided, users will be redirected to the *_redirect-to* URL after form submission. If this field is missing a generic 'form submission successfully made' message will be shown.
+Fields *_honeypot* and *_redirect-to* are optional. 
+* The *_honeypot* field is a spam prevention field and should be hidden for regular website users. If *_honeypot* is not empty the request will be ignored. 
+* If provided, users will be redirected to the *_redirect-to* URL after form submission. If *_redirect-to* is missing a generic 'form submission successfully made' message will be shown.
 
 ### AJAX
 Append *_format=json* to the query string of the Formplug URL to get responses back in JSON. This makes it easy to interact with Formplug using Javscript.
