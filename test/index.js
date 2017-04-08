@@ -70,7 +70,7 @@ describe('receive', function () {
     it('encrypted email', function () {
       let event = {
         pathParameters: {
-          '_to': encryption.encrypt('johndoe@example.com')
+          '_to': encryption.encryptString('johndoe@example.com')
         }
       }
       receiveHttpResponseAssert('receive-success', event, spy)
@@ -92,7 +92,7 @@ describe('receive', function () {
 function encryptHttpResponseAssert (type, event, spy) {
   let data = encryptRequest.getParams(event)
   encryptHandler.handle(event, {}, sinon.stub())
-  if ('_email' in data) data['_encrypted'] = encryption.encrypt(data['_email'])
+  if ('_email' in data) data['_encrypted'] = encryption.encryptString(data['_email'])
   httpResponseAssert(data, type, event, spy)
 }
 
