@@ -16,6 +16,8 @@ const receiveRequest = require('../handlers/receive/request')
 
 const eventEncryptSuccess = require('../events/encrypt-success.json')
 const eventEncryptSuccessJson = require('../events/encrypt-success-json.json')
+const eventEncryptBadEmail = require('../events/encrypt-bad-email.json')
+const eventEncryptNoEmail = require('../events/encrypt-no-email.json')
 const eventReceiveSuccess = require('../events/receive-success.json')
 const eventReceiveSuccessJson = require('../events/receive-success-json.json')
 const eventReceiveBadEmail = require('../events/receive-bad-email.json')
@@ -38,6 +40,14 @@ describe('encrypt', function () {
       encryptHttpResponseAssert('encrypt-success', eventEncryptSuccessJson, spy)
     })
   })
+  describe('error', function () {
+    it('bad email', function () {
+      encryptHttpResponseAssert('encrypt-bad-email', eventEncryptBadEmail, spy)
+    })
+    it('no email', function () {
+      encryptHttpResponseAssert('encrypt-no-email', eventEncryptNoEmail, spy)
+    })
+  })
 })
 
 describe('receive', function () {
@@ -57,6 +67,14 @@ describe('receive', function () {
     it('json', function () {
       receiveHttpResponseAssert('receive-success', eventReceiveSuccessJson, spy)
     })
+    it('encrypted email', function () {
+      let event = {
+        pathParameters: {
+          '_to': encryption.encrypt('johndoe@example.com')
+        }
+      }
+      receiveHttpResponseAssert('receive-success', event, spy)
+    })
   })
   describe('error', function () {
     it('bad email', function () {
@@ -74,7 +92,7 @@ describe('receive', function () {
 function encryptHttpResponseAssert (type, event, spy) {
   let data = encryptRequest.getParams(event)
   encryptHandler.handle(event, {}, sinon.stub())
-  data['_encrypted'] = encryption.encrypt(data['_email'])
+  if ('_email' in data) data['_encrypted'] = encryption.encrypt(data['_email'])
   httpResponseAssert(data, type, event, spy)
 }
 
