@@ -15,7 +15,7 @@ module.exports.isValid = function (data, callback) {
 
 function checkNoEmail (data, callback) {
   if (!('_email' in data)) {
-    route.render('no-encrypt-email', data, callback)
+    route.render('encrypt-no-email', data, callback)
     return false
   }
   return true
@@ -23,7 +23,7 @@ function checkNoEmail (data, callback) {
 
 function checkBadEmail (data, callback) {
   if ('_email' in data && !validation.isEmail(data['_email'])) {
-    route.render('bad-encrypt-email', data, callback)
+    route.render('encrypt-bad-email', data, callback)
     return false
   }
   return true
