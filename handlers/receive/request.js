@@ -3,6 +3,7 @@
 const querystring = require('querystring')
 
 const validation = require('../../lib/http/validation')
+const encryption = require('../../lib/database/encryption')
 const route = require('../../lib/http/route')
 
 module.exports.getParams = function (event) {
@@ -11,6 +12,10 @@ module.exports.getParams = function (event) {
 
 module.exports.isValid = function (data, callback) {
   return checkHoneyPot(data, callback) && checkToParam(data, callback)
+}
+
+module.exports.hasEncryptedToEmail = function (data) {
+  return validation.isEmail(encryption.decryptString(data['_to']))
 }
 
 function checkHoneyPot (data, callback) {
@@ -26,7 +31,7 @@ function checkToParam (data, callback) {
     route.render('receive-no-email', data, callback)
     return false
   }
-  if ('_to' in data && !validation.isEmail(data['_to'])) {
+  if ('_to' in data && !validation.isEmail(data['_to']) && !module.exports.hasEncryptedToEmail(data)) {
     route.render('receive-bad-email', data, callback)
     return false
   }
