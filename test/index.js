@@ -102,7 +102,7 @@ describe('receive', function () {
     it('honeypot', function () {
       receiveHttpResponseAssert('receive-honeypot', eventReceiveHoneypot, spy)
     })
-    it('database put', function () {
+    it('database service', function () {
       stub.rejects('error saving to the databse')
       receiveHttpResponseAssert('receive-error', eventReceiveSuccess, spy)
     })
