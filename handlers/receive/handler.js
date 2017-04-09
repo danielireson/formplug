@@ -1,6 +1,6 @@
 'use strict'
 
-const database = require('../../lib/database/database')
+const databaseService = require('../../lib/database/service')
 const encryption = require('../../lib/database/encryption')
 const log = require('../../lib/utility/log')
 const route = require('../../lib/http/route')
@@ -10,7 +10,7 @@ module.exports.handle = (event, context, callback) => {
   let data = request.getParams(event)
   if (request.isValid(data, callback)) {
     if (request.hasEncryptedToEmail(data)) data['_to'] = encryption.decryptString(data['_to'])
-    database.put(data)
+    databaseService.put(data)
       .then(() => log.success('Successfully queued email'))
       .then(() => route.render('receive-success', data, callback))
       .catch(function (error) {

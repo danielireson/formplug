@@ -7,9 +7,10 @@ const sinon = require('sinon')
 const sinonStubPromise = require('sinon-stub-promise')
 sinonStubPromise(sinon)
 
-const database = require('../lib/database/database')
+const databaseService = require('../lib/database/service')
 const encryption = require('../lib/database/encryption')
-const mail = require('../lib/mail/mail')
+const mailBuilder = require('../lib/mail/builder')
+const mailService = require('../lib/mail/service')
 const route = require('../lib/http/route')
 const response = require('../lib/http/response')
 const encryptHandler = require('../handlers/encrypt/handler')
@@ -60,7 +61,7 @@ describe('receive', function () {
   var spy, stub
   beforeEach(function () {
     spy = sinon.spy(response, 'build')
-    stub = sinon.stub(database, 'put').returnsPromise()
+    stub = sinon.stub(databaseService, 'put').returnsPromise()
   })
   afterEach(function () {
     spy.restore()
@@ -109,9 +110,9 @@ describe('receive', function () {
 describe('send', function () {
   var spy, mailStub, databaseStub
   beforeEach(function () {
-    spy = sinon.spy(mail, 'buildEmail')
-    mailStub = sinon.stub(mail, 'send').returnsPromise()
-    databaseStub = sinon.stub(database, 'delete').returnsPromise()
+    spy = sinon.spy(mailBuilder, 'build')
+    mailStub = sinon.stub(mailService, 'send').returnsPromise()
+    databaseStub = sinon.stub(databaseService, 'delete').returnsPromise()
   })
   afterEach(function () {
     spy.restore()
@@ -160,10 +161,10 @@ function httpResponseAssert (data, type, event, spy) {
 }
 
 function sendResponseAssert (event, spy, databaseStub) {
-  let data = sendRequest.getParams(event)
-  let expectedEmail = mail.buildEmail(data)
+  let data = sendRequest.getParams(event).data
+  let expectedEmail = mailBuilder.build(data)
   sendHandler.handle(event, {}, sinon.stub())
-  assert.equal(spy.lastCall.returnValue, expectedEmail, 'email response does not match expected')
+  assert.deepEqual(spy.lastCall.returnValue, expectedEmail, 'email response does not match')
   assert(!databaseStub.notCalled, 'database delete has not been called')
   assert(databaseStub.calledOnce, 'database delete called more than once')
 }
