@@ -102,7 +102,7 @@ describe('receive', function () {
       receiveHttpResponseAssert('receive-honeypot', eventReceiveHoneypot, spy)
     })
     it('database service', function () {
-      stub.rejects('error saving to the databse')
+      stub.rejects('error saving to the database')
       receiveHttpResponseAssert('receive-error', eventReceiveSuccess, spy)
     })
   })
@@ -148,7 +148,7 @@ describe('send', function () {
       assert.equal(actualError, expectedError, 'error format does not match')
       spy.restore()
     })
-    it('databse service', function () {
+    it('database service', function () {
       var spy = sinon.spy(utilityLog, 'error')
       mailStub.resolves()
       databaseStub.rejects()
