@@ -1,21 +1,21 @@
 'use strict'
 
 const databaseService = require('../../lib/database/service')
-const encryption = require('../../lib/database/encryption')
-const log = require('../../lib/utility/log')
-const route = require('../../lib/http/route')
-const request = require('./request')
+const databaseEncryption = require('../../lib/database/encryption')
+const utilityLog = require('../../lib/utility/log')
+const httpRoute = require('../../lib/http/route')
+const receiveRequest = require('./request')
 
 module.exports.handle = (event, context, callback) => {
-  let data = request.getParams(event)
-  if (request.isValid(data, callback)) {
-    if (request.hasEncryptedToEmail(data)) data['_to'] = encryption.decryptString(data['_to'])
+  let data = receiveRequest.getParams(event)
+  if (receiveRequest.isValid(data, callback)) {
+    if (receiveRequest.hasEncryptedToEmail(data)) data['_to'] = databaseEncryption.decryptString(data['_to'])
     databaseService.put(data)
-      .then(() => log.success('Successfully queued email'))
-      .then(() => route.render('receive-success', data, callback))
+      .then(() => utilityLog.success('Successfully queued email'))
+      .then(() => httpRoute.render('receive-success', data, callback))
       .catch(function (error) {
-        route.render('receive-error', data, callback)
-        log.error(['Error adding to the database', data, error])
+        httpRoute.render('receive-error', data, callback)
+        utilityLog.error(['Error adding to the database', data, error])
       })
   }
 }

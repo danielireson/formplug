@@ -2,8 +2,8 @@
 
 const querystring = require('querystring')
 
-const validation = require('../../lib/http/validation')
-const route = require('../../lib/http/route')
+const httpValidation = require('../../lib/http/validation')
+const httpRoute = require('../../lib/http/route')
 
 module.exports.getParams = function (event) {
   return Object.assign({}, querystring.parse(event.body), event.pathParameters, event.queryStringParameters)
@@ -15,15 +15,15 @@ module.exports.isValid = function (data, callback) {
 
 function checkNoEmail (data, callback) {
   if (!('_email' in data)) {
-    route.render('encrypt-no-email', data, callback)
+    httpRoute.render('encrypt-no-email', data, callback)
     return false
   }
   return true
 }
 
 function checkBadEmail (data, callback) {
-  if ('_email' in data && !validation.isEmail(data['_email'])) {
-    route.render('encrypt-bad-email', data, callback)
+  if ('_email' in data && !httpValidation.isEmail(data['_email'])) {
+    httpRoute.render('encrypt-bad-email', data, callback)
     return false
   }
   return true

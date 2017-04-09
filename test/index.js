@@ -8,11 +8,11 @@ const sinonStubPromise = require('sinon-stub-promise')
 sinonStubPromise(sinon)
 
 const databaseService = require('../lib/database/service')
-const encryption = require('../lib/database/encryption')
+const databaseEncryption = require('../lib/database/encryption')
 const mailBuilder = require('../lib/mail/builder')
 const mailService = require('../lib/mail/service')
-const route = require('../lib/http/route')
-const response = require('../lib/http/response')
+const httpRoute = require('../lib/http/route')
+const httpResponse = require('../lib/http/response')
 const encryptHandler = require('../handlers/encrypt/handler')
 const encryptRequest = require('../handlers/encrypt/request')
 const receiveHandler = require('../handlers/receive/handler')
@@ -34,7 +34,7 @@ const eventReceiveHoneypot = require('../events/receive-honeypot.json')
 describe('encrypt', function () {
   var spy
   beforeEach(function () {
-    spy = sinon.spy(response, 'build')
+    spy = sinon.spy(httpResponse, 'build')
   })
   afterEach(function () {
     spy.restore()
@@ -60,7 +60,7 @@ describe('encrypt', function () {
 describe('receive', function () {
   var spy, stub
   beforeEach(function () {
-    spy = sinon.spy(response, 'build')
+    spy = sinon.spy(httpResponse, 'build')
     stub = sinon.stub(databaseService, 'put').returnsPromise()
   })
   afterEach(function () {
@@ -80,7 +80,7 @@ describe('receive', function () {
       stub.resolves()
       let event = {
         pathParameters: {
-          '_to': encryption.encryptString('johndoe@example.com')
+          '_to': databaseEncryption.encryptString('johndoe@example.com')
         }
       }
       receiveHttpResponseAssert('receive-success', event, spy)
@@ -139,7 +139,7 @@ describe('send', function () {
 function encryptHttpResponseAssert (type, event, spy) {
   let data = encryptRequest.getParams(event)
   encryptHandler.handle(event, {}, sinon.stub())
-  if ('_email' in data) data['_encrypted'] = encryption.encryptString(data['_email'])
+  if ('_email' in data) data['_encrypted'] = databaseEncryption.encryptString(data['_email'])
   httpResponseAssert(data, type, event, spy)
 }
 
@@ -150,7 +150,7 @@ function receiveHttpResponseAssert (type, event, spy) {
 }
 
 function httpResponseAssert (data, type, event, spy) {
-  let routeDetails = route.getRouteDetails(type, data)
+  let routeDetails = httpRoute.getRouteDetails(type, data)
   assert(!spy.notCalled, 'response build has not been called')
   assert(spy.calledOnce, 'response build called more than once')
   let result = spy.firstCall.returnValue
@@ -179,7 +179,7 @@ function buildSendEvent (data) {
             S: '1'
           },
           data: {
-            S: encryption.encryptObject(data)
+            S: databaseEncryption.encryptObject(data)
           }
         }
       }
