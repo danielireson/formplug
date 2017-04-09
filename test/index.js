@@ -13,6 +13,8 @@ const mailBuilder = require('../lib/mail/builder')
 const mailService = require('../lib/mail/service')
 const httpRoute = require('../lib/http/route')
 const httpResponse = require('../lib/http/response')
+const utilityLog = require('../lib/utility/log')
+
 const encryptHandler = require('../handlers/encrypt/handler')
 const encryptRequest = require('../handlers/encrypt/request')
 const receiveHandler = require('../handlers/receive/handler')
@@ -109,6 +111,12 @@ describe('receive', function () {
 
 describe('send', function () {
   var mailStub, databaseStub
+  var data = {
+    _to: 'johndoe@example.com',
+    text: 'abc',
+    number: '123'
+  }
+  var event = buildSendEvent(data)
   beforeEach(function () {
     mailStub = sinon.stub(mailService, 'send').returnsPromise()
     databaseStub = sinon.stub(databaseService, 'delete').returnsPromise()
@@ -122,12 +130,6 @@ describe('send', function () {
       var spy = sinon.spy(mailBuilder, 'build')
       mailStub.resolves()
       databaseStub.resolves()
-      let data = {
-        _to: 'johndoe@example.com',
-        text: 'abc',
-        number: '123'
-      }
-      let event = buildSendEvent(data)
       let expectedEmail = mailBuilder.build(data)
       sendHandler.handle(event, {}, sinon.stub())
       assert.deepEqual(spy.lastCall.returnValue, expectedEmail, 'email response does not match')
@@ -137,7 +139,16 @@ describe('send', function () {
     })
   })
   describe('error', function () {
-
+    it('mail service', function () {
+      var spy = sinon.spy(utilityLog, 'error')
+      mailStub.rejects()
+      sendHandler.handle(event, {}, sinon.stub())
+      assert(spy.calledOnce, 'error should only be thrown once')
+      let actualError = spy.firstCall.args[0][0]
+      let expectedError = 'Error sending email'
+      assert.equal(actualError, expectedError, 'error format does not match')
+      spy.restore()
+    })
   })
 })
 
