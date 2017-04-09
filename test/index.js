@@ -114,10 +114,11 @@ function receiveHttpResponseAssert (type, event, spy) {
 
 function httpResponseAssert (data, type, event, spy) {
   let routeDetails = route.getRouteDetails(type, data)
-  assert(spy.calledOnce)
+  assert.equal(spy.notCalled, false, 'response build has not been called')
+  assert(spy.calledOnce, 'response build called more than once')
   let result = spy.firstCall.returnValue
-  assert.equal(result.statusCode, routeDetails.statusCode)
+  assert.equal(result.statusCode, routeDetails.statusCode, 'status codes do not match')
   let expectedContentType = data['_format'] === 'json' ? 'application/json' : 'text/html'
-  assert.equal(result.headers['Content-Type'], expectedContentType)
-  assert.include(result.body, routeDetails.message)
+  assert.equal(result.headers['Content-Type'], expectedContentType, 'content type header does not match')
+  assert.include(result.body, routeDetails.message, 'response body does not include expected message')
 }
