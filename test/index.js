@@ -108,19 +108,18 @@ describe('receive', function () {
 })
 
 describe('send', function () {
-  var spy, mailStub, databaseStub
+  var mailStub, databaseStub
   beforeEach(function () {
-    spy = sinon.spy(mailBuilder, 'build')
     mailStub = sinon.stub(mailService, 'send').returnsPromise()
     databaseStub = sinon.stub(databaseService, 'delete').returnsPromise()
   })
   afterEach(function () {
-    spy.restore()
     mailStub.restore()
     databaseStub.restore()
   })
   describe('success', function () {
     it('email', function () {
+      var spy = sinon.spy(mailBuilder, 'build')
       mailStub.resolves()
       databaseStub.resolves()
       let data = {
@@ -128,7 +127,13 @@ describe('send', function () {
         text: 'abc',
         number: '123'
       }
-      sendResponseAssert(buildSendEvent(data), spy, databaseStub)
+      let event = buildSendEvent(data)
+      let expectedEmail = mailBuilder.build(data)
+      sendHandler.handle(event, {}, sinon.stub())
+      assert.deepEqual(spy.lastCall.returnValue, expectedEmail, 'email response does not match')
+      assert(!databaseStub.notCalled, 'database delete has not been called')
+      assert(databaseStub.calledOnce, 'database delete called more than once')
+      spy.restore()
     })
   })
   describe('error', function () {
@@ -158,15 +163,6 @@ function httpResponseAssert (data, type, event, spy) {
   let expectedContentType = data['_format'] === 'json' ? 'application/json' : 'text/html'
   assert.equal(result.headers['Content-Type'], expectedContentType, 'content type header does not match')
   assert.include(result.body, routeDetails.message, 'response body does not include expected message')
-}
-
-function sendResponseAssert (event, spy, databaseStub) {
-  let data = sendRequest.getParams(event).data
-  let expectedEmail = mailBuilder.build(data)
-  sendHandler.handle(event, {}, sinon.stub())
-  assert.deepEqual(spy.lastCall.returnValue, expectedEmail, 'email response does not match')
-  assert(!databaseStub.notCalled, 'database delete has not been called')
-  assert(databaseStub.calledOnce, 'database delete called more than once')
 }
 
 function buildSendEvent (data) {
