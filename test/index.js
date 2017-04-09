@@ -148,6 +148,17 @@ describe('send', function () {
       assert.equal(actualError, expectedError, 'error format does not match')
       spy.restore()
     })
+    it('databse service', function () {
+      var spy = sinon.spy(utilityLog, 'error')
+      mailStub.resolves()
+      databaseStub.rejects()
+      sendHandler.handle(event, {}, sinon.stub())
+      assert(spy.calledOnce, 'error should only be thrown once')
+      let actualError = spy.firstCall.args[0][0]
+      let expectedError = 'Error sending email'
+      assert.equal(actualError, expectedError, 'error format does not match')
+      spy.restore()
+    })
   })
 })
 
