@@ -118,7 +118,7 @@ function receiveHttpResponseAssert (type, event, spy) {
 
 function httpResponseAssert (data, type, event, spy) {
   let routeDetails = route.getRouteDetails(type, data)
-  assert.equal(spy.notCalled, false, 'response build has not been called')
+  assert(!spy.notCalled, 'response build has not been called')
   assert(spy.calledOnce, 'response build called more than once')
   let result = spy.firstCall.returnValue
   assert.equal(result.statusCode, routeDetails.statusCode, 'status codes do not match')
