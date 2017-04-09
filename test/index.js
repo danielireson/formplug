@@ -20,6 +20,7 @@ const eventEncryptBadEmail = require('../events/encrypt-bad-email.json')
 const eventEncryptNoEmail = require('../events/encrypt-no-email.json')
 const eventReceiveSuccess = require('../events/receive-success.json')
 const eventReceiveSuccessJson = require('../events/receive-success-json.json')
+const eventReceiveSuccessRedirect = require('../events/receive-success-redirect.json')
 const eventReceiveBadEmail = require('../events/receive-bad-email.json')
 const eventReceiveNoEmail = require('../events/receive-no-email.json')
 const eventReceiveHoneypot = require('../events/receive-honeypot.json')
@@ -74,6 +75,9 @@ describe('receive', function () {
         }
       }
       receiveHttpResponseAssert('receive-success', event, spy)
+    })
+    it('redirect', function () {
+      receiveHttpResponseAssert('receive-success', eventReceiveSuccessRedirect, spy)
     })
   })
   describe('error', function () {
