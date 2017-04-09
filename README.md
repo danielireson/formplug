@@ -8,14 +8,14 @@ Set a HTML form action to your Formplug endpoint and POST data will be forwarded
 <form action="https://apigatewayurl.com/to/johndoe@example.com">
     <input type="text" name="name">
     <input type="text" name="location">
-    <input type="text" name="_redirect-to" value="http://yoursite.com">
+    <input type="text" name="_redirect" value="http://yoursite.com">
     <input type="text" name="_honeypot" style="display:none">
     <input type="submit" value="send">
 </form>
 ```
-Fields *_honeypot* and *_redirect-to* are optional. 
+Fields *_honeypot* and *_redirect* are optional. 
 * The *_honeypot* field is a spam prevention field and should be hidden for regular website users. If *_honeypot* is not empty the request will be ignored. 
-* If provided, users will be redirected to the *_redirect-to* URL after form submission. If *_redirect-to* is missing a generic 'form submission successfully made' message will be shown.
+* If provided, users will be redirected to the *_redirect* URL after form submission. If *_redirect* is missing a generic 'form submission successfully made' message will be shown.
 
 ### AJAX
 Append *_format=json* to the query string of the Formplug URL to get responses back in JSON. This makes it easy to interact with Formplug using Javscript.
