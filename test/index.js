@@ -20,7 +20,6 @@ const encryptRequest = require('../handlers/encrypt/request')
 const receiveHandler = require('../handlers/receive/handler')
 const receiveRequest = require('../handlers/receive/request')
 const sendHandler = require('../handlers/send/handler')
-const sendRequest = require('../handlers/send/request')
 
 const eventEncryptSuccess = require('../events/encrypt-success.json')
 const eventEncryptSuccessJson = require('../events/encrypt-success-json.json')
