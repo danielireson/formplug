@@ -4,6 +4,8 @@ const beforeEach = require('mocha').beforeEach
 const afterEach = require('mocha').afterEach
 const assert = require('chai').assert
 const sinon = require('sinon')
+const sinonStubPromise = require('sinon-stub-promise')
+sinonStubPromise(sinon)
 
 const database = require('../lib/database/database')
 const encryption = require('../lib/database/encryption')
@@ -55,7 +57,7 @@ describe('receive', function () {
   var spy, stub
   beforeEach(function () {
     spy = sinon.spy(response, 'build')
-    stub = sinon.stub(database, 'put').returns(Promise.resolve())
+    stub = sinon.stub(database, 'put').returnsPromise()
   })
   afterEach(function () {
     spy.restore()
@@ -63,12 +65,15 @@ describe('receive', function () {
   })
   describe('success', function () {
     it('html', function () {
+      stub.resolves()
       receiveHttpResponseAssert('receive-success', eventReceiveSuccess, spy)
     })
     it('json', function () {
+      stub.resolves()
       receiveHttpResponseAssert('receive-success', eventReceiveSuccessJson, spy)
     })
     it('encrypted email', function () {
+      stub.resolves()
       let event = {
         pathParameters: {
           '_to': encryption.encryptString('johndoe@example.com')
@@ -77,6 +82,7 @@ describe('receive', function () {
       receiveHttpResponseAssert('receive-success', event, spy)
     })
     it('redirect', function () {
+      stub.resolves()
       receiveHttpResponseAssert('receive-success', eventReceiveSuccessRedirect, spy)
     })
   })
