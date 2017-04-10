@@ -3,7 +3,7 @@ A form backend for static sites. Formplug is built using the Serverless Framewor
 
 ## Usage
 ### HTML forms
-Set a HTML form action to your Formplug endpoint and POST data will be forwarded on to the specified email address.
+Set the form action to your Formplug endpoint and responses will be forwarded on to the specified email address. The email address can be plain text as shown below or hidden behind an encrypted hexedecimal string (see next section).
 ``` html
 <form action="https://apigatewayurl.com/to/johndoe@example.com">
     <input type="text" name="name">
@@ -16,6 +16,16 @@ Set a HTML form action to your Formplug endpoint and POST data will be forwarded
 Fields *_honeypot* and *_redirect* are optional. 
 * The *_honeypot* field is a spam prevention field and should be hidden for regular website users. If *_honeypot* is not empty the request will be ignored. 
 * If provided, users will be redirected to the *_redirect* URL after form submission. If *_redirect* is missing a generic 'form submission successfully made' message will be shown.
+
+### Encrypt your email address
+The email address can be encyrpted so it's not visible in the request or HTML page source. It's encrypted and decrypted using the encryption key in *config.json*. If this key is changed then the email's encrypted string will also change.
+``` html
+# make a GET request to the encrypt endpoint to get the hex string
+https://apigatewayurl.com/encrypt/johndoe@example.com
+
+# to endpoints can now look like the following
+https://apigatewayurl.com/to/1974d0cc894607de62f0581ec1334997
+```
 
 ### AJAX
 Append *_format=json* to the query string of the Formplug URL to get responses back in JSON. This makes it easy to interact with Formplug using Javscript.
