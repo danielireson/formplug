@@ -23,7 +23,22 @@ Append *_format=json* to the query string of the Formplug URL to get responses b
 https://apigatewayurl.com/to/johndoe@example.com?_format=json
 ```
 
+### Customisable messages
+You can optionally add custom messages to *config.json* to override the default user messages for *encrypt* and *receive* http requests.
+``` json
+{
+  "MSG_ENCRYPT_NO_EMAIL": "",
+  "MSG_ENCRYPT_BAD_EMAIL": "",
+  "MSG_RECEIVE_HONEYPOT": "",
+  "MSG_RECEIVE_NO_EMAIL": "",
+  "MSG_RECEIVE_BAD_EMAIL": "",
+  "MSG_RECEIVE_ERROR": "",
+  "MSG_RECEIVE_SUCCESS": ""
+}
+```
+
 ## Setup
+### Instructions
 1. Follow the instructions on the [Serverless](https://serverless.com/framework/docs/providers/aws/guide/installation) website to install Node.js, Serverless and setup your AWS credentials.
 2. Copy *config.sample.json* and save it as *config.json*. *ENCRYPTION_KEY* should be set to a random character string, this is used for encrypting/decrypting data stored in the DynamoDB queue. *REGION* should be set as either *eu-west-1*, *us-east-1*, or *us-west-2* as these are the only regions where Amazon SES is supported. *STAGE* is the AWS stage to use, this will appear in your API Gateway URL, it's common to use *dev* or *prod*. *TABLE_NAME* is the DynamoDB table name to be created and used as the queue. Your config file should look similar to the following with *STREAM* and *FROM_ARN* empty.
 ``` json
