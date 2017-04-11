@@ -19,7 +19,7 @@ module.exports.hasEncryptedToEmail = function (data) {
 }
 
 function checkHoneyPot (data, callback) {
-  if ('_honeypot' in data) {
+  if ('_honeypot' in data && data['_honeypot'] !== '') {
     httpRoute.render('receive-honeypot', data, callback)
     return false
   }
