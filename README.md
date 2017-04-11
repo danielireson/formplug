@@ -5,7 +5,7 @@ A form backend for static sites. Formplug is built using the Serverless Framewor
 ### HTML forms
 Set the form action to your Formplug endpoint and responses will be forwarded on to the specified email address. The email address can be plain text as shown below or hidden behind an encrypted hexedecimal string (see next section).
 ``` html
-<form action="https://apigatewayurl.com/to/johndoe@example.com">
+<form action="https://apigatewayurl.com/to/johndoe@example.com" method="post">
     <input type="text" name="name">
     <input type="text" name="location">
     <input type="text" name="_redirect" value="http://yoursite.com">
