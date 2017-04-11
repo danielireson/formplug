@@ -8,7 +8,7 @@ Set the form action to your Formplug endpoint and responses will be forwarded on
 <form action="https://apigatewayurl.com/to/johndoe@example.com" method="post">
     <input type="text" name="name">
     <input type="text" name="location">
-    <input type="text" name="_redirect" value="http://yoursite.com">
+    <input type="hidden" name="_redirect" value="http://yoursite.com">
     <input type="text" name="_honeypot" style="display:none">
     <input type="submit" value="send">
 </form>
