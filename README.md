@@ -17,6 +17,8 @@ Fields *_honeypot* and *_redirect* are optional.
 * The *_honeypot* field is a spam prevention field and should be hidden for regular website users. If *_honeypot* is not empty the request will be ignored. 
 * If provided, users will be redirected to the *_redirect* URL after form submission. If *_redirect* is missing a generic 'form submission successfully made' message will be shown.
 
+![Submission preview](readme-screenshot.png)
+
 ### Encrypt your email address
 The email address can be encyrpted so it's not visible in the request or HTML page source. It's encrypted and decrypted using the encryption key in *config.json*. If this key is changed then the email's encrypted string will also change.
 ``` html
