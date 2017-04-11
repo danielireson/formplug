@@ -30,7 +30,7 @@ https://apigatewayurl.com/to/1974d0cc894607de62f0581ec1334997
 ```
 
 ### AJAX
-Append *_format=json* to the query string of the Formplug URL to get responses back in JSON. This makes it easy to interact with Formplug using Javscript.
+Append *_format=json* to the query string of the Formplug URL to get responses back in JSON with a CORS allow all header. This makes it easy to interact with Formplug using Javscript.
 ``` html
 https://apigatewayurl.com/to/johndoe@example.com?_format=json
 ```
