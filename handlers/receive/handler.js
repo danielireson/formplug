@@ -9,7 +9,7 @@ const receiveRequest = require('./request')
 module.exports.handle = (event, context, callback) => {
   let data = receiveRequest.getParams(event)
   if (receiveRequest.isValid(data, callback)) {
-    if (receiveRequest.hasEncryptedToEmail(data)) data['_to'] = httpEncryption.decryptString(data['_to'])
+    if (receiveRequest.hasEncryptedToEmail(data)) data['_to'] = httpEncryption.decrypt(data['_to'])
     eventInvoker.send(data)
       .then(() => utilityLog.success('Successfully queued email'))
       .then(() => httpRoute.render('receive-success', data, callback))
