@@ -7,12 +7,12 @@ const sinon = require('sinon')
 const sinonStubPromise = require('sinon-stub-promise')
 sinonStubPromise(sinon)
 
-const databaseService = require('../lib/database/service')
-const databaseEncryption = require('../lib/database/encryption')
-const mailBuilder = require('../lib/mail/builder')
-const mailService = require('../lib/mail/service')
+const httpEncryption = require('../lib/http/encryption')
 const httpRoute = require('../lib/http/route')
 const httpResponse = require('../lib/http/response')
+const eventInvoker = require('../lib/event/invoker')
+const mailBuilder = require('../lib/mail/builder')
+const mailService = require('../lib/mail/service')
 const utilityLog = require('../lib/utility/log')
 
 const encryptHandler = require('../handlers/encrypt/handler')
@@ -62,7 +62,7 @@ describe('receive', function () {
   var spy, stub
   beforeEach(function () {
     spy = sinon.spy(httpResponse, 'build')
-    stub = sinon.stub(databaseService, 'put').returnsPromise()
+    stub = sinon.stub(eventInvoker, 'send').returnsPromise()
   })
   afterEach(function () {
     spy.restore()
@@ -81,7 +81,7 @@ describe('receive', function () {
       stub.resolves()
       let event = {
         pathParameters: {
-          '_to': databaseEncryption.encryptString('johndoe@example.com')
+          '_to': httpEncryption.encrypt('johndoe@example.com')
         }
       }
       receiveHttpResponseAssert('receive-success', event, spy)
@@ -101,58 +101,41 @@ describe('receive', function () {
     it('honeypot', function () {
       receiveHttpResponseAssert('receive-honeypot', eventReceiveHoneypot, spy)
     })
-    it('database service', function () {
-      stub.rejects('error saving to the database')
+    it('send invoke', function () {
+      stub.rejects('error invoker send function')
       receiveHttpResponseAssert('receive-error', eventReceiveSuccess, spy)
     })
   })
 })
 
 describe('send', function () {
-  var mailStub, databaseStub
+  var stub
   var data = {
     _to: 'johndoe@example.com',
     text: 'abc',
     number: '123'
   }
-  var event = buildSendEvent(data)
   beforeEach(function () {
-    mailStub = sinon.stub(mailService, 'send').returnsPromise()
-    databaseStub = sinon.stub(databaseService, 'delete').returnsPromise()
+    stub = sinon.stub(mailService, 'send').returnsPromise()
   })
   afterEach(function () {
-    mailStub.restore()
-    databaseStub.restore()
+    stub.restore()
   })
   describe('success', function () {
     it('email', function () {
       var spy = sinon.spy(mailBuilder, 'build')
-      mailStub.resolves()
-      databaseStub.resolves()
+      stub.resolves()
       let expectedEmail = mailBuilder.build(data)
-      sendHandler.handle(event, {}, sinon.stub())
+      sendHandler.handle(data, {}, sinon.stub())
       assert.deepEqual(spy.lastCall.returnValue, expectedEmail, 'email response does not match')
-      assert(!databaseStub.notCalled, 'database delete has not been called')
-      assert(databaseStub.calledOnce, 'database delete called more than once')
       spy.restore()
     })
   })
   describe('error', function () {
     it('mail service', function () {
       var spy = sinon.spy(utilityLog, 'error')
-      mailStub.rejects()
-      sendHandler.handle(event, {}, sinon.stub())
-      assert(spy.calledOnce, 'error should only be thrown once')
-      let actualError = spy.firstCall.args[0][0]
-      let expectedError = 'Error sending email'
-      assert.equal(actualError, expectedError, 'error format does not match')
-      spy.restore()
-    })
-    it('database service', function () {
-      var spy = sinon.spy(utilityLog, 'error')
-      mailStub.resolves()
-      databaseStub.rejects()
-      sendHandler.handle(event, {}, sinon.stub())
+      stub.rejects()
+      sendHandler.handle(data, {}, sinon.stub())
       assert(spy.calledOnce, 'error should only be thrown once')
       let actualError = spy.firstCall.args[0][0]
       let expectedError = 'Error sending email'
@@ -165,7 +148,7 @@ describe('send', function () {
 function encryptHttpResponseAssert (type, event, spy) {
   let data = encryptRequest.getParams(event)
   encryptHandler.handle(event, {}, sinon.stub())
-  if ('_email' in data) data['_encrypted'] = databaseEncryption.encryptString(data['_email'])
+  if ('_email' in data) data['_encrypted'] = httpEncryption.encrypt(data['_email'])
   httpResponseAssert(data, type, event, spy)
 }
 
@@ -184,22 +167,4 @@ function httpResponseAssert (data, type, event, spy) {
   let expectedContentType = data['_format'] === 'json' ? 'application/json' : 'text/html'
   assert.equal(result.headers['Content-Type'], expectedContentType, 'content type header does not match')
   assert.include(result.body, routeDetails.message, 'response body does not include expected message')
-}
-
-function buildSendEvent (data) {
-  return {
-    Records: [{
-      eventName: 'INSERT',
-      dynamodb: {
-        NewImage: {
-          id: {
-            S: '1'
-          },
-          data: {
-            S: databaseEncryption.encryptObject(data)
-          }
-        }
-      }
-    }]
-  }
 }
