@@ -2,6 +2,7 @@ service: formplug
 
 plugins:
   - serverless-plugin-include-dependencies
+  - serverless-plugin-lambda-dead-letter
 
 provider:
   name: aws
@@ -12,6 +13,10 @@ provider:
     - Effect: "Allow"
       Action:
         - "lambda:InvokeFunction"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
       Resource: "*"
     - Effect: "Allow"
       Action:
@@ -45,3 +50,5 @@ functions:
                 _to: true
   send:
     handler: handlers/send/handler.handle
+    deadLetter:
+      sqs:  formplug-${file(config.json):STAGE}-send-dl-queue 

@@ -18,6 +18,7 @@
     "eslint-plugin-standard": "^2.1.1",
     "mocha": "^3.2.0",
     "serverless-plugin-include-dependencies": "^2.0.0",
+    "serverless-plugin-lambda-dead-letter": "^1.2.1",
     "sinon": "^2.1.0",
     "sinon-stub-promise": "^4.0.0"
   }
