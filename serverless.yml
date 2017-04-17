@@ -11,8 +11,8 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "dynamodb:*"
-      Resource: "arn:aws:dynamodb:*:*:table/${file(config.json):TABLE_NAME}"
+        - "lambda:InvokeFunction"
+      Resource: "*"
     - Effect: "Allow"
       Action:
         - "ses:*"
@@ -45,25 +45,3 @@ functions:
                 _to: true
   send:
     handler: handlers/send/handler.handle
-    events:
-      - stream: 
-          arn: ${file(config.json):STREAM_ARN}
-          batchSize: 1
-
-resources:
-  Resources:
-    DynamoDbTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${file(config.json):TABLE_NAME}
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        StreamSpecification:
-          StreamViewType: NEW_IMAGE

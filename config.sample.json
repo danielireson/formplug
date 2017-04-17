@@ -2,7 +2,5 @@
   "ENCRYPTION_KEY": "formsaregreat",
   "REGION": "eu-west-1",
   "STAGE": "dev",
-  "TABLE_NAME": "formplug-queue",
-  "STREAM_ARN": "",
   "FROM_ARN"
 }

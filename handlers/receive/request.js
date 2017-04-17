@@ -3,8 +3,8 @@
 const querystring = require('querystring')
 
 const httpValidation = require('../../lib/http/validation')
+const httpEncryption = require('../../lib/http/encryption')
 const httpRoute = require('../../lib/http/route')
-const databaseEncryption = require('../../lib/database/encryption')
 
 module.exports.getParams = function (event) {
   return Object.assign({}, querystring.parse(event.body), event.pathParameters, event.queryStringParameters)
@@ -15,7 +15,7 @@ module.exports.isValid = function (data, callback) {
 }
 
 module.exports.hasEncryptedToEmail = function (data) {
-  return httpValidation.isEmail(databaseEncryption.decryptString(data['_to']))
+  return httpValidation.isEmail(httpEncryption.decrypt(data['_to']))
 }
 
 function checkHoneyPot (data, callback) {
