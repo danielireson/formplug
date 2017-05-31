@@ -15,7 +15,7 @@ module.exports.handle = (event, context, callback) => {
       })
       .catch(function (error) {
         httpRoute.render('receive-error', data, callback)
-        utilityLog.error(['Error adding to the database', data, error])
+        utilityLog.error(['Error adding to the database', data, error], callback)
       })
   }
 }
