@@ -7,15 +7,19 @@ const httpEncryption = require('../../lib/http/encryption')
 const httpRoute = require('../../lib/http/route')
 
 module.exports.getParams = function (event) {
-  return Object.assign({}, querystring.parse(event.body), event.pathParameters, event.queryStringParameters)
+  let data = Object.assign({}, querystring.parse(event.body), event.pathParameters, event.queryStringParameters)
+  if (hasEncryptedToEmail(data)) {
+    data['_to'] = httpEncryption.decrypt(data['_to'])
+  }
+  return data
 }
 
 module.exports.isValid = function (data, callback) {
   return checkHoneyPot(data, callback) && checkToParam(data, callback)
 }
 
-module.exports.hasEncryptedToEmail = function (data) {
-  return httpValidation.isEmail(httpEncryption.decrypt(data['_to']))
+function hasEncryptedToEmail (data) {
+  return '_to' in data && httpValidation.isEmail(httpEncryption.decrypt(data['_to']))
 }
 
 function checkHoneyPot (data, callback) {
@@ -31,7 +35,7 @@ function checkToParam (data, callback) {
     httpRoute.render('receive-no-email', data, callback)
     return false
   }
-  if ('_to' in data && !httpValidation.isEmail(data['_to']) && !module.exports.hasEncryptedToEmail(data)) {
+  if ('_to' in data && !httpValidation.isEmail(data['_to'])) {
     httpRoute.render('receive-bad-email', data, callback)
     return false
   }
