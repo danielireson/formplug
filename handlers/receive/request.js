@@ -14,7 +14,7 @@ module.exports.getParams = function (event) {
   return data
 }
 
-module.exports.isValid = function (data, callback) {
+module.exports.validate = function (data, callback) {
   return checkHoneyPot(data, callback) && checkToParam(data, callback)
 }
 

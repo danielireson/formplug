@@ -7,7 +7,7 @@ const receiveRequest = require('./request')
 
 module.exports.handle = (event, context, callback) => {
   let data = receiveRequest.getParams(event)
-  if (receiveRequest.isValid(data, callback)) {
+  if (receiveRequest.validate(data, callback)) {
     eventInvoker.send(data)
       .then(function () {
         httpRoute.render('receive-success', data, callback)

@@ -9,7 +9,7 @@ module.exports.getParams = function (event) {
   return Object.assign({}, querystring.parse(event.body), event.pathParameters, event.queryStringParameters)
 }
 
-module.exports.isValid = function (data, callback) {
+module.exports.validate = function (data, callback) {
   return checkNoEmail(data, callback) && checkBadEmail(data, callback)
 }
 
