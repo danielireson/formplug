@@ -10,10 +10,10 @@ module.exports.getParams = function (event) {
 }
 
 module.exports.validate = function (data, callback) {
-  return checkNoEmail(data, callback) && checkBadEmail(data, callback)
+  return hasEmail(data, callback) && hasValidEmail(data, callback)
 }
 
-function checkNoEmail (data, callback) {
+function hasEmail (data, callback) {
   if (!('_email' in data)) {
     httpRoute.render('encrypt-no-email', data, callback)
     return false
@@ -21,7 +21,7 @@ function checkNoEmail (data, callback) {
   return true
 }
 
-function checkBadEmail (data, callback) {
+function hasValidEmail (data, callback) {
   if ('_email' in data && !httpValidation.isEmail(data['_email'])) {
     httpRoute.render('encrypt-bad-email', data, callback)
     return false

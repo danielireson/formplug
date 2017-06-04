@@ -15,14 +15,14 @@ module.exports.getParams = function (event) {
 }
 
 module.exports.validate = function (data, callback) {
-  return checkHoneyPot(data, callback) && checkToParam(data, callback)
+  return hasNoHoneypot(data, callback) && hasValidEmail(data, callback)
 }
 
 function hasEncryptedToEmail (data) {
   return '_to' in data && httpValidation.isEmail(httpEncryption.decrypt(data['_to']))
 }
 
-function checkHoneyPot (data, callback) {
+function hasNoHoneypot (data, callback) {
   if ('_honeypot' in data && data['_honeypot'] !== '') {
     httpRoute.render('receive-honeypot', data, callback)
     return false
@@ -30,7 +30,7 @@ function checkHoneyPot (data, callback) {
   return true
 }
 
-function checkToParam (data, callback) {
+function hasValidEmail (data, callback) {
   if (!('_to' in data)) {
     httpRoute.render('receive-no-email', data, callback)
     return false
