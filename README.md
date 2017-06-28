@@ -8,14 +8,15 @@ Set the form action to your Formplug endpoint and responses will be forwarded on
 <form action="https://apigatewayurl.com/to/johndoe@example.com" method="post">
     <input type="text" name="name">
     <input type="text" name="location">
+    <input type="hidden" name="_cc" value="johndoe2@example.com;johndoe3@exmaple.com">
     <input type="hidden" name="_redirect" value="http://yoursite.com">
     <input type="text" name="_honeypot" style="display:none">
     <input type="submit" value="send">
 </form>
 ```
-Fields *_honeypot* and *_redirect* are optional. 
-* The *_honeypot* field is a spam prevention field and should be hidden for regular website users. If *_honeypot* is not empty the request will be ignored. 
-* If provided, users will be redirected to the *_redirect* URL after form submission. If *_redirect* is missing a generic 'form submission successfully made' message will be shown.
+* The optional *_honeypot* field is a spam prevention field and should be hidden for regular website users. If *_honeypot* is not empty the request will be ignored. 
+* The optional *_cc* field allows you to specify a list of email addresses to receive a carbon copy of the message. Separate multiple email addresses with semicolons.
+* The optional *_redirect* field is a redirect success URL. If *_redirect* is missing a generic 'form submission successfully made' message will be shown.
 
 ![Submission preview](readme-screenshot.png)
 
