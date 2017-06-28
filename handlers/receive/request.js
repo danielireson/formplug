@@ -11,6 +11,11 @@ module.exports.getParams = function (event) {
   if (hasEncryptedToEmail(data)) {
     data['_to'] = httpEncryption.decrypt(data['_to'])
   }
+  if ('_cc' in data) {
+    data['_cc'] = data['_cc'].split(';')
+  } else {
+    data['_cc'] = []
+  }
   return data
 }
 

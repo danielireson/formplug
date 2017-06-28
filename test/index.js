@@ -110,11 +110,6 @@ describe('receive', function () {
 
 describe('send', function () {
   var stub
-  var data = {
-    _to: 'johndoe@example.com',
-    text: 'abc',
-    number: '123'
-  }
   beforeEach(function () {
     stub = sinon.stub(mailService, 'send').returnsPromise()
   })
@@ -122,7 +117,26 @@ describe('send', function () {
     stub.restore()
   })
   describe('success', function () {
-    it('email', function () {
+    it('to', function () {
+      let data = {
+        _to: 'johndoe@example.com',
+        text: 'abc',
+        number: '123'
+      }
+      var spy = sinon.spy(mailBuilder, 'build')
+      stub.resolves()
+      let expectedEmail = mailBuilder.build(data)
+      sendHandler.handle(data, {}, sinon.stub())
+      assert.deepEqual(spy.lastCall.returnValue, expectedEmail, 'email response does not match')
+      spy.restore()
+    })
+    it('cc', function () {
+      let data = {
+        _to: 'johndoe@example.com',
+        _cc: 'johndoe@example.com;johndoe@example.com',
+        text: 'abc',
+        number: '123'
+      }
       var spy = sinon.spy(mailBuilder, 'build')
       stub.resolves()
       let expectedEmail = mailBuilder.build(data)
@@ -133,6 +147,11 @@ describe('send', function () {
   })
   describe('error', function () {
     it('mail service', function () {
+      let data = {
+        _to: 'johndoe@example.com',
+        text: 'abc',
+        number: '123'
+      }
       var spy = sinon.spy(utilityLog, 'error')
       stub.rejects()
       sendHandler.handle(data, {}, sinon.stub())
