@@ -1,4 +1,4 @@
-service: formplug
+service: ${file(config.json):SERVICE_NAME}
 
 plugins:
   - serverless-plugin-include-dependencies
