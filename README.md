@@ -59,9 +59,10 @@ You can optionally add custom messages to *config.json* to override the default 
 
 ### Instructions
 1. Follow the instructions on the [Serverless](https://serverless.com/framework/docs/providers/aws/guide/installation) website to install Node.js, Serverless and setup your AWS credentials.
-2. Copy *config.sample.json* and save it as *config.json*. *ENCRYPTION_KEY* should be set to a random character string, this is used for the optional encrypting/decrypting of the email address in the endpoint URL. *REGION* should be set as either *eu-west-1*, *us-east-1*, or *us-west-2* as these are the only regions where Amazon SES is supported. *STAGE* is the AWS stage to use, this will appear in your API Gateway URL, it's common to use *dev* or *prod*.
+2. Copy *config.sample.json* and save it as *config.json*. *SERVICE_NAME* should be set to match the name of your service in serverless.yml. *ENCRYPTION_KEY* should be set to a random character string, this is used for the optional encrypting/decrypting of the email address in the endpoint URL. *REGION* should be set as either *eu-west-1*, *us-east-1*, or *us-west-2* as these are the only regions where Amazon SES is supported. *STAGE* is the AWS stage to use, this will appear in your API Gateway URL, it's common to use *dev* or *prod*.
 ``` json
 {
+  "SERVICE_NAME": "formplug",
   "ENCRYPTION_KEY": "formsaregreat",
   "REGION": "eu-west-1",
   "STAGE": "dev",
