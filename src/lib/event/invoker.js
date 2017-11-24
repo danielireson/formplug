@@ -3,7 +3,7 @@
 const aws = require('aws-sdk')
 const lambda = new aws.Lambda()
 
-const config = require('../../config.json')
+const config = require('../../../config.json')
 
 module.exports.send = function (data) {
   let event = {

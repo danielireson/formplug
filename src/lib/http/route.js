@@ -1,6 +1,6 @@
 'use strict'
 
-const config = require('../../config.json')
+const config = require('../../../config.json')
 const httpValidation = require('./validation')
 const httpResponse = require('./response')
 

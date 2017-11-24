@@ -24,7 +24,7 @@ provider:
 
 functions:
   encrypt:
-    handler: handlers/encrypt/handler.handle
+    handler: src/handlers/encrypt/handler.handle
     events:
       - http:
           path: /encrypt/{_email}
@@ -36,7 +36,7 @@ functions:
               paths:
                 _email: true
   receive:
-    handler: handlers/receive/handler.handle
+    handler: src/handlers/receive/handler.handle
     events:
       - http:
           path: /to/{_to}
@@ -48,4 +48,4 @@ functions:
               paths:
                 _to: true
   send:
-    handler: handlers/send/handler.handle 
+    handler: src/handlers/send/handler.handle 

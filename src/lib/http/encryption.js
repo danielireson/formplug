@@ -2,7 +2,7 @@
 
 const crypto = require('crypto')
 
-const config = require('../../config.json')
+const config = require('../../../config.json')
 
 module.exports.encrypt = function (str) {
   let cipher = crypto.createCipher('aes-256-ctr', config.ENCRYPTION_KEY)
