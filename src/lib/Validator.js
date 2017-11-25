@@ -10,4 +10,4 @@ class Validator {
   }
 }
 
-module.exports.Validator = Validator
+module.exports = Validator
