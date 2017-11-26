@@ -43,39 +43,122 @@ describe('Request', function () {
     assert.deepEqual(testSubject.userParameters, {one: 'var1', two: 'var2', three: 'var3'})
   })
 
-  it('should get the "to" recipient', function () {
+  it('should parse the "to" recipient', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
       body: '_to=johndoe@example.com'
     }
     const testSubject = new Request(event)
-    return testSubject.validate().then(function () {
-      assert.strictEqual(testSubject.recipients.to, 'johndoe@example.com')
-    })
+    return testSubject.validate()
+      .then(function () {
+        assert.strictEqual(testSubject.recipients.to, 'johndoe@example.com')
+      })
   })
 
-  it('should get the the "cc" recipients', function () {
+  it('reject an invalid "to" recipient', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe'
+    }
+    const testSubject = new Request(event)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error, "Invalid email in '_to' field")
+      })
+  })
+
+  it('should parse the the "cc" recipients', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
       body: '_cc=johndoe@example.com;janedoe@example.com'
     }
     const testSubject = new Request(event)
-    return testSubject.validate().then(function () {
-      assert.deepEqual(testSubject.recipients.cc, ['johndoe@example.com', 'janedoe@example.com'])
-    })
+    return testSubject.validate()
+      .then(function () {
+        assert.deepEqual(testSubject.recipients.cc, ['johndoe@example.com', 'janedoe@example.com'])
+      })
   })
 
-  it('should get the the "bcc" recipients', function () {
+  it('reject an invalid "cc" recipient as the first recipient', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_cc=johndoe'
+    }
+    const testSubject = new Request(event)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error, "Invalid email in '_cc' field")
+      })
+  })
+
+  it('reject an invalid "cc" recipient as the second recipient', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_cc=johndoe@example.com;janedoe'
+    }
+    const testSubject = new Request(event)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error, "Invalid email in '_cc' field")
+      })
+  })
+
+  it('should parse the the "bcc" recipients', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
       body: '_bcc=johndoe@example.com;janedoe@example.com'
     }
     const testSubject = new Request(event)
-    return testSubject.validate().then(function () {
-      assert.deepEqual(testSubject.recipients.bcc, ['johndoe@example.com', 'janedoe@example.com'])
-    })
+    return testSubject.validate()
+      .then(function () {
+        assert.deepEqual(testSubject.recipients.bcc, ['johndoe@example.com', 'janedoe@example.com'])
+      })
+  })
+
+  it('reject an invalid "bcc" recipient as the first recipient', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_bcc=johndoe'
+    }
+    const testSubject = new Request(event)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error, "Invalid email in '_bcc' field")
+      })
+  })
+
+  it('reject an invalid "cc" recipient as the second recipient', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_bcc=johndoe@example.com;janedoe'
+    }
+    const testSubject = new Request(event)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error, "Invalid email in '_bcc' field")
+      })
   })
 })

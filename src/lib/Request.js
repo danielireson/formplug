@@ -22,7 +22,7 @@ class Request {
   }
 
   _validateSingleEmails () {
-    ['_to'].reduce((promise, field) => {
+    for (let field of ['_to']) {
       if (field in this.userParameters) {
         let email = this.userParameters[field]
         if (Validator.isEmail(email)) {
@@ -31,26 +31,26 @@ class Request {
           return Promise.reject(`Invalid email in '${field}' field`)
         }
       }
+    }
 
-      return Promise.resolve()
-    }, Promise.resolve())
+    return Promise.resolve()
   }
 
   _validateDelimiteredEmails () {
-    ['_cc', '_bcc'].reduce((promise, field) => {
+    for (let field of ['_cc', '_bcc']) {
       if (field in this.userParameters) {
         let emails = this.userParameters[field].split(';')
-        emails.forEach((email) => {
+        for (let email of emails) {
           if (Validator.isEmail(email)) {
             this.recipients[field.substring(1)].push(email)
           } else {
             return Promise.reject(`Invalid email in '${field}' field`)
           }
-        })
+        }
       }
+    }
 
-      return Promise.resolve()
-    }, Promise.resolve())
+    return Promise.resolve()
   }
 }
 
