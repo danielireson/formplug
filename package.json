@@ -4,7 +4,8 @@
   "author": "Daniel Ireson",
   "license": "MIT",
   "scripts": {
-    "test": "NODE_ENV=testing mocha 'src/**/*.spec.js'"
+    "test": "NODE_ENV=testing mocha 'src/**/*.spec.js'",
+    "encrypt": "node ./scripts/encrypt.js"
   },
   "dependencies": {
     "aws-sdk": "^2.28.0",
