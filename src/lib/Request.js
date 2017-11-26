@@ -24,7 +24,7 @@ class Request {
 
   _validateNoHoneyPot () {
     if ('_honeypot' in this.userParameters && this.userParameters._honeypot !== '') {
-      return Promise.reject('You shall not pass')
+      return Promise.reject(new Error('You shall not pass'))
     }
 
     return Promise.resolve()
@@ -37,7 +37,7 @@ class Request {
         if (Validator.isEmail(email)) {
           this.recipients[field.substring(1)] = email
         } else {
-          return Promise.reject(`Invalid email in '${field}' field`)
+          return Promise.reject(new Error(`Invalid email in '${field}' field`))
         }
       }
     }
@@ -53,7 +53,7 @@ class Request {
           if (Validator.isEmail(email)) {
             this.recipients[field.substring(1)].push(email)
           } else {
-            return Promise.reject(`Invalid email in '${field}' field`)
+            return Promise.reject(new Error(`Invalid email in '${field}' field`))
           }
         }
       }

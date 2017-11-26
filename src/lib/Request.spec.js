@@ -68,7 +68,7 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
-        assert.strictEqual(error, "Invalid email in '_to' field")
+        assert.strictEqual(error.message, "Invalid email in '_to' field")
       })
   })
 
@@ -97,7 +97,7 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
-        assert.strictEqual(error, "Invalid email in '_cc' field")
+        assert.strictEqual(error.message, "Invalid email in '_cc' field")
       })
   })
 
@@ -113,7 +113,7 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
-        assert.strictEqual(error, "Invalid email in '_cc' field")
+        assert.strictEqual(error.message, "Invalid email in '_cc' field")
       })
   })
 
@@ -142,7 +142,7 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
-        assert.strictEqual(error, "Invalid email in '_bcc' field")
+        assert.strictEqual(error.message, "Invalid email in '_bcc' field")
       })
   })
 
@@ -155,10 +155,10 @@ describe('Request', function () {
     const testSubject = new Request(event)
     return testSubject.validate()
       .then(function (resolved) {
-        assert.exists(resolved, 'promise should have rejected')
+        assert.exists(resolved, 'promise should have rejected with error')
       })
       .catch(function (error) {
-        assert.strictEqual(error, "Invalid email in '_bcc' field")
+        assert.strictEqual(error.message, "Invalid email in '_bcc' field")
       })
   })
 
@@ -171,10 +171,10 @@ describe('Request', function () {
     const testSubject = new Request(event)
     return testSubject.validate()
       .then(function (resolved) {
-        assert.exists(resolved, 'promise should have rejected')
+        assert.exists(resolved, 'promise should have rejected with error')
       })
       .catch(function (error) {
-        assert.strictEqual(error, 'You shall not pass')
+        assert.strictEqual(error.message, 'You shall not pass')
       })
   })
 })
