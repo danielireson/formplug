@@ -161,4 +161,20 @@ describe('Request', function () {
         assert.strictEqual(error, "Invalid email in '_bcc' field")
       })
   })
+
+  it('reject validation if the honeypot field has been filled', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_honeypot=testing'
+    }
+    const testSubject = new Request(event)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error, 'You shall not pass')
+      })
+  })
 })

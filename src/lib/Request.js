@@ -17,8 +17,17 @@ class Request {
 
   validate () {
     return Promise.resolve()
+      .then(() => this._validateNoHoneyPot())
       .then(() => this._validateSingleEmails())
       .then(() => this._validateDelimiteredEmails())
+  }
+
+  _validateNoHoneyPot () {
+    if ('_honeypot' in this.userParameters && this.userParameters._honeypot !== '') {
+      return Promise.reject('You shall not pass')
+    }
+
+    return Promise.resolve()
   }
 
   _validateSingleEmails () {
