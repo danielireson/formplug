@@ -21,7 +21,7 @@ Set the form action to your Formplug endpoint and responses will be forwarded on
 ![Submission preview](readme-screenshot.png)
 
 ### Encrypt your email address
-The email address can be encyrpted so it's not visible in the request or HTML page source. It's encrypted and decrypted using the encryption key in *config.json*. If this key is changed then the email's encrypted string will also change.
+The email address can be encrypted so it's not visible in the request or HTML page source. It's encrypted and decrypted using the encryption key in *config.json*. If this key is changed then the email's encrypted string will also change.
 ``` html
 # make a GET request to the encrypt endpoint to get the hex string
 https://apigatewayurl.com/encrypt/johndoe@example.com
@@ -59,7 +59,7 @@ You can optionally add custom messages to *config.json* to override the default 
 
 ### Instructions
 1. Follow the instructions on the [Serverless](https://serverless.com/framework/docs/providers/aws/guide/installation) website to install Node.js, Serverless and setup your AWS credentials.
-2. Copy *config.sample.json* and save it as *config.json*. *SERVICE_NAME* should be set to match the name of your service in serverless.yml. *ENCRYPTION_KEY* should be set to a random character string, this is used for the optional encrypting/decrypting of the email address in the endpoint URL. *REGION* should be set as either *eu-west-1*, *us-east-1*, or *us-west-2* as these are the only regions where Amazon SES is supported. *STAGE* is the AWS stage to use, this will appear in your API Gateway URL, it's common to use *dev* or *prod*.
+2. Copy *config.sample.json* and save it as *config.json*. Set *SERVICE_NAME* to the name you want serverless to use in your service and function names. *ENCRYPTION_KEY* should be set to a random character string; this is used for the optional encrypting/decrypting of the email address in the endpoint URL. *REGION* should be set as either *eu-west-1*, *us-east-1*, or *us-west-2* as these are the only regions where Amazon SES is supported. *STAGE* is the AWS stage to use. This will appear in your API Gateway URL. It’s common to use *dev* or *prod*.
 ``` json
 {
   "SERVICE_NAME": "formplug",
