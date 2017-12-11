@@ -4,7 +4,8 @@ const Validator = require('./Validator')
 
 class Request {
   constructor (event, encrypter) {
-    this.delimeteredFields = ['_cc', '_bcc']
+    this.singleEmailFields = ['_to']
+    this.delimeteredEmailFields = ['_cc', '_bcc']
     this.recipients = {
       to: '',
       cc: [],
@@ -33,7 +34,7 @@ class Request {
   }
 
   _validateSingleEmails () {
-    for (let field of ['_to']) {
+    for (let field of this.singleEmailFields) {
       if (field in this.userParameters) {
         let input = this.userParameters[field]
         if (!this._parseEmail(input, field)) {
@@ -46,7 +47,7 @@ class Request {
   }
 
   _validateDelimiteredEmails () {
-    for (let field of ['_cc', '_bcc']) {
+    for (let field of this.delimeteredEmailFields) {
       if (field in this.userParameters) {
         let inputs = this.userParameters[field].split(';')
         for (let input of inputs) {
@@ -76,7 +77,7 @@ class Request {
   }
 
   _addEmail (email, field) {
-    if (this.delimeteredFields.indexOf(field) === -1) {
+    if (this.delimeteredEmailFields.indexOf(field) === -1) {
       this.recipients[field.substring(1)] = email
     } else {
       this.recipients[field.substring(1)].push(email)
