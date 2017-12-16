@@ -269,4 +269,34 @@ describe('Request', function () {
         assert.strictEqual(error.message, 'You shall not pass')
       })
   })
+
+  it('should validate a redirect URL', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_redirect=http%3A%2F%2Fexample.com'
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function () {
+        assert.strictEqual(testSubject.redirectUrl, 'http://example.com')
+      })
+  })
+
+  it('reject an invalid redirect URL', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_redirect=invalid'
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected with error')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
+        assert.strictEqual(error.message, "Invalid website URL in '_redirect'")
+      })
+  })
 })

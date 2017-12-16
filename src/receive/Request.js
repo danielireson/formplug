@@ -5,7 +5,6 @@ const Validator = require('../common/Validator')
 
 class Request {
   constructor (event, encrypter) {
-    this.responseFormat = 'html'
     this.singleEmailFields = ['_to']
     this.delimeteredEmailFields = ['_cc', '_bcc']
     this.recipients = {
@@ -13,6 +12,9 @@ class Request {
       cc: [],
       bcc: []
     }
+
+    this.responseFormat = 'html'
+    this.redirectUrl = null
 
     this.pathParameters = event.pathParameters || {}
     this.queryStringParameters = event.queryStringParameters || {}
@@ -26,6 +28,7 @@ class Request {
       .then(() => this._validateSingleEmails())
       .then(() => this._validateDelimiteredEmails())
       .then(() => this._validateResponseFormat())
+      .then(() => this._validateRedirect())
   }
 
   _validateNoHoneyPot () {
@@ -71,6 +74,17 @@ class Request {
         return Promise.resolve()
       } else {
         return Promise.reject(new HttpError().unprocessableEntity('Invalid response format in the query string'))
+      }
+    }
+  }
+
+  _validateRedirect () {
+    if ('_redirect' in this.userParameters) {
+      if (Validator.isWebsite(this.userParameters['_redirect'])) {
+        this.redirectUrl = this.userParameters['_redirect']
+        return Promise.resolve()
+      } else {
+        return Promise.reject(new HttpError().unprocessableEntity("Invalid website URL in '_redirect'"))
       }
     }
   }
