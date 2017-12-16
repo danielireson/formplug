@@ -1,6 +1,3 @@
 {
-  "pathParameters": {
-    "_to": "test@example.com"
-  },
-  "body": "name=John%20Doe"
+  "body": "_to=test%40example.com"
 }

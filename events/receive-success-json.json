@@ -1,9 +1,0 @@
-{
-  "queryStringParameters": {
-    "_format": "json"
-  },
-  "pathParameters": {
-    "_to": "test@example.com"
-  },
-  "body": "name=John%20Doe"
-}
