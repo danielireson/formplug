@@ -20,7 +20,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "ses:*"
-      Resource: ${file(config.json):FROM_ARN}
+      Resource: ${file(config.json):SENDER_ARN}
 
 functions:
   receive:
