@@ -1,6 +1,6 @@
 const querystring = require('querystring')
 
-const HttpError = require('../common/HttpError')
+const HttpError = require('./HttpError')
 const Validator = require('../common/Validator')
 
 class Request {
