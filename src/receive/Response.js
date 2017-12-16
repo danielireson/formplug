@@ -5,7 +5,7 @@ class Response {
   }
 
   buildJson () {
-    let response = {
+    return {
       statusCode: this.statusCode,
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -16,24 +16,20 @@ class Response {
         message: this.message
       })
     }
-
-    return Promise.resolve(response)
   }
 
   buildHtml (template) {
-    let response = {
+    return {
       statusCode: this.statusCode,
       headers: {
         'Content-Type': 'text/html'
       },
       body: template.replace('{{ message }}', this.message)
     }
-
-    return Promise.resolve(response)
   }
 
   buildRedirect (redirectUrl) {
-    let response = {
+    return {
       statusCode: this.statusCode,
       headers: {
         'Content-Type': 'text/plain',
@@ -41,8 +37,6 @@ class Response {
       },
       body: this.message
     }
-
-    return Promise.resolve(response)
   }
 }
 
