@@ -75,6 +75,7 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
         assert.strictEqual(error.message, 'Invalid response format in the query string')
       })
   })
@@ -115,7 +116,7 @@ describe('Request', function () {
       })
   })
 
-  it('reject an invalid "to" recipient', function () {
+  it('should reject an invalid "to" recipient', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -127,6 +128,7 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
         assert.strictEqual(error.message, "Invalid email in '_to' field")
       })
   })
@@ -157,7 +159,7 @@ describe('Request', function () {
       })
   })
 
-  it('reject an invalid "cc" recipient as the first recipient', function () {
+  it('should reject an invalid "cc" recipient as the first recipient', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -169,11 +171,12 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
         assert.strictEqual(error.message, "Invalid email in '_cc' field")
       })
   })
 
-  it('reject an invalid "cc" recipient as the second recipient', function () {
+  it('should reject an invalid "cc" recipient as the second recipient', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -185,6 +188,7 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
         assert.strictEqual(error.message, "Invalid email in '_cc' field")
       })
   })
@@ -215,7 +219,7 @@ describe('Request', function () {
       })
   })
 
-  it('reject an invalid "bcc" recipient as the first recipient', function () {
+  it('should reject an invalid "bcc" recipient as the first recipient', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -227,11 +231,12 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected')
       })
       .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
         assert.strictEqual(error.message, "Invalid email in '_bcc' field")
       })
   })
 
-  it('reject an invalid "cc" recipient as the second recipient', function () {
+  it('should reject an invalid "cc" recipient as the second recipient', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -243,11 +248,12 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected with error')
       })
       .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
         assert.strictEqual(error.message, "Invalid email in '_bcc' field")
       })
   })
 
-  it('reject validation if the honeypot field has been filled', function () {
+  it('should reject validation if the honeypot field has been filled', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -259,6 +265,7 @@ describe('Request', function () {
         assert.exists(resolved, 'promise should have rejected with error')
       })
       .catch(function (error) {
+        assert.strictEqual(error.statusCode, 403)
         assert.strictEqual(error.message, 'You shall not pass')
       })
   })

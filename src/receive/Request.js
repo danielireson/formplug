@@ -1,5 +1,6 @@
 const querystring = require('querystring')
 
+const HttpError = require('../common/HttpError')
 const Validator = require('../common/Validator')
 
 class Request {
@@ -29,7 +30,7 @@ class Request {
 
   _validateNoHoneyPot () {
     if ('_honeypot' in this.userParameters && this.userParameters._honeypot !== '') {
-      return Promise.reject(new Error('You shall not pass'))
+      return Promise.reject(new HttpError().forbidden('You shall not pass'))
     }
 
     return Promise.resolve()
@@ -40,7 +41,7 @@ class Request {
       if (field in this.userParameters) {
         let input = this.userParameters[field]
         if (!this._parseEmail(input, field)) {
-          return Promise.reject(new Error(`Invalid email in '${field}' field`))
+          return Promise.reject(new HttpError().unprocessableEntity(`Invalid email in '${field}' field`))
         }
       }
     }
@@ -54,7 +55,7 @@ class Request {
         let inputs = this.userParameters[field].split(';')
         for (let input of inputs) {
           if (!this._parseEmail(input, field)) {
-            return Promise.reject(new Error(`Invalid email in '${field}' field`))
+            return Promise.reject(new HttpError().unprocessableEntity(`Invalid email in '${field}' field`))
           }
         }
       }
@@ -69,7 +70,7 @@ class Request {
         this.responseFormat = this.queryStringParameters.format
         return Promise.resolve()
       } else {
-        return Promise.reject(new Error('Invalid response format in the query string'))
+        return Promise.reject(new HttpError().unprocessableEntity('Invalid response format in the query string'))
       }
     }
   }
