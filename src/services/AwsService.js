@@ -1,4 +1,4 @@
-class AwsService {
+class Aws {
   constructor (aws) {
     this.aws = aws
   }
@@ -17,4 +17,4 @@ class AwsService {
   }
 }
 
-module.exports = AwsService
+module.exports = Aws

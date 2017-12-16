@@ -2,7 +2,7 @@ const describe = require('mocha').describe
 const it = require('mocha').it
 const assert = require('chai').assert
 
-const Encrypter = require('./Encrypter')
+const Encrypter = require('../common/Encrypter')
 const Request = require('./Request')
 
 describe('Request', function () {

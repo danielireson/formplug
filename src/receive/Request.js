@@ -1,9 +1,10 @@
 const querystring = require('querystring')
 
-const Validator = require('./Validator')
+const Validator = require('../common/Validator')
 
 class Request {
   constructor (event, encrypter) {
+    this.responseFormat = 'html'
     this.singleEmailFields = ['_to']
     this.delimeteredEmailFields = ['_cc', '_bcc']
     this.recipients = {
