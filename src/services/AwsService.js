@@ -1,4 +1,6 @@
-class Aws {
+const aws = require('aws-sdk')
+
+class AwsService {
   constructor (aws) {
     this.aws = aws
   }
@@ -17,4 +19,4 @@ class Aws {
   }
 }
 
-module.exports = Aws
+module.exports = new AwsService(aws)

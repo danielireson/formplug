@@ -1,11 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 
-const AwsService = require('../services/AwsService')
-const awsService = new AwsService(require('aws-sdk'))
-
 const Request = require('./Request')
 const Response = require('./Response')
+const aws = require('../services/AwsService')
 
 const config = require('../../config.json')
 
@@ -14,7 +12,7 @@ module.exports.handle = (event, context, callback) => {
   request.validate()
     .then(function () {
       const payload = {recipients: request.recipients, userParameters: request.userParameters}
-      return awsService.invokeLambda(config.SERVICE_NAME, config.STAGE, 'send', payload)
+      return aws.invokeLambda(config.SERVICE_NAME, config.STAGE, 'send', payload)
     })
     .then(function () {
       const statusCode = request.redirectUrl ? 302 : 200
