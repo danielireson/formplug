@@ -94,7 +94,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe@example.com'
+      body: '_to=johndoe%40example.com'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -137,7 +137,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_cc=johndoe@example.com;janedoe@example.com'
+      body: '_cc=johndoe%40example.com;janedoe%40example.com'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -180,7 +180,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_cc=johndoe@example.com;janedoe'
+      body: '_cc=johndoe%40example.com;janedoe'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -197,7 +197,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_bcc=johndoe@example.com;janedoe@example.com'
+      body: '_bcc=johndoe%40example.com;janedoe%40example.com'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -240,7 +240,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_bcc=johndoe@example.com;janedoe'
+      body: '_bcc=johndoe%40example.com;janedoe'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
