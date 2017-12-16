@@ -97,7 +97,7 @@ describe('Email', function () {
       })
   })
 
-  it('build the email body correctly', function () {
+  it('should build the email body correctly', function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {one: 'var1', two: 'var2'}
@@ -107,7 +107,7 @@ describe('Email', function () {
       })
   })
 
-  it('not add private parameters to the email body', function () {
+  it('should not add private parameters to the email body', function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {one: 'var1', _two: 'var2'}
