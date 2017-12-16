@@ -14,8 +14,8 @@ class Request {
       bcc: []
     }
 
-    this.pathParameters = event.pathParameters
-    this.queryStringParameters = event.queryStringParameters
+    this.pathParameters = event.pathParameters || {}
+    this.queryStringParameters = event.queryStringParameters || {}
     this.userParameters = querystring.parse(event.body)
     this.encrypter = encrypter
   }
