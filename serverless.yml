@@ -27,13 +27,11 @@ functions:
     handler: src/receive/handler.handle
     events:
       - http:
-          path: /to/{_to}
+          path: /
           method: post
           request:
             parameters:
               querystrings:
                 _format: true
-              paths:
-                _to: true
   send:
     handler: src/send/handler.handle
