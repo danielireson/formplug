@@ -283,7 +283,7 @@ describe('Request', function () {
       })
   })
 
-  it('reject an invalid redirect URL', function () {
+  it('should reject an invalid redirect URL', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
