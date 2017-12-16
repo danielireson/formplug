@@ -24,6 +24,7 @@ class Request {
       .then(() => this._validateNoHoneyPot())
       .then(() => this._validateSingleEmails())
       .then(() => this._validateDelimiteredEmails())
+      .then(() => this._validateResponseFormat())
   }
 
   _validateNoHoneyPot () {
@@ -60,6 +61,17 @@ class Request {
     }
 
     return Promise.resolve()
+  }
+
+  _validateResponseFormat () {
+    if ('format' in this.queryStringParameters) {
+      if (this.queryStringParameters.format === 'json' || this.queryStringParameters.format === 'html') {
+        this.responseFormat = this.queryStringParameters.format
+        return Promise.resolve()
+      } else {
+        return Promise.reject(new Error('Invalid response format in the query string'))
+      }
+    }
   }
 
   _parseEmail (input, field) {

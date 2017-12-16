@@ -36,6 +36,49 @@ describe('Request', function () {
     assert.deepEqual(testSubject.queryStringParameters, event.queryStringParameters)
   })
 
+  it("should set the response format to 'html' by default", function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: ''
+    }
+    const testSubject = new Request(event, encrypter)
+    assert.strictEqual(testSubject.responseFormat, 'html')
+  })
+
+  it("should set the response format to 'json' if the query string has 'format=json'", function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {
+        format: 'json'
+      },
+      body: ''
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function () {
+        assert.strictEqual(testSubject.responseFormat, 'json')
+      })
+  })
+
+  it("should reject a query string response format that isn't 'json' or 'html'", function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {
+        format: 'invalid'
+      },
+      body: ''
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error.message, 'Invalid response format in the query string')
+      })
+  })
+
   it('should get user parameters from request body', function () {
     const event = {
       pathParameters: {},
