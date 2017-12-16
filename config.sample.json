@@ -3,5 +3,5 @@
   "ENCRYPTION_KEY": "formsaregreat",
   "REGION": "eu-west-1",
   "STAGE": "dev",
-  "FROM_ARN"
+  "SENDER_ARN": ""
 }
