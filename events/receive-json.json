@@ -1,0 +1,6 @@
+{
+  "queryStringParameters": {
+    "format": "json"
+  },
+  "body": "_to=test%40example.com"
+}
