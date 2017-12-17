@@ -27,6 +27,7 @@ class Request {
       .then(() => this._validateNoHoneyPot())
       .then(() => this._validateSingleEmails())
       .then(() => this._validateDelimiteredEmails())
+      .then(() => this._validateToRecipient())
       .then(() => this._validateResponseFormat())
       .then(() => this._validateRedirect())
   }
@@ -37,6 +38,12 @@ class Request {
     }
 
     return Promise.resolve()
+  }
+
+  _validateToRecipient () {
+    if (this.recipients.to === '') {
+      return Promise.reject(new HttpError().unprocessableEntity("Please provide a recipient in '_to' field"))
+    }
   }
 
   _validateSingleEmails () {

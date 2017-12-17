@@ -52,7 +52,7 @@ describe('Request', function () {
       queryStringParameters: {
         format: 'json'
       },
-      body: ''
+      body: '_to=johndoe%40example.com'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -67,7 +67,7 @@ describe('Request', function () {
       queryStringParameters: {
         format: 'invalid'
       },
-      body: ''
+      body: '_to=johndoe%40example.com'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -133,11 +133,28 @@ describe('Request', function () {
       })
   })
 
+  it('should reject validation on a missing "to" recipient', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: ''
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
+        assert.strictEqual(error.message, "Please provide a recipient in '_to' field")
+      })
+  })
+
   it('should parse the "cc" recipients', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_cc=johndoe%40example.com;janedoe%40example.com'
+      body: '_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe%40example.com'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -150,7 +167,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_cc=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
+      body: '_to=johndoe%40example.com&_cc=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -163,7 +180,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_cc=johndoe'
+      body: '_to=johndoe%40example.com&_cc=johndoe'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -180,7 +197,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_cc=johndoe%40example.com;janedoe'
+      body: '_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -197,7 +214,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_bcc=johndoe%40example.com;janedoe%40example.com'
+      body: '_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe%40example.com'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -210,7 +227,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_bcc=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
+      body: '_to=johndoe%40example.com&_bcc=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -223,7 +240,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_bcc=johndoe'
+      body: '_to=johndoe%40example.com&_bcc=johndoe'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -240,7 +257,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_bcc=johndoe%40example.com;janedoe'
+      body: '_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -257,7 +274,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_honeypot=testing'
+      body: '_to=johndoe%40example.com&_honeypot=testing'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -274,7 +291,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_redirect=http%3A%2F%2Fexample.com'
+      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
@@ -287,7 +304,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_redirect=invalid'
+      body: '_to=johndoe%40example.com&_redirect=invalid'
     }
     const testSubject = new Request(event, encrypter)
     return testSubject.validate()
