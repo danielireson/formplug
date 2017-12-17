@@ -90,7 +90,7 @@ describe('Request', function () {
     assert.deepEqual(testSubject.userParameters, {one: 'var1', two: 'var2', three: 'var3'})
   })
 
-  it('should parse the "to" recipient', function () {
+  it("should parse the 'to' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -103,7 +103,7 @@ describe('Request', function () {
       })
   })
 
-  it('should parse an encrypted "to" recipient', function () {
+  it("should parse an encrypted 'to' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -116,7 +116,7 @@ describe('Request', function () {
       })
   })
 
-  it('should reject an invalid "to" recipient', function () {
+  it("should reject an invalid 'to' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -133,7 +133,7 @@ describe('Request', function () {
       })
   })
 
-  it('should reject validation on a missing "to" recipient', function () {
+  it("should reject validation on a missing 'to' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -150,7 +150,7 @@ describe('Request', function () {
       })
   })
 
-  it('should parse the "cc" recipients', function () {
+  it("should parse the 'cc' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -163,7 +163,7 @@ describe('Request', function () {
       })
   })
 
-  it('should parse encrypted "cc" recipients', function () {
+  it("should parse encrypted 'cc' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -176,7 +176,7 @@ describe('Request', function () {
       })
   })
 
-  it('should reject an invalid "cc" recipient as the first recipient', function () {
+  it("should reject an invalid 'cc' recipient as the first recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -193,7 +193,7 @@ describe('Request', function () {
       })
   })
 
-  it('should reject an invalid "cc" recipient as the second recipient', function () {
+  it("should reject an invalid 'cc' recipient as the second recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -210,7 +210,7 @@ describe('Request', function () {
       })
   })
 
-  it('should parse the "bcc" recipients', function () {
+  it("should parse the 'bcc' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -223,7 +223,7 @@ describe('Request', function () {
       })
   })
 
-  it('should parse encrypted "bcc" recipients', function () {
+  it("should parse encrypted 'bcc' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -236,7 +236,7 @@ describe('Request', function () {
       })
   })
 
-  it('should reject an invalid "bcc" recipient as the first recipient', function () {
+  it("should reject an invalid 'bcc' recipient as the first recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
@@ -253,7 +253,7 @@ describe('Request', function () {
       })
   })
 
-  it('should reject an invalid "cc" recipient as the second recipient', function () {
+  it("should reject an invalid 'cc' recipient as the second recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
