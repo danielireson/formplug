@@ -14,6 +14,7 @@ module.exports.handle = (event, context, callback) => {
 
   request.validate()
     .then(function () {
+      console.log(`invoking send lambda for recipient '${request.recipients.to}'`)
       const payload = {recipients: request.recipients, userParameters: request.userParameters}
       return aws.invokeLambda(config.SERVICE_NAME, config.STAGE, 'send', payload)
     })
@@ -23,10 +24,12 @@ module.exports.handle = (event, context, callback) => {
       return Promise.resolve(new Response(statusCode, message))
     })
     .catch(function (error) {
+      callback(error)
       const response = new Response(error.statusCode, error.message)
       return Promise.resolve(response)
     })
     .then(function (response) {
+      console.log(`returning http ${response.statusCode} response`)
       if (request.redirectUrl) {
         callback(null, response.buildRedirect(request.redirectUrl))
         return
