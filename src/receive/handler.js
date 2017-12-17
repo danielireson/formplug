@@ -19,7 +19,7 @@ module.exports.handle = (event, context, callback) => {
     })
     .then(function () {
       const statusCode = request.redirectUrl ? 302 : 200
-      const message = config.MSG_RECEIVE_SUCCESS || 'Form submission successfully made.'
+      const message = config.MSG_RECEIVE_SUCCESS || 'Form submission successfully made'
       return Promise.resolve(new Response(statusCode, message))
     })
     .catch(function (error) {
