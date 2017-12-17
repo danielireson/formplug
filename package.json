@@ -4,8 +4,11 @@
   "author": "Daniel Ireson",
   "license": "MIT",
   "scripts": {
-    "test": "NODE_ENV=testing mocha 'src/**/*.spec.js'",
-    "encrypt": "node ./scripts/encrypt.js"
+    "serverless": "serverless",
+    "encrypt": "node ./scripts/encrypt.js",
+    "test:unit": "NODE_ENV=testing mocha ./src/**/*.spec.js || true",
+    "test:integration": "NODE_ENV=testing mocha test || true",
+    "test": "npm run test:unit && npm run test:integration"
   },
   "dependencies": {
     "aws-sdk": "^2.28.0",
