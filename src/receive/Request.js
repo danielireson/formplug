@@ -25,12 +25,24 @@ class Request {
 
   validate () {
     return Promise.resolve()
+      .then(() => this._validateResponseFormat())
       .then(() => this._validateNoHoneyPot())
       .then(() => this._validateSingleEmails())
       .then(() => this._validateDelimiteredEmails())
       .then(() => this._validateToRecipient())
-      .then(() => this._validateResponseFormat())
       .then(() => this._validateRedirect())
+  }
+
+  _validateResponseFormat () {
+    if ('format' in this.queryStringParameters) {
+      if (this.queryStringParameters.format !== 'json' && this.queryStringParameters.format !== 'html') {
+        return Promise.reject(new HttpError().unprocessableEntity('Invalid response format in the query string'))
+      } else {
+        this.responseFormat = this.queryStringParameters.format
+      }
+    }
+
+    return Promise.resolve()
   }
 
   _validateNoHoneyPot () {
@@ -77,18 +89,6 @@ class Request {
 
       return resolve()
     })
-  }
-
-  _validateResponseFormat () {
-    if ('format' in this.queryStringParameters) {
-      if (this.queryStringParameters.format !== 'json' && this.queryStringParameters.format !== 'html') {
-        return Promise.reject(new HttpError().unprocessableEntity('Invalid response format in the query string'))
-      } else {
-        this.responseFormat = this.queryStringParameters.format
-      }
-    }
-
-    return Promise.resolve()
   }
 
   _validateRedirect () {
