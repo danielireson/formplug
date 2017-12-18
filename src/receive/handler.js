@@ -35,12 +35,12 @@ module.exports.handle = (event, context, callback) => {
     })
     .then(function (response) {
       Log.info(`returning http ${response.statusCode} response`)
-      if (request.redirectUrl) {
-        callback(null, response.buildRedirect(request.redirectUrl))
-        return
-      }
       if (request.responseFormat === 'json') {
         callback(null, response.buildJson())
+        return
+      }
+      if (request.responseFormat === 'plain' && request.redirectUrl) {
+        callback(null, response.buildRedirect(request.redirectUrl))
         return
       }
       if (request.responseFormat === 'html') {

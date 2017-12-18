@@ -89,6 +89,7 @@ class Request {
   _validateRedirect () {
     if ('_redirect' in this.userParameters) {
       if (Validator.isWebsite(this.userParameters['_redirect'])) {
+        this.responseFormat = 'plain'
         this.redirectUrl = this.userParameters['_redirect']
         return Promise.resolve()
       } else {
