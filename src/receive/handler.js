@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const Encrypter = require('../common/encrypter')
+const Encrypter = require('../common/Encrypter')
 const Log = require('../common/Log')
 const Request = require('./Request')
 const Response = require('./Response')
