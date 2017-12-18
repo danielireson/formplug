@@ -65,7 +65,7 @@ Users will be shown a generic form submission success message if a redirect URL 
 ![Submission preview](readme-screenshot.png)
 
 ## Encryption
-Email addresses can be encrypted so that they're not visible in the HTML source or any HTTP requests. Encrypted strings are derived using *ENCRYPTION_KEY* in *config.json* and so you should ensure that this is set to a unique value. Encryption is handled locally using NPM scripts.
+Email addresses can be encrypted so that they're not visible in the HTML source. Ensure *ENCRYPTION_KEY* in *config.json* is set to a unique random value as this is used to determine the encrypted values.
 
 ### Encrypting an email address
 ``` bash
