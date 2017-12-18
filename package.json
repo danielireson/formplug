@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "encrypt": "node ./scripts/encrypt.js",
+    "decrypt": "node ./scripts/decrypt.js",
     "test:unit": "NODE_ENV=testing mocha ./src/**/*.spec.js || true",
     "test:integration": "NODE_ENV=testing mocha test || true",
     "test": "npm run test:unit && npm run test:integration"
