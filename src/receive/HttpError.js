@@ -1,42 +1,32 @@
 class HttpError {
-  constructor () {
-    this.internalServerError('An unexpected error occurred')
-  }
-
   badRequest (message) {
-    this.statusCode = 400
-    this.message = message
-    return this
+    return this._buildError(400, message)
   }
 
   forbidden (message) {
-    this.statusCode = 403
-    this.message = message
-    return this
+    return this._buildError(403, message)
   }
 
   notFound (message) {
-    this.statusCode = 404
-    this.message = message
-    return this
+    return this._buildError(404, message)
   }
 
   unprocessableEntity (message) {
-    this.statusCode = 422
-    this.message = message
-    return this
+    return this._buildError(422, message)
   }
 
   internalServerError (message) {
-    this.statusCode = 500
-    this.message = message
-    return this
+    return this._buildError(500, message)
   }
 
   badGateway (message) {
-    this.statusCode = 502
-    this.message = message
-    return this
+    return this._buildError(502, message)
+  }
+
+  _buildError (statusCode, message) {
+    const error = new Error(message)
+    error.statusCode = statusCode
+    return error
   }
 }
 

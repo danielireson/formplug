@@ -40,10 +40,4 @@ describe('HttpError', function () {
     assert.strictEqual(testSubject.statusCode, 502)
     assert.strictEqual(testSubject.message, 'error message')
   })
-
-  it('should fallback to INTERNAL_SERVER_ERROR if an invalid response type is given', function () {
-    const testSubject = new HttpError()
-    assert.strictEqual(testSubject.statusCode, 500)
-    assert.strictEqual(testSubject.message, 'An unexpected error occurred')
-  })
 })
