@@ -32,6 +32,6 @@ functions:
           request:
             parameters:
               querystrings:
-                _format: true
+                format: true
   send:
     handler: src/send/handler.handle
