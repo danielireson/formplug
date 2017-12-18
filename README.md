@@ -23,14 +23,14 @@ Append *format=json* to the query string of the endpoint to get responses back i
 ```
 
 ### Special inputs
-Name | Description | Supports multiple | Required 
+Name | Description | Multiple emails | Required 
 --- | --- | --- | ---
 _to | Email address of the primary recipient. | N | Y
 _cc | Email addresses to receive a carbon copy. | Y | N
 _bcc | Email addresses to receive a blind carbon copy. | Y | N
 _replyTo | Email addresses to set as reply to addresses. | Y | N
-_honeypot | A spam prevention field that should be hidden for regular website users. The submission will be ignored if the the _honeypot input is present and not empty. | N | N
-_redirect | A URL to redirect users to after a successful form submission. | N | N
+_honeypot | A spam prevention field that should be hidden for regular website users. The submission will be ignored if the the _honeypot input is present and not empty. | / | N
+_redirect | A URL to redirect users to after a successful form submission. | / | N
 
 #### Dynamically changing recipients
 Use a *select* if you want to change where the email goes based on a user choice.
