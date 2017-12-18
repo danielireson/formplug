@@ -89,7 +89,7 @@ Amazon SES can only send emails from addresses that you have verified ownership 
 ### Add config
 Create a copy of *config.sample.json* as *config.json* and then customise as appropriate for your setup.
 
-Config name | Description | Required
+Name | Description | Required
 --- | --- | ---
 SERVICE_NAME | The private name for the service. | Y
 ENCRYPTION_KEY | A random string used for encryption. | Y
