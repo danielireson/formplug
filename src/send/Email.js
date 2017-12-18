@@ -1,10 +1,9 @@
 const Validator = require('../common/Validator')
 
-const config = require('../../config.json')
-
 class Email {
-  constructor (senderArn) {
+  constructor (senderArn, subject) {
     this.senderArn = senderArn
+    this.subject = subject
   }
 
   build (recipients, userParameters) {
@@ -20,7 +19,7 @@ class Email {
           },
           Message: {
             Subject: {
-              Data: config.MSG_SUBJECT || 'You have a form submission'
+              Data: this.subject
             },
             Body: {
               Text: {

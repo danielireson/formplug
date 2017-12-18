@@ -5,7 +5,7 @@ const aws = require('../services/AwsService')
 const config = require('../../config.json')
 
 module.exports.handle = (event, context, callback) => {
-  new Email(getSenderArn()).build(event.recipients, event.userParameters)
+  new Email(getSenderArn(), getSubject()).build(event.recipients, event.userParameters)
     .then(function (email) {
       Log.info(`sending email to '${event.recipients.to}'`)
       return sendEmail(email)
@@ -24,6 +24,14 @@ function getSenderArn () {
   } else {
     Log.error("please set 'SENDER_ARN' in 'config.json'")
     return ''
+  }
+}
+
+function getSubject () {
+  if ('MSG_SUBJECT' in config && config.MSG_SUBJECT !== '') {
+    return config.MSG_SUBJECT
+  } else {
+    return 'You have a form submission'
   }
 }
 
