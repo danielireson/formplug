@@ -1,74 +1,103 @@
-# Formplug
-A form backend for static sites. Formplug is built using the Serverless Framework and runs on AWS Lambda. It uses API Gateway for routes and SES to send emails.
+# Formplug [![Build Status](https://travis-ci.org/danielireson/formplug-serverless.svg?branch=master)](https://travis-ci.org/danielireson/formplug-serverless)
+Formplug is a form backend for AWS Lambda, use it to accept form submissions by email without server-side code. It's built using the Serverless Framework and makes use of Amazon SES to send emails.
 
 ## Usage
-### HTML forms
-Set the form action to your Formplug endpoint and responses will be forwarded on to the specified email address. The email address can be plain text as shown below or hidden behind an encrypted hexedecimal string (see next section).
+### Basic
+Set the form action to your Formplug endpoint to have form submissions forwarded on by email. Email addresses can be passed in plain text (as in the example below) or encrypted as a hexedecimal string (see next section).
 ``` html
-<form action="https://apigatewayurl.com/to/johndoe@example.com" method="post">
-    <input type="text" name="name">
-    <input type="text" name="location">
-    <input type="hidden" name="_cc" value="johndoe2@example.com;johndoe3@exmaple.com">
-    <input type="hidden" name="_redirect" value="http://yoursite.com">
-    <input type="text" name="_honeypot" style="display:none">
+<form action="https://apigatewayurl.com" method="post">
+    <input type="hidden" name="_to" value="johndoe@example.com">
+    <input type="text" name="message">
     <input type="submit" value="send">
 </form>
 ```
-* The optional *_honeypot* field is a spam prevention field and should be hidden for regular website users. If *_honeypot* is not empty the request will be ignored. 
-* The optional *_cc* field allows you to specify a list of email addresses to receive a carbon copy of the message. Separate multiple email addresses with semicolons.
-* The optional *_redirect* field is a redirect success URL. If *_redirect* is missing a generic 'form submission successfully made' message will be shown.
+
+### AJAX
+Append *format=json* to the query string of the endpoint to get responses back in JSON with a CORS allow all origin header. You should do this if you plan on working with the API using JavaScript.
+``` html
+<form action="https://apigatewayurl.com?format=json" method="post">
+    <input type="hidden" name="_to" value="johndoe@example.com">
+    <input type="text" name="message">
+    <input type="submit" value="send">
+</form>
+```
+
+### Special inputs
+Name | Description | Supports multiple | Required 
+--- | --- | --- | ---
+_to | Email address of the primary recipient. | N | Y
+_cc | Email addresses to receive a carbon copy. | Y | N
+_bcc | Email addresses to receive a blind carbon copy. | Y | N
+_replyTo | Email addresses to set as reply to addresses. | Y | N
+_honeypot | A spam prevention field that should be hidden for regular website users. The submission will be ignored if the the _honeypot input is present and not empty. | N | N
+_redirect | A URL to redirect users to after a successful form submission. | N | N
+
+#### Dynamically changing recipients
+Use a *select* if you want to change where the email goes based on a user choice.
+``` html
+<select name="_to">
+  <option value="johndoe@example.com">Recipient option 1</option>
+  <option value="janedoe@exmaple.com">Recipient option 2</option>
+</select>
+```
+
+#### Accepting multiple email addresses
+Separate multiple email addresses by a semicolon.
+
+``` html
+<!-- plain text emails -->
+<input type="hidden" name="_cc" value="johndoe@example.com;janedoe@exmaple.com"
+
+<!-- encrypted emails -->
+<input type="hidden" name="_cc" value="ff19d0abcd474813ad;c031a9b24855090b5e8b">
+```
+
+#### Using the honeypot
+When using the honeypot field you should use CSS to hide the input and keep the type as *text*.
+
+``` html
+<input type="text" name="_honeypot" value="" style="display:none">
+```
+
+#### Customising messages
+Users will be shown a generic form submission success message if a redirect URL isn't provided. This message can be customised through adding a *MSG_RECEIVE_SUCCESS* entry to *config.json*. Similarly, the subject line for emails can be customised through *MSG_SUBJECT* in *config.json*.
 
 ![Submission preview](readme-screenshot.png)
 
-### Encrypt your email address
-The email address can be encyrpted so it's not visible in the request or HTML page source. It's encrypted and decrypted using the encryption key in *config.json*. If this key is changed then the email's encrypted string will also change.
-``` html
-# make a GET request to the encrypt endpoint to get the hex string
-https://apigatewayurl.com/encrypt/johndoe@example.com
+## Encryption
+Email addresses can be encrypted so that they're not visible in the HTML source or any HTTP requests. Encrypted strings are derived using *ENCRYPTION_KEY* in *config.json* and so you should ensure that this is set to a unique value. Encryption is handled locally using NPM scripts.
 
-# to endpoints can now look like the following
-https://apigatewayurl.com/to/1974d0cc894607de62f0581ec1334997
+### Encrypting an email address
+``` bash
+> npm run encrypt johndoe@example.com
+johndoe@example.com => ff17d6a0cd474813adc031a9b24855090b5e8b
 ```
 
-### AJAX
-Append *_format=json* to the query string of the Formplug URL to get responses back in JSON with a CORS allow all origin header. This makes it easy to interact with Formplug using Javascript.
-``` html
-https://apigatewayurl.com/to/johndoe@example.com?_format=json
-```
-
-### Customisable messages
-You can optionally add custom messages to *config.json* to override the default user messages for *encrypt* and *receive* http requests.
-``` json
-{
-  "MSG_ENCRYPT_NO_EMAIL": "",
-  "MSG_ENCRYPT_BAD_EMAIL": "",
-  "MSG_RECEIVE_HONEYPOT": "",
-  "MSG_RECEIVE_NO_EMAIL": "",
-  "MSG_RECEIVE_BAD_EMAIL": "",
-  "MSG_RECEIVE_ERROR": "",
-  "MSG_RECEIVE_SUCCESS": ""
-}
+### Decrypting an email address
+``` bash
+> npm run decrypt ff17d6a0cd474813adc031a9b24855090b5e8b
+ff17d6a0cd474813adc031a9b24855090b5e8b => johndoe@example.com
 ```
 
 ## Setup
-### Overview
-1. Install Serverless.
-2. Create initial config.
-3. Get a SES ARN and add to config.
-4. Deploy.
+### Install Serverless
+Follow the instructions on the [Serverless website](https://serverless.com/framework/docs/providers/aws/guide/installation) to install the Serverless Framework and setup your AWS credentials.
 
-### Instructions
-1. Follow the instructions on the [Serverless](https://serverless.com/framework/docs/providers/aws/guide/installation) website to install Node.js, Serverless and setup your AWS credentials.
-2. Copy *config.sample.json* and save it as *config.json*. *SERVICE_NAME* is the private name of your service. *ENCRYPTION_KEY* should be set to a random character string, this is used for the optional encrypting/decrypting of the email address in the endpoint URL. *REGION* should be set as either *eu-west-1*, *us-east-1*, or *us-west-2* as these are the only regions where Amazon SES is supported. *STAGE* is the AWS stage to use, this will appear in your API Gateway URL, it's common to use *dev* or *prod*.
-``` json
-{
-  "SERVICE_NAME": "formplug",
-  "ENCRYPTION_KEY": "formsaregreat",
-  "REGION": "eu-west-1",
-  "STAGE": "dev",
-  "FROM_ARN": ""
-}
-```
-3. Using the AWS Console an email address needs to be setup to send email from. Head to the SES dashboard and on the left hand side select *Email Addresses* from underneath *Identity Management*. Hit the blue *Verify a New Email Address* button, enter your desired email and click the verification link in your inbox. After verification, the email's *Identity ARN* is visible after clicking on the email on the *Email Addresses* page. Copy this value and paste it to the *FROM_ARN* field in *config.json*. Unfortunately AWS puts new SES accounts under limits which prevents emails being sent to email addresses that haven't been verified. Check out the relevant [AWS SES documentation](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html) for more information. The limits can be lifted easily by opening a support ticket as outlined in the docs, but this takes them a few hours to approve.
-4. Run *serverless deploy* from the terminal and Formplug should be up and running. You should see your API Gateway endpoint to POST to in the terminal after the Serverless deployment has finished.
+### Setup SES identity
+Amazon SES can only send emails from addresses that you have verified ownership of. Verification can be done using the [AWS Management Console](aws.amazon.com) by visiting the SES Dashboard and heading to Identity Management. AWS also puts new SES accounts under limits which prevent emails from being sent to email addresses that haven't been verified. Check out the relevant [AWS SES documentation](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html) for more information. The limits can be lifted by opening a support ticket as outlined in the docs, but this takes a few hours to approve.
 
+### Add config
+Create a copy of *config.sample.json* as *config.json* and then customise as appropriate for your setup.
+
+Config name | Description | Required
+--- | --- | ---
+SERVICE_NAME | The private name for the service. | Y
+ENCRYPTION_KEY | A random string used for encryption. | Y
+REGION | The AWS region to deploy to (this should be either *eu-west-1*, *us-east-1*, or *us-west-2* as these are the only SES supported regions). | Y
+STAGE | The AWS stage to deploy to (it's common to use *dev* or *prod*). | Y
+SENDER_ARN | The [ARN](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) of the sender email address. | Y
+MSG_RECEIVE_SUCCESS | This is returned to the user on a successful form submission if a redirect URL isn't provided. | N
+MSG_SUBJECT | The subject line to use in emails. | N
+
+### Deploy
+Run `serverless deploy` to deploy to AWS.
