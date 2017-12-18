@@ -13,7 +13,9 @@ class Encrypter {
       let crypted = cipher.update(input, 'utf8', 'hex')
       crypted += cipher.final('hex')
       return crypted
-    } catch (e) {}
+    } catch (e) {
+      return ''
+    }
   }
 
   decrypt (input) {
@@ -24,12 +26,14 @@ class Encrypter {
       let text = decipher.update(input, 'hex', 'utf8')
       text += decipher.final('utf8')
       return text
-    } catch (e) {}
+    } catch (e) {
+      return ''
+    }
   }
 
   _validateEncryptionKey () {
     if (this.encryptionKey == null || this.encryptionKey === '') {
-      throw new Error('Invalid encryption key')
+      throw new Error('invalid encryption key')
     }
   }
 }

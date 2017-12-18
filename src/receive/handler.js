@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 const Encrypter = require('../common/encrypter')
+const Log = require('../common/Log')
 const Request = require('./Request')
 const Response = require('./Response')
 
@@ -12,9 +13,13 @@ module.exports.handle = (event, context, callback) => {
   const encrypter = new Encrypter(getEncryptionKey())
   const request = new Request(event, encrypter)
 
+  let paramCount = Object.keys(request.userParameters).length
+  Log.info(`${request.responseFormat} request received with ${paramCount} parameters`)
+
   request.validate()
     .then(function () {
-      console.log(`invoking send lambda for recipient '${request.recipients.to}'`)
+      let recipientCount = request.recipients.cc.length + request.recipients.bcc.length + request.recipients.replyTo.length
+      Log.info(`invokng send lambda for '${request.recipients.to}' and ${recipientCount} other recipients`)
       const payload = {recipients: request.recipients, userParameters: request.userParameters}
       return aws.invokeLambda(config.SERVICE_NAME, config.STAGE, 'send', payload)
     })
@@ -24,12 +29,12 @@ module.exports.handle = (event, context, callback) => {
       return Promise.resolve(new Response(statusCode, message))
     })
     .catch(function (error) {
-      callback(error)
+      Log.error('error was caught while executing receive lambda', error)
       const response = new Response(error.statusCode, error.message)
       return Promise.resolve(response)
     })
     .then(function (response) {
-      console.log(`returning http ${response.statusCode} response`)
+      Log.info(`returning http ${response.statusCode} response`)
       if (request.redirectUrl) {
         callback(null, response.buildRedirect(request.redirectUrl))
         return
@@ -50,6 +55,7 @@ function getEncryptionKey () {
   if ('ENCRYPTION_KEY' in config && config.ENCRYPTION_KEY !== '') {
     return config.ENCRYPTION_KEY
   } else {
-    throw new Error("Please set 'ENCRYPTION_KEY' in config.json")
+    Log.error("please set 'ENCRYPTION_KEY' in 'config.json'")
+    return ''
   }
 }

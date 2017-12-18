@@ -8,13 +8,13 @@ describe('Encrypter', function () {
   it('should check the encryption key is not null', function () {
     const encryptionKey = null
     const testSubject = new Encrypter(encryptionKey)
-    assert.throws(() => testSubject.encrypt('input'), 'Invalid encryption key')
+    assert.throws(() => testSubject.encrypt('input'), 'invalid encryption key')
   })
 
   it('should check the encryption key is not an empty string', function () {
     const encryptionKey = ''
     const testSubject = new Encrypter(encryptionKey)
-    assert.throws(() => testSubject.encrypt('input'), 'Invalid encryption key')
+    assert.throws(() => testSubject.encrypt('input'), 'invalid encryption key')
   })
 
   it('should encrypt a string', function () {
