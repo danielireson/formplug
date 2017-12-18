@@ -3,4 +3,5 @@ node_js:
   - "6.10"
 before_script:
   - "npm install -g serverless"
+  - "cp config.sample.json config.json"
 script: "npm run-script test"
