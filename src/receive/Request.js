@@ -48,54 +48,60 @@ class Request {
   }
 
   _validateSingleEmails () {
-    for (let field of this.singleEmailFields) {
-      if (field in this.userParameters) {
-        let input = this.userParameters[field]
-        if (!this._parseEmail(input, field)) {
-          return Promise.reject(new HttpError().unprocessableEntity(`Invalid email in '${field}' field`))
-        }
-      }
-    }
+    return new Promise((resolve, reject) => {
+      this.singleEmailFields
+        .filter((field) => field in this.userParameters)
+        .forEach((field) => {
+          let input = this.userParameters[field]
+          if (!this._parseEmail(input, field)) {
+            return reject(new HttpError().unprocessableEntity(`Invalid email in '${field}' field`))
+          }
+        })
 
-    return Promise.resolve()
+      return resolve()
+    })
   }
 
   _validateDelimiteredEmails () {
-    for (let field of this.delimeteredEmailFields) {
-      if (field in this.userParameters) {
-        let inputs = this.userParameters[field].split(';')
-        for (let input of inputs) {
-          if (!this._parseEmail(input, field)) {
-            return Promise.reject(new HttpError().unprocessableEntity(`Invalid email in '${field}' field`))
-          }
-        }
-      }
-    }
+    return new Promise((resolve, reject) => {
+      this.delimeteredEmailFields
+        .filter((field) => field in this.userParameters)
+        .forEach((field) => {
+          let inputs = this.userParameters[field].split(';')
+          inputs.forEach((input) => {
+            if (!this._parseEmail(input, field)) {
+              return reject(new HttpError().unprocessableEntity(`Invalid email in '${field}' field`))
+            }
+          })
+        })
 
-    return Promise.resolve()
+      return resolve()
+    })
   }
 
   _validateResponseFormat () {
     if ('format' in this.queryStringParameters) {
-      if (this.queryStringParameters.format === 'json' || this.queryStringParameters.format === 'html') {
-        this.responseFormat = this.queryStringParameters.format
-        return Promise.resolve()
-      } else {
+      if (this.queryStringParameters.format !== 'json' && this.queryStringParameters.format !== 'html') {
         return Promise.reject(new HttpError().unprocessableEntity('Invalid response format in the query string'))
+      } else {
+        this.responseFormat = this.queryStringParameters.format
       }
     }
+
+    return Promise.resolve()
   }
 
   _validateRedirect () {
     if ('_redirect' in this.userParameters) {
-      if (Validator.isWebsite(this.userParameters['_redirect'])) {
+      if (!Validator.isWebsite(this.userParameters['_redirect'])) {
+        return Promise.reject(new HttpError().unprocessableEntity("Invalid website URL in '_redirect'"))
+      } else {
         this.responseFormat = 'plain'
         this.redirectUrl = this.userParameters['_redirect']
-        return Promise.resolve()
-      } else {
-        return Promise.reject(new HttpError().unprocessableEntity("Invalid website URL in '_redirect'"))
       }
     }
+
+    return Promise.resolve()
   }
 
   _parseEmail (input, field) {
