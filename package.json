@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "aws-sdk": "^2.28.0",
-    "chai": "^4.1.2",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
