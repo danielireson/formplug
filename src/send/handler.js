@@ -8,7 +8,7 @@ module.exports.handle = (event, context, callback) => {
   new Email(getSenderArn()).build(event.recipients, event.userParameters)
     .then(function (email) {
       Log.info(`sending email to '${event.recipients.to}'`)
-      return aws.sendEmail(email)
+      return sendEmail(email)
     })
     .then(function () {
       Log.info(`email successfully sent to '${event.recipients.to}'`)
@@ -24,5 +24,13 @@ function getSenderArn () {
   } else {
     Log.error("please set 'SENDER_ARN' in 'config.json'")
     return ''
+  }
+}
+
+function sendEmail (email) {
+  if (process.env.NODE_ENV !== 'testing') {
+    return aws.sendEmail(email)
+  } else {
+    return Promise.resolve()
   }
 }
