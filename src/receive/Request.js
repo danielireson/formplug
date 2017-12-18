@@ -6,11 +6,12 @@ const Validator = require('../common/Validator')
 class Request {
   constructor (event, encrypter) {
     this.singleEmailFields = ['_to']
-    this.delimeteredEmailFields = ['_cc', '_bcc']
+    this.delimeteredEmailFields = ['_cc', '_bcc', '_replyTo']
     this.recipients = {
       to: '',
       cc: [],
-      bcc: []
+      bcc: [],
+      replyTo: []
     }
 
     this.responseFormat = 'html'

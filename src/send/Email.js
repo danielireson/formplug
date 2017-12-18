@@ -12,6 +12,7 @@ class Email {
       .then(() => {
         let email = {
           Source: this._buildSenderSource(),
+          ReplyToAddresses: recipients.replyTo,
           Destination: {
             ToAddresses: [recipients.to],
             CcAddresses: recipients.cc,

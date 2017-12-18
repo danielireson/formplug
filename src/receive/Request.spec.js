@@ -150,6 +150,49 @@ describe('Request', function () {
       })
   })
 
+  it("should parse the 'replyTo' recipient", function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&_replyTo=johndoe%40example.com'
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function () {
+        assert.deepEqual(testSubject.recipients.replyTo, ['johndoe@example.com'])
+      })
+  })
+
+  it("should parse an encrypted 'replyTo' recipient", function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&_replyTo=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function () {
+        assert.deepEqual(testSubject.recipients.replyTo, ['johndoe@example.com'])
+      })
+  })
+
+  it("should reject an invalid 'replyTo' recipient", function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&_replyTo=johndoe'
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error.statusCode, 422)
+        assert.strictEqual(error.message, "Invalid email in '_replyTo' field")
+      })
+  })
+
   it("should parse the 'cc' recipients", function () {
     const event = {
       pathParameters: {},
