@@ -86,6 +86,9 @@ Follow the instructions on the [Serverless website](https://serverless.com/frame
 ### Setup SES identity
 Amazon SES can only send emails from addresses that you have verified ownership of. Verification can be done using the [AWS Management Console](aws.amazon.com) by visiting the SES Dashboard and heading to Identity Management. AWS also puts new SES accounts under limits which prevent emails from being sent to email addresses that haven't been verified. Check out the relevant [AWS SES documentation](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html) for more information. The limits can be lifted by opening a support ticket as outlined in the docs, but this takes a few hours to approve.
 
+### Install dependencies
+Run `npm install` to get the NPM dependencies.
+
 ### Add config
 Create a copy of *config.sample.json* as *config.json* and then customise as appropriate for your setup.
 
