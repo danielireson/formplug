@@ -1,5 +1,5 @@
 # Formplug [![Build Status](https://travis-ci.org/danielireson/formplug-serverless.svg?branch=master)](https://travis-ci.org/danielireson/formplug-serverless)
-Formplug is a serverless form backend for AWS Lambda, use it to accept form submissions by email without server-side code. It's built using the Serverless Framework and makes use of Amazon SES to send emails.
+Formplug is a form forwarding service for AWS Lambda, use it to accept form submissions by email without server-side code. It's built using the Serverless Framework and uses Amazon SES to send emails.
 
 ## Usage
 ### Basic
