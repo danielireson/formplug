@@ -5,6 +5,5 @@ cache:
   directories:
     - node_modules
 before_script:
-  - "npm install -g serverless"
   - "cp config.sample.json config.json"
-script: "npm run-script test"
+script: "npm run-script test:unit"
