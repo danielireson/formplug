@@ -20,7 +20,7 @@ module.exports.handle = (event, context, callback) => {
 
   request.validate()
     .then(function () {
-      let recipientCount = request.recipients.cc.length + request.recipients.bcc.length + request.recipients.replyTo.length
+      let recipientCount = [].concat(request.recipients.cc, request.recipients.bcc, request.recipients.replyTo).length
       Log.info(`sending to '${request.recipients.to}' and ${recipientCount} other recipients`)
       const email = new Email(getSenderArn(), getSubject())
       return EmailService.send(email.build(request.recipients, request.userParameters))
