@@ -45,7 +45,7 @@ module.exports.handle = (event, context, callback) => {
         return
       }
       if (request.responseFormat === 'html') {
-        const template = fs.readFileSync(path.resolve(__dirname, './http/template.html')).toString()
+        const template = fs.readFileSync(path.resolve(__dirname, 'template.html')).toString()
         callback(null, response.buildHtml(template))
         return
       }
