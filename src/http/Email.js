@@ -7,30 +7,27 @@ class Email {
   }
 
   build (recipients, userParameters) {
-    return this._validateArn()
-      .then(() => {
-        let email = {
-          Source: this._buildSenderSource(),
-          ReplyToAddresses: recipients.replyTo,
-          Destination: {
-            ToAddresses: [recipients.to],
-            CcAddresses: recipients.cc,
-            BccAddresses: recipients.bcc
-          },
-          Message: {
-            Subject: {
-              Data: this.subject
-            },
-            Body: {
-              Text: {
-                Data: this._buildMessageBody(userParameters) + this._buildMessageFooter()
-              }
-            }
+    this._validateArn()
+
+    return {
+      Source: this._buildSenderSource(),
+      ReplyToAddresses: recipients.replyTo,
+      Destination: {
+        ToAddresses: [recipients.to],
+        CcAddresses: recipients.cc,
+        BccAddresses: recipients.bcc
+      },
+      Message: {
+        Subject: {
+          Data: this.subject
+        },
+        Body: {
+          Text: {
+            Data: this._buildMessageBody(userParameters) + this._buildMessageFooter()
           }
         }
-
-        return Promise.resolve(email)
-      })
+      }
+    }
   }
 
   _validateArn () {
@@ -38,22 +35,20 @@ class Email {
     let identity = senderArnAsArray.length > 0 ? senderArnAsArray[senderArnAsArray.length - 1] : ''
 
     if (senderArnAsArray.length !== 6) {
-      return Promise.reject(new Error('Sender ARN is formatted incorrectly'))
+      throw new Error('sender ARN is formatted incorrectly')
     }
 
     if (this.senderArn.substring(0, 3) !== 'arn') {
-      return Promise.reject(new Error("Sender ARN should start with 'arn'"))
+      throw new Error("sender ARN should start with 'arn'")
     }
 
     if (identity.length < 9) {
-      return Promise.reject(new Error('Sender ARN identity length is invalid'))
+      throw new Error('sender ARN identity length is invalid')
     }
 
     if (!Validator.isEmail(identity.substring(9))) {
-      return Promise.reject(new Error('Sender ARN identity email address is invalid'))
+      throw new Error('sender ARN identity email address is invalid')
     }
-
-    return Promise.resolve()
   }
 
   _buildSenderSource () {

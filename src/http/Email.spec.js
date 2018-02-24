@@ -9,111 +9,75 @@ describe('Email', function () {
     const testSubject = new Email('arn')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.exists(resolved, 'promise should have rejected')
-      })
-      .catch(function (error) {
-        assert.strictEqual(error.message, 'Sender ARN is formatted incorrectly')
-      })
+    assert.throws(() => testSubject.build(recipients, userParameters), 'sender ARN is formatted incorrectly')
   })
 
   it("should reject an arn that doesn't start with 'arn'", function () {
     const testSubject = new Email('other:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.exists(resolved, 'promise should have rejected')
-      })
-      .catch(function (error) {
-        assert.strictEqual(error.message, "Sender ARN should start with 'arn'")
-      })
+    assert.throws(() => testSubject.build(recipients, userParameters), "sender ARN should start with 'arn'")
   })
 
   it('should reject an arn with an invalid identity length', function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.exists(resolved, 'promise should have rejected')
-      })
-      .catch(function (error) {
-        assert.strictEqual(error.message, 'Sender ARN identity length is invalid')
-      })
+    assert.throws(() => testSubject.build(recipients, userParameters), 'sender ARN identity length is invalid')
   })
 
   it('should reject an arn with an invalid identity email address', function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.exists(resolved, 'promise should have rejected')
-      })
-      .catch(function (error) {
-        assert.strictEqual(error.message, 'Sender ARN identity email address is invalid')
-      })
+    assert.throws(() => testSubject.build(recipients, userParameters), 'sender ARN identity email address is invalid')
   })
 
   it('should build the sender source correctly', function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.strictEqual(resolved.Source, 'Formplug <johndoe@example.com>')
-      })
+    const email = testSubject.build(recipients, userParameters)
+    assert.strictEqual(email.Source, 'Formplug <johndoe@example.com>')
   })
 
   it("should set the 'to' email address correctly", function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: 'janedoe@example.com', cc: [], bcc: []}
     const userParameters = {}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.deepEqual(resolved.Destination.ToAddresses, ['janedoe@example.com'])
-      })
+    const email = testSubject.build(recipients, userParameters)
+    assert.deepEqual(email.Destination.ToAddresses, ['janedoe@example.com'])
   })
 
   it("should set the 'cc' email addresses correctly", function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: '', cc: ['janedoe@example.com'], bcc: []}
     const userParameters = {}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.deepEqual(resolved.Destination.CcAddresses, ['janedoe@example.com'])
-      })
+    const email = testSubject.build(recipients, userParameters)
+    assert.deepEqual(email.Destination.CcAddresses, ['janedoe@example.com'])
   })
 
   it("should set the 'bcc' email address correctly", function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: '', cc: [], bcc: ['janedoe@example.com']}
     const userParameters = {}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.deepEqual(resolved.Destination.BccAddresses, ['janedoe@example.com'])
-      })
+    const email = testSubject.build(recipients, userParameters)
+    assert.deepEqual(email.Destination.BccAddresses, ['janedoe@example.com'])
   })
 
   it('should build the email body correctly', function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {one: 'var1', two: 'var2'}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.strictEqual(resolved.Message.Body.Text.Data, 'ONE: var1\r\nTWO: var2\r\n---\r\nSent with Formplug')
-      })
+    const email = testSubject.build(recipients, userParameters)
+    assert.strictEqual(email.Message.Body.Text.Data, 'ONE: var1\r\nTWO: var2\r\n---\r\nSent with Formplug')
   })
 
   it('should not add private parameters to the email body', function () {
     const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {one: 'var1', _two: 'var2'}
-    return testSubject.build(recipients, userParameters)
-      .then(function (resolved) {
-        assert.strictEqual(resolved.Message.Body.Text.Data, 'ONE: var1\r\n---\r\nSent with Formplug')
-      })
+    const email = testSubject.build(recipients, userParameters)
+    assert.strictEqual(email.Message.Body.Text.Data, 'ONE: var1\r\n---\r\nSent with Formplug')
   })
 })
