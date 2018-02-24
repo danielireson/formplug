@@ -30,8 +30,7 @@ module.exports.handle = (event, context, callback) => {
     })
     .catch(function (error) {
       Log.error('error was caught while executing receive lambda', error)
-      const response = new Response(error.statusCode, error.message)
-      return Promise.resolve(response)
+      return Promise.resolve(new Response(error.statusCode, error.message))
     })
     .then(function (response) {
       Log.info(`returning http ${response.statusCode} response`)
