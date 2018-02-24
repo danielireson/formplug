@@ -1,10 +1,10 @@
 const fs = require('fs')
 const path = require('path')
 
-const Encrypter = require('../common/Encrypter')
-const Log = require('../common/Log')
-const Request = require('./Request')
-const Response = require('./Response')
+const Encrypter = require('./common/Encrypter')
+const Log = require('./common/Log')
+const Request = require('./http/Request')
+const Response = require('./http/Response')
 
 const aws = require('../services/AwsService')
 const config = require('../../config.json')
