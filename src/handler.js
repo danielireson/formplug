@@ -7,7 +7,8 @@ const Log = require('./common/Log')
 const Request = require('./http/Request')
 const Response = require('./http/Response')
 
-const aws = require('./services/AwsService')
+const EmailService = require('./services/EmailService')
+
 const config = require('../config.json')
 
 module.exports.handle = (event, context, callback) => {
@@ -21,7 +22,8 @@ module.exports.handle = (event, context, callback) => {
     .then(function () {
       let recipientCount = request.recipients.cc.length + request.recipients.bcc.length + request.recipients.replyTo.length
       Log.info(`sending to '${request.recipients.to}' and ${recipientCount} other recipients`)
-      return aws.sendEmail(new Email(getSenderArn(), getSubject()).build(request.recipients, request.userParameters))
+      const email = new Email(getSenderArn(), getSubject())
+      return EmailService.send(email.build(request.recipients, request.userParameters))
     })
     .then(function () {
       const statusCode = request.redirectUrl ? 302 : 200
