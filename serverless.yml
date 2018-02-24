@@ -33,5 +33,3 @@ functions:
             parameters:
               querystrings:
                 format: true
-  send:
-    handler: src/send/handler.handle
