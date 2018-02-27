@@ -51,7 +51,7 @@ Separate multiple email addresses by a semicolon.
 <!-- plain text emails -->
 <input type="hidden" name="_cc" value="johndoe@example.com;janedoe@exmaple.com"
 
-<!-- encrypted emails -->
+<!-- encrypted email address -->
 <input type="hidden" name="_cc" value="ff19d0abcd474813ad;c031a9b24855090b5e8b">
 ```
 
