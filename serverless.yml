@@ -16,6 +16,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "sqs:SendMessage"
+        - "ses:SendEmail"
       Resource: "*"
     - Effect: "Allow"
       Action:
