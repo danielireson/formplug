@@ -24,7 +24,7 @@ class Request {
     
     this.remoteIp = event.requestContext && event.requestContext.identity && event.requestContext.identity.sourceIp
 
-    this.googleRecaptcha = googleRecaptcha;
+    this.googleRecaptcha = googleRecaptcha
   }
 
   validate () {
@@ -54,21 +54,21 @@ class Request {
     if ('g-recaptcha-response' in this.userParameters) {
       return new Promise((resolve, reject) => {
         if (!this.googleRecaptcha) {
-          return reject(new HttpError().forbidden('Server is not configured properly for CAPTCHA. Ensure SECRET key is provided'));
+          return reject(new HttpError().forbidden('Server is not configured properly for CAPTCHA. Ensure SECRET key is provided'))
         }
         
         this.googleRecaptcha.verify({ response: this.userParameters['g-recaptcha-response'], remoteIp: this.remoteIp }, (error) => {
           if (error) {
-            return reject(new HttpError().forbidden('Captcha was not solved properly. Are you a human?'));
+            return reject(new HttpError().forbidden('Captcha was not solved properly. Are you a human?'))
           }
-          resolve();
-        });
+          resolve()
+        })
       })
     } else {
       if (this.googleRecaptcha) {
-        return Promise.reject(new HttpError().forbidden('Captcha response not provided. Are you a human?'));
+        return Promise.reject(new HttpError().forbidden('Captcha response not provided. Are you a human?'))
       } else {
-        return Promise.resolve();
+        return Promise.resolve()
       }
     }
   }

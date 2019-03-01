@@ -10,8 +10,8 @@ describe('Request', function () {
 
   const fakeRecaptcha = {
     verify: (options, callback) => {
-      if (options.response !== 'valid') return callback('captcha invalid');
-      return callback();
+      if (options.response !== 'valid') return callback('captcha invalid')
+      return callback()
     }
   }
 
