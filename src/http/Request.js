@@ -4,7 +4,7 @@ const HttpError = require('./HttpError')
 const Validator = require('../common/Validator')
 
 class Request {
-  constructor (event, encrypter) {
+  constructor (event, encrypter, googleRecaptcha) {
     this.singleEmailFields = ['_to']
     this.delimeteredEmailFields = ['_cc', '_bcc', '_replyTo']
     this.recipients = {
@@ -21,11 +21,16 @@ class Request {
     this.queryStringParameters = event.queryStringParameters || {}
     this.userParameters = querystring.parse(event.body)
     this.encrypter = encrypter
+    
+    this.remoteIp = event.requestContext && event.requestContext.identity && event.requestContext.identity.sourceIp
+
+    this.googleRecaptcha = googleRecaptcha;
   }
 
   validate () {
     return Promise.resolve()
       .then(() => this._validateResponseFormat())
+      .then(() => this._validateCaptcha())
       .then(() => this._validateNoHoneyPot())
       .then(() => this._validateSingleEmails())
       .then(() => this._validateDelimiteredEmails())
@@ -43,6 +48,29 @@ class Request {
     }
 
     return Promise.resolve()
+  }
+
+  _validateCaptcha () {
+    if ('g-recaptcha-response' in this.userParameters) {
+      return new Promise((resolve, reject) => {
+        if (!this.googleRecaptcha) {
+          return reject(new HttpError().forbidden('Server is not configured properly for CAPTCHA. Ensure SECRET key is provided'));
+        }
+        
+        this.googleRecaptcha.verify({ response: this.userParameters['g-recaptcha-response'], remoteIp: this.remoteIp }, (error) => {
+          if (error) {
+            return reject(new HttpError().forbidden('Captcha was not solved properly. Are you a human?'));
+          }
+          resolve();
+        });
+      })
+    } else {
+      if (this.googleRecaptcha) {
+        return Promise.reject(new HttpError().forbidden('Captcha response not provided. Are you a human?'));
+      } else {
+        return Promise.resolve();
+      }
+    }
   }
 
   _validateNoHoneyPot () {

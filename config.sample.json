@@ -3,5 +3,6 @@
   "ENCRYPTION_KEY": "formsaregreat",
   "REGION": "eu-west-1",
   "STAGE": "dev",
-  "SENDER_ARN": ""
+  "SENDER_ARN": "",
+  "RECAPTCHA_SECRET_KEY": ""
 }

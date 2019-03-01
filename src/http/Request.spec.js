@@ -8,6 +8,13 @@ const Request = require('./Request')
 describe('Request', function () {
   const encrypter = new Encrypter('testing')
 
+  const fakeRecaptcha = {
+    verify: (options, callback) => {
+      if (options.response !== 'valid') return callback('captcha invalid');
+      return callback();
+    }
+  }
+
   it('should get path parameters', function () {
     const event = {
       pathParameters: {
@@ -327,6 +334,71 @@ describe('Request', function () {
       .catch(function (error) {
         assert.strictEqual(error.statusCode, 403)
         assert.strictEqual(error.message, 'You shall not pass')
+      })
+  })
+
+  it('should reject validation if a captha response is provided but captcha secret key is not configured', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&g-recaptcha-response=testing'
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected with error')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error.statusCode, 403)
+        assert.include(error.message, 'CAPTCHA')
+      })
+  })
+
+  it('should reject validation if a captha response is provided but captcha secret key is not configured', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&g-recaptcha-response=testing'
+    }
+    const testSubject = new Request(event, encrypter)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected with error')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error.statusCode, 403)
+        assert.include(error.message, 'CAPTCHA')
+      })
+  })
+
+  it('should reject validation if captcha response is invalid', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&g-recaptcha-response=invalid'
+    }
+    const testSubject = new Request(event, encrypter, fakeRecaptcha)
+    return testSubject.validate()
+      .then(function (resolved) {
+        assert.exists(resolved, 'promise should have rejected with error')
+      })
+      .catch(function (error) {
+        assert.strictEqual(error.statusCode, 403)
+        assert.include(error.message, 'Captcha was not solved properly')
+      })
+  })
+
+  it('should pass validation if captcha response is valid', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&g-recaptcha-response=valid'
+    }
+    const testSubject = new Request(event, encrypter, fakeRecaptcha)
+
+    return testSubject.validate()
+      .catch(function (error) {
+        assert.fail(error, undefined, 'promise should not be rejected')
       })
   })
 

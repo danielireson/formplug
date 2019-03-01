@@ -80,4 +80,12 @@ describe('Email', function () {
     const email = testSubject.build(recipients, userParameters)
     assert.strictEqual(email.Message.Body.Text.Data, 'ONE: var1\r\n---\r\nSent with Formplug')
   })
+
+  it('should not add recaptcha parameters to the email body', function () {
+    const testSubject = new Email('arn:aws:ses:eu-west-1:123456789123:identity/johndoe@example.com')
+    const recipients = {to: '', cc: [], bcc: []}
+    const userParameters = {'g-recaptcha-response': 'response', one: 'var1'}
+    const email = testSubject.build(recipients, userParameters)
+    assert.strictEqual(email.Message.Body.Text.Data, 'ONE: var1\r\n---\r\nSent with Formplug')
+  })
 })

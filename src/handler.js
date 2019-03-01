@@ -11,9 +11,17 @@ const EmailService = require('./services/EmailService')
 
 const config = require('../config.json')
 
+const GoogleRecaptcha = require('google-recaptcha')
+
+const googleRecaptcha = 
+  config.RECAPTCHA_SECRET_KEY 
+  ? new GoogleRecaptcha({secret: config.RECAPTCHA_SECRET_KEY})
+  : null
+
 module.exports.handle = (event, context, callback) => {
+  
   const encrypter = new Encrypter(getEncryptionKey())
-  const request = new Request(event, encrypter)
+  const request = new Request(event, encrypter, googleRecaptcha)
 
   let paramCount = Object.keys(request.userParameters).length
   Log.info(`${request.responseFormat} request received with ${paramCount} parameters`)

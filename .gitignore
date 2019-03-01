@@ -11,3 +11,5 @@ jspm_packages
 # Formplug
 project.txt
 config.json
+
+package-lock.json

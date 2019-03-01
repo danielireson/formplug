@@ -4,6 +4,8 @@
 
 Formplug is a form forwarding service for AWS Lambda, use it to accept form submissions by email without server-side code. It's built using the Serverless Framework and uses Amazon SES to send emails.
 
+**Now with reCAPTCHA (v2) support!**. See [config](#add-config) for instructions.
+
 ## Usage
 ### Basic
 Set the form action to your Formplug endpoint to have form submissions forwarded on by email. Email addresses can be passed in plain text (as in the example below) or encrypted as a hexedecimal string (see next section).
@@ -104,6 +106,7 @@ STAGE | The AWS stage to deploy to (it's common to use *dev* or *prod*). | Y
 SENDER_ARN | The [ARN](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) of the sender email address. | Y
 MSG_RECEIVE_SUCCESS | This is returned to the user on a successful form submission if a redirect URL isn't provided. | N
 MSG_SUBJECT | The subject line to use in emails. | N
+RECAPTCHA_SECRET_KEY | The reCAPTCHA secret key. See the [reCAPTCHA v2 documentation](https://developers.google.com/recaptcha/docs/display). | N
 
 ### Deploy
 Run `serverless deploy` to deploy to AWS.
