@@ -16,7 +16,7 @@ const GoogleRecaptcha = require('google-recaptcha')
 const googleRecaptcha = 
   config.RECAPTCHA_SECRET_KEY 
   ? new GoogleRecaptcha({secret: config.RECAPTCHA_SECRET_KEY})
-  : null
+  : undefined
 
 module.exports.handle = (event, context, callback) => {
   
