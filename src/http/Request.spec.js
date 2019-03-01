@@ -354,23 +354,6 @@ describe('Request', function () {
       })
   })
 
-  it('should reject validation if a captha response is provided but captcha secret key is not configured', function () {
-    const event = {
-      pathParameters: {},
-      queryStringParameters: {},
-      body: '_to=johndoe%40example.com&g-recaptcha-response=testing'
-    }
-    const testSubject = new Request(event, encrypter)
-    return testSubject.validate()
-      .then(function (resolved) {
-        assert.exists(resolved, 'promise should have rejected with error')
-      })
-      .catch(function (error) {
-        assert.strictEqual(error.statusCode, 403)
-        assert.include(error.message, 'CAPTCHA')
-      })
-  })
-
   it('should reject validation if captcha response is invalid', function () {
     const event = {
       pathParameters: {},
