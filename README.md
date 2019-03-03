@@ -17,6 +17,36 @@ Set the form action to your Formplug endpoint to have form submissions forwarded
 </form>
 ```
 
+### reCAPTCHA quick-start:
+
+Go to https://www.google.com/recaptcha and set up an account from the admin console.
+
+Adding an [**invisible** reCAPTCHA](https://developers.google.com/recaptcha/docs/invisible) to your form is as simple as the following:
+
+```html
+  <head>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
+    <script type='text/javascript'>
+      function onSubmit(token) {
+        document.getElementById("contact-form").submit();
+      }
+    </script>
+  </head>
+
+  <body>
+    ...
+    <form action="https://apigatewayurl.com" method="post" id='contact-form'>
+      <input type="hidden" name="_to" value="johndoe@example.com">
+      <input type="text" name="message">
+      <button class="g-recaptcha" data-sitekey="<YOUR SITE KEY>" data-callback='onSubmit'>Submit</button>
+    </form>
+
+  </body>
+```
+
+For additional information on other reCAPTCHA widgets, see the [reCAPTCHA v2 documentation](https://developers.google.com/recaptcha/docs/display). You will also need to supply your SECRET key in `config.json`. See [the configuration section](#add-config) for additional information.
+
 ### AJAX
 Append *format=json* to the query string of the endpoint to get responses back in JSON with a CORS allow all origin header. You should do this if you plan on working with the API using JavaScript.
 ``` html
@@ -74,17 +104,23 @@ Email addresses can be encrypted so that they're not visible in the HTML source.
 
 ### Encrypting an email address
 ``` bash
-> npm run encrypt johndoe@example.com
+> yarn run encrypt johndoe@example.com
 johndoe@example.com => ff17d6a0cd474813adc031a9b24855090b5e8b
 ```
 
 ### Decrypting an email address
 ``` bash
-> npm run decrypt ff17d6a0cd474813adc031a9b24855090b5e8b
+> yarn run decrypt ff17d6a0cd474813adc031a9b24855090b5e8b
 ff17d6a0cd474813adc031a9b24855090b5e8b => johndoe@example.com
 ```
 
 ## Setup
+### Clone this repository to a location of your own choosing:
+
+```
+git clone git@github.com:danielireson/formplug-serverless.git
+```
+
 ### Install Serverless
 Follow the instructions on the [Serverless website](https://serverless.com/framework/docs/providers/aws/guide/installation) to install the Serverless Framework and setup your AWS credentials.
 
@@ -92,7 +128,7 @@ Follow the instructions on the [Serverless website](https://serverless.com/frame
 Amazon SES can only send emails from addresses that you have verified ownership of. Verification can be done using the [AWS Management Console](aws.amazon.com) by visiting the SES Dashboard and heading to Identity Management. AWS also puts new SES accounts under limits which prevent emails from being sent to email addresses that haven't been verified. Check out the relevant [AWS SES documentation](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html) for more information. The limits can be lifted by opening a support ticket as outlined in the docs, but this takes a few hours to approve.
 
 ### Install dependencies
-Run `npm install` to get the NPM dependencies.
+Run `yarn install` to get the dependencies.
 
 ### Add config
 Create a copy of *config.sample.json* as *config.json* and then customise as appropriate for your setup.
