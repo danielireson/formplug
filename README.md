@@ -4,7 +4,7 @@
 
 Formplug is a form forwarding service for AWS Lambda, use it to accept form submissions by email without server-side code. It's built using the Serverless Framework and uses Amazon SES to send emails.
 
-**Now with reCAPTCHA (v2) support!**. See [config](#add-config) for instructions.
+**Now with reCAPTCHA (v2) support!**. See [the reCAPTCHA quick-start](#recaptcha-quick-start) for instructions.
 
 ## Usage
 ### Basic
