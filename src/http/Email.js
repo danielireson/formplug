@@ -23,7 +23,7 @@ class Email {
         },
         Body: {
           Text: {
-            Data: this._buildMessageBody(userParameters) + this._buildMessageFooter()
+            Data: this._buildMessageBody(userParameters)
           }
         }
       }
@@ -68,12 +68,6 @@ class Email {
         message += param.toUpperCase() + ': ' + userParameters[param] + '\r\n'
         return message
       }, '')
-  }
-
-  _buildMessageFooter () {
-    let footer = '---' + '\r\n'
-    footer += 'Sent with Formplug'
-    return footer
   }
 }
 

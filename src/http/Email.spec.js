@@ -70,7 +70,7 @@ describe('Email', function () {
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {one: 'var1', two: 'var2'}
     const email = testSubject.build(recipients, userParameters)
-    assert.strictEqual(email.Message.Body.Text.Data, 'ONE: var1\r\nTWO: var2\r\n---\r\nSent with Formplug')
+    assert.strictEqual(email.Message.Body.Text.Data, 'ONE: var1\r\nTWO: var2\r\n')
   })
 
   it('should not add private parameters to the email body', function () {
@@ -78,6 +78,6 @@ describe('Email', function () {
     const recipients = {to: '', cc: [], bcc: []}
     const userParameters = {one: 'var1', _two: 'var2'}
     const email = testSubject.build(recipients, userParameters)
-    assert.strictEqual(email.Message.Body.Text.Data, 'ONE: var1\r\n---\r\nSent with Formplug')
+    assert.strictEqual(email.Message.Body.Text.Data, 'ONE: var1\r\n')
   })
 })
