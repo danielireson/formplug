@@ -1,4 +1,5 @@
 const aws = require('aws-sdk')
+const ses = new aws.SES()
 
 class EmailService {
   constructor (service) {
@@ -6,8 +7,8 @@ class EmailService {
   }
 
   send (email) {
-    return new this.service.SES().sendEmail(email).promise()
+    return this.service.sendEmail(email).promise()
   }
 }
 
-module.exports = new EmailService(aws)
+module.exports = new EmailService(ses)
