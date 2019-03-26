@@ -4,9 +4,11 @@ const assert = require('chai').assert
 
 const Encrypter = require('../common/Encrypter')
 const Request = require('./Request')
+const Validator = require('../common/Validator')
 
 describe('Request', function () {
   const encrypter = new Encrypter('testing')
+  const validator = new Validator()
 
   it('should get path parameters', function () {
     const event = {
@@ -18,7 +20,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: ''
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     assert.deepEqual(testSubject.pathParameters, event.pathParameters)
   })
 
@@ -32,7 +34,7 @@ describe('Request', function () {
       },
       body: ''
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     assert.deepEqual(testSubject.queryStringParameters, event.queryStringParameters)
   })
 
@@ -42,7 +44,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: ''
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     assert.strictEqual(testSubject.responseFormat, 'html')
   })
 
@@ -54,7 +56,7 @@ describe('Request', function () {
       },
       body: '_to=johndoe%40example.com'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.strictEqual(testSubject.responseFormat, 'json')
@@ -69,7 +71,7 @@ describe('Request', function () {
       },
       body: '_to=johndoe%40example.com'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected')
@@ -86,7 +88,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: 'one=var1&two=var2&three=var3'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     assert.deepEqual(testSubject.userParameters, {one: 'var1', two: 'var2', three: 'var3'})
   })
 
@@ -96,7 +98,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.strictEqual(testSubject.recipients.to, 'johndoe@example.com')
@@ -109,7 +111,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.strictEqual(testSubject.recipients.to, 'johndoe@example.com')
@@ -122,7 +124,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected')
@@ -139,7 +141,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: ''
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected')
@@ -156,7 +158,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_replyTo=johndoe%40example.com'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.deepEqual(testSubject.recipients.replyTo, ['johndoe@example.com'])
@@ -169,7 +171,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_replyTo=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.deepEqual(testSubject.recipients.replyTo, ['johndoe@example.com'])
@@ -182,7 +184,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_replyTo=johndoe'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected')
@@ -199,7 +201,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe%40example.com'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.deepEqual(testSubject.recipients.cc, ['johndoe@example.com', 'janedoe@example.com'])
@@ -212,7 +214,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_cc=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.deepEqual(testSubject.recipients.cc, ['johndoe@example.com'])
@@ -225,7 +227,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_cc=johndoe'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected')
@@ -242,7 +244,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected')
@@ -259,7 +261,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe%40example.com'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.deepEqual(testSubject.recipients.bcc, ['johndoe@example.com', 'janedoe@example.com'])
@@ -272,7 +274,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_bcc=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.deepEqual(testSubject.recipients.bcc, ['johndoe@example.com'])
@@ -285,7 +287,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_bcc=johndoe'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected')
@@ -302,7 +304,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected with error')
@@ -319,7 +321,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_honeypot=testing'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected with error')
@@ -336,7 +338,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function () {
         assert.strictEqual(testSubject.redirectUrl, 'http://example.com')
@@ -349,7 +351,7 @@ describe('Request', function () {
       queryStringParameters: {},
       body: '_to=johndoe%40example.com&_redirect=invalid'
     }
-    const testSubject = new Request(event, encrypter)
+    const testSubject = new Request(event, encrypter, validator)
     return testSubject.validate()
       .then(function (resolved) {
         assert.exists(resolved, 'promise should have rejected with error')

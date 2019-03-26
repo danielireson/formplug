@@ -6,13 +6,15 @@ const Encrypter = require('./common/Encrypter')
 const Log = require('./common/Log')
 const Request = require('./http/Request')
 const Response = require('./http/Response')
+const Validator = require('./common/Validator')
 
 const emailService = require('./services/EmailService')
 const configService = require('./services/ConfigService')
 
 module.exports.handle = (event, context, callback) => {
   const encrypter = new Encrypter(configService.getValue('ENCRYPTION_KEY'))
-  const request = new Request(event, encrypter)
+  const validator = new Validator()
+  const request = new Request(event, encrypter, validator)
 
   let paramCount = Object.keys(request.userParameters).length
   Log.info(`${request.responseFormat} request received with ${paramCount} parameters`)
@@ -28,7 +30,8 @@ module.exports.handle = (event, context, callback) => {
 
       const email = new Email(
         configService.getValue('SENDER_ARN'),
-        configService.getValueWithDefault('MSG_SUBJECT', 'You have a form submission'))
+        configService.getValueWithDefault('MSG_SUBJECT', 'You have a form submission'),
+        validator)
 
       return emailService.send(email.build(request.recipients, request.userParameters))
     })
