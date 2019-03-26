@@ -8,11 +8,10 @@ const Request = require('./http/Request')
 const Response = require('./http/Response')
 
 const emailService = require('./services/EmailService')
-
-const config = require('../config.json')
+const configService = require('./services/ConfigService')
 
 module.exports.handle = (event, context, callback) => {
-  const encrypter = new Encrypter(getEncryptionKey())
+  const encrypter = new Encrypter(configService.getValue('ENCRYPTION_KEY'))
   const request = new Request(event, encrypter)
 
   let paramCount = Object.keys(request.userParameters).length
@@ -22,12 +21,14 @@ module.exports.handle = (event, context, callback) => {
     .then(function () {
       let recipientCount = [].concat(request.recipients.cc, request.recipients.bcc, request.recipients.replyTo).length
       Log.info(`sending to '${request.recipients.to}' and ${recipientCount} other recipients`)
-      const email = new Email(getSenderArn(), getSubject())
+      const email = new Email(
+        configService.getValue('SENDER_ARN'),
+        configService.getValueWithDefault('MSG_SUBJECT', 'You have a form submission'))
       return emailService.send(email.build(request.recipients, request.userParameters))
     })
     .then(function () {
       const statusCode = request.redirectUrl ? 302 : 200
-      const message = config.MSG_RECEIVE_SUCCESS || 'Form submission successfully made'
+      const message = configService.getValueWithDefault('MSG_RECEIVE_SUCCESS', 'Form submission successfully made')
       return Promise.resolve(new Response(statusCode, message))
     })
     .catch(function (error) {
@@ -50,30 +51,4 @@ module.exports.handle = (event, context, callback) => {
         return
       }
     })
-}
-
-function getEncryptionKey () {
-  if ('ENCRYPTION_KEY' in config && config.ENCRYPTION_KEY !== '') {
-    return config.ENCRYPTION_KEY
-  } else {
-    Log.error("please set 'ENCRYPTION_KEY' in 'config.json'")
-    return ''
-  }
-}
-
-function getSenderArn () {
-  if ('SENDER_ARN' in config && config.SENDER_ARN !== '') {
-    return config.SENDER_ARN
-  } else {
-    Log.error("please set 'SENDER_ARN' in 'config.json'")
-    return ''
-  }
-}
-
-function getSubject () {
-  if ('MSG_SUBJECT' in config && config.MSG_SUBJECT !== '') {
-    return config.MSG_SUBJECT
-  } else {
-    return 'You have a form submission'
-  }
 }
