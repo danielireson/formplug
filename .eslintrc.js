@@ -8,7 +8,7 @@ module.exports = {
     "rules": {
       "no-useless-return": 0,
       "node/no-unsupported-features": ["error", {
-          "version": 6
+          "version": 8
       }]
     }
 };
