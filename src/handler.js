@@ -5,7 +5,10 @@ const Email = require('./http/Email')
 const Encrypter = require('./common/Encrypter')
 const Log = require('./common/Log')
 const Request = require('./http/Request')
-const Response = require('./http/Response')
+const JsonResponse = require('./http/JsonResponse')
+const HtmlResponse = require('./http/HtmlResponse')
+const RedirectResponse = require('./http/RedirectResponse')
+const PlainTextResponse = require('./http/PlainTextResponse')
 const Validator = require('./common/Validator')
 
 const emailService = require('./services/EmailService')
@@ -36,35 +39,36 @@ module.exports.handle = (event, context, callback) => {
       return emailService.send(email.build(request.recipients, request.userParameters))
     })
     .then(function () {
-      const statusCode = request.redirectUrl ? 302 : 200
       const message = configService.getValueWithDefault(
         'MSG_RECEIVE_SUCCESS',
         'Form submission successfully made')
 
-      return Promise.resolve(new Response(statusCode, message))
+      let response = null
+
+      if (request.responseFormat === 'json') {
+        response = new JsonResponse(200, message)
+      } else if (request.redirectUrl) {
+        response = new RedirectResponse(302, message, request.redirectUrl)
+      } else {
+        const template = fs.readFileSync(
+          path.resolve(
+            __dirname,
+            'templates',
+            configService.getValueWithDefault('TEMPLATE', 'default.html'))).toString()
+
+        response = new HtmlResponse(200, message, template)
+      }
+
+      return Promise.resolve(response)
     })
     .catch(function (error) {
       Log.error('error was caught while executing receive lambda', error)
 
-      return Promise.resolve(new Response(error.statusCode, error.message))
+      return Promise.resolve(new PlainTextResponse(error.statusCode, error.message))
     })
     .then(function (response) {
       Log.info(`returning http ${response.statusCode} response`)
 
-      if (request.responseFormat === 'json') {
-        callback(null, response.buildJson())
-        return
-      }
-
-      if (request.responseFormat === 'plain' && request.redirectUrl) {
-        callback(null, response.buildRedirect(request.redirectUrl))
-        return
-      }
-
-      if (request.responseFormat === 'html') {
-        const template = fs.readFileSync(path.resolve(__dirname, 'template.html')).toString()
-        callback(null, response.buildHtml(template))
-        return
-      }
+      callback(null, response.build())
     })
 }
