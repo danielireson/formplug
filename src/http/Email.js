@@ -1,8 +1,9 @@
+const validation = require('../utils/validation')
+
 class Email {
-  constructor (senderArn, subject, validator) {
+  constructor (senderArn, subject) {
     this.senderArn = senderArn
     this.subject = subject
-    this.validator = validator
   }
 
   build (recipients, userParameters) {
@@ -45,7 +46,7 @@ class Email {
       throw new Error('sender ARN identity length is invalid')
     }
 
-    if (!this.validator.isEmail(identity.substring(9))) {
+    if (!validation.isEmail(identity.substring(9))) {
       throw new Error('sender ARN identity email address is invalid')
     }
   }

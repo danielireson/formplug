@@ -2,8 +2,10 @@ const querystring = require('querystring')
 
 const HttpError = require('./HttpError')
 
+const validation = require('../utils/validation')
+
 class Request {
-  constructor (event, encrypter, validator) {
+  constructor (event, encrypter) {
     this.singleEmailFields = ['_to']
     this.delimeteredEmailFields = ['_cc', '_bcc', '_replyTo']
     this.recipients = {
@@ -20,7 +22,6 @@ class Request {
     this.queryStringParameters = event.queryStringParameters || {}
     this.userParameters = querystring.parse(event.body)
     this.encrypter = encrypter
-    this.validator = validator
   }
 
   validate () {
@@ -93,7 +94,7 @@ class Request {
 
   _validateRedirect () {
     if ('_redirect' in this.userParameters) {
-      if (!this.validator.isWebsite(this.userParameters['_redirect'])) {
+      if (!validation.isWebsite(this.userParameters['_redirect'])) {
         return Promise.reject(new HttpError().unprocessableEntity("Invalid website URL in '_redirect'"))
       } else {
         this.responseFormat = 'plain'
@@ -106,14 +107,14 @@ class Request {
 
   _parseEmail (input, field) {
     // check for plain text email addresses
-    if (this.validator.isEmail(input)) {
+    if (validation.isEmail(input)) {
       this._addEmail(input, field)
       return true
     }
 
     // check for encrypted email addresses
     let inputDecrypted = this.encrypter.decrypt(input)
-    if (this.validator.isEmail(inputDecrypted)) {
+    if (validation.isEmail(inputDecrypted)) {
       this._addEmail(inputDecrypted, field)
       return true
     }
