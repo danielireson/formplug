@@ -11,7 +11,7 @@ class HtmlResponse {
       headers: {
         'Content-Type': 'text/html'
       },
-      body: this.template.replace('{{ message }}', this.message)
+      body: this.template.replace(/{{ message }}/g, this.message)
     }
   }
 }
