@@ -18,12 +18,12 @@ module.exports.handle = (event, context, callback) => {
   const encrypter = new Encrypter(config.getValue('ENCRYPTION_KEY'))
   const request = new Request(event, encrypter)
 
-  let paramCount = Object.keys(request.userParameters).length
+  const paramCount = Object.keys(request.userParameters).length
   logging.info(`${request.responseFormat} request received with ${paramCount} parameters`)
 
   request.validate()
     .then(function () {
-      let recipientCount = [].concat(
+      const recipientCount = [].concat(
         request.recipients.cc,
         request.recipients.bcc,
         request.recipients.replyTo).length
