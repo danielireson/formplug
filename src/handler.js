@@ -60,8 +60,13 @@ module.exports.handle = (event, context, callback) => {
     .catch(function (error) {
       logging.error('error was caught while executing receive lambda', error)
 
-      const statusCode = error.statusCode || 500
-      const message = error.message
+      let statusCode = 500
+      let message = 'An unexpected error occurred'
+
+      if (error instanceof HttpError) {
+        statusCode = error.statusCode
+        message = error.message
+      }
 
       let response = null
 
