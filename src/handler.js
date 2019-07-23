@@ -48,13 +48,11 @@ module.exports.handle = (event, context, callback) => {
       } else if (request.redirectUrl) {
         response = new RedirectResponse(302, message, request.redirectUrl)
       } else {
-        const template = fs.readFileSync(
-          path.resolve(
-            __dirname,
-            'templates',
-            config.getValueWithDefault('TEMPLATE', 'default.html'))).toString()
-
-        response = new HtmlResponse(200, message, template)
+        try {
+          response = new HtmlResponse(200, message, htmlTemplate())
+        } catch (error) {
+          response = new PlainTextResponse(500, message)
+        }
       }
 
       return Promise.resolve(response)
@@ -62,11 +60,34 @@ module.exports.handle = (event, context, callback) => {
     .catch(function (error) {
       logging.error('error was caught while executing receive lambda', error)
 
-      return Promise.resolve(new PlainTextResponse(error.statusCode || 500, error.message))
+      const statusCode = error.statusCode || 500
+      const message = error.message
+
+      let response = null
+
+      if (request.responseFormat === 'json') {
+        response = new JsonResponse(statusCode, message)
+      } else {
+        try {
+          response = new HtmlResponse(statusCode, message, htmlTemplate())
+        } catch (error) {
+          response = new PlainTextResponse(statusCode, message)
+        }
+      }
+
+      return Promise.resolve(response)
     })
     .then(function (response) {
       logging.info(`returning http ${response.statusCode} response`)
 
       callback(null, response.build())
     })
+}
+
+function htmlTemplate () {
+  return fs.readFileSync(
+    path.resolve(
+      __dirname,
+      'templates',
+      config.getValueWithDefault('TEMPLATE', 'default.html'))).toString()
 }
