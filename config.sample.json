@@ -4,6 +4,5 @@
   "REGION": "eu-west-1",
   "STAGE": "dev",
   "SENDER_ARN": "",
-  "SENDER": "Formplug",
-  "TEMPLATE": ""
+  "SENDER": "Formplug"
 }
