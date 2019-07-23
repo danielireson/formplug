@@ -1,7 +1,8 @@
 const validation = require('../utils/validation')
 
 class Email {
-  constructor (senderArn, subject) {
+  constructor (sender, senderArn, subject) {
+    this.sender = sender
     this.senderArn = senderArn
     this.subject = subject
   }
@@ -54,7 +55,7 @@ class Email {
   _buildSenderSource () {
     let senderArnAsArray = this.senderArn.split('/')
     let email = senderArnAsArray[senderArnAsArray.length - 1]
-    return `Formplug <${email}>`
+    return `${this.sender} <${email}>`
   }
 
   _buildMessageBody (userParameters) {

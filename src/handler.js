@@ -31,6 +31,7 @@ module.exports.handle = (event, context, callback) => {
       logging.info(`sending to '${request.recipients.to}' and ${recipientCount} other recipients`)
 
       const email = new Email(
+        config.getValue('SENDER'),
         config.getValue('SENDER_ARN'),
         config.getValueWithDefault('MSG_SUBJECT', 'You have a form submission'))
 
