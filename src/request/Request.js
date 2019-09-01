@@ -2,8 +2,8 @@ const querystring = require('querystring')
 
 const HttpError = require('../error/HttpError')
 
-const encryption = require('../../utils/encryption')
-const validation = require('../../utils/validation')
+const encryption = require('../utils/encryption')
+const validation = require('../utils/validation')
 
 class Request {
   constructor (event, encryptionKey) {

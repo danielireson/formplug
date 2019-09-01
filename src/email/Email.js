@@ -1,4 +1,4 @@
-const validation = require('../../utils/validation')
+const validation = require('../utils/validation')
 
 class Email {
   constructor (sender, senderArn, subject) {
