@@ -9,8 +9,6 @@ const HtmlResponse = require('./response/HtmlResponse')
 const RedirectResponse = require('./response/RedirectResponse')
 const PlainTextResponse = require('./response/PlainTextResponse')
 
-const emailService = require('./email/EmailService')
-
 const config = require('./utils/config')
 const logging = require('./utils/logging')
 
@@ -35,7 +33,7 @@ module.exports.handle = async (event, context, callback) => {
       config.getValue('SENDER_ARN'),
       config.getValueWithDefault('MSG_SUBJECT', 'You have a form submission'))
 
-    await emailService.send(email.build(request.recipients, request.userParameters))
+    email.build(request.recipients, request.userParameters).send()
 
     const message = config.getValueWithDefault(
       'MSG_RECEIVE_SUCCESS',
