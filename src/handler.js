@@ -1,6 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 
+const aws = require('aws-sdk')
+const ses = new aws.SES()
+
 const Email = require('./models/email/Email')
 const Request = require('./models/request/Request')
 const JsonResponse = require('./models/response/JsonResponse')
@@ -31,7 +34,7 @@ module.exports.handle = async (event, context, callback) => {
       config.getValue('SENDER_ARN'),
       config.getValueWithDefault('MSG_SUBJECT', 'You have a form submission'))
 
-    email.build(request.recipients, request.userParameters).send()
+    await sendEmail(email.build(request.recipients, request.userParameters))
 
     const message = config.getValueWithDefault(
       'MSG_RECEIVE_SUCCESS',
@@ -73,6 +76,10 @@ module.exports.handle = async (event, context, callback) => {
   logging.info(`returning http ${response.statusCode} response`)
 
   callback(null, response.build())
+}
+
+function sendEmail (email) {
+  return ses.sendEmail(email).promise()
 }
 
 function htmlTemplate () {
