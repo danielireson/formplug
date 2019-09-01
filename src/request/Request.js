@@ -1,6 +1,7 @@
 const querystring = require('querystring')
 
-const HttpError = require('../error/HttpError')
+const ForbiddenError = require('../error/ForbiddenError')
+const UnprocessableEntityError = require('../error/UnprocessableEntityError')
 
 const encryption = require('../utils/encryption')
 const validation = require('../utils/validation')
@@ -38,7 +39,7 @@ class Request {
   _validateResponseFormat () {
     if ('format' in this.queryStringParameters) {
       if (this.queryStringParameters.format !== 'json' && this.queryStringParameters.format !== 'html') {
-        return Promise.reject(new HttpError().unprocessableEntity('Invalid response format in the query string'))
+        return Promise.reject(new UnprocessableEntityError('Invalid response format in the query string'))
       } else {
         this.responseFormat = this.queryStringParameters.format
       }
@@ -49,7 +50,7 @@ class Request {
 
   _validateNoHoneyPot () {
     if ('_honeypot' in this.userParameters && this.userParameters._honeypot !== '') {
-      return Promise.reject(new HttpError().forbidden('You shall not pass'))
+      return Promise.reject(new ForbiddenError('You shall not pass'))
     }
 
     return Promise.resolve()
@@ -57,7 +58,7 @@ class Request {
 
   _validateToRecipient () {
     if (this.recipients.to === '') {
-      return Promise.reject(new HttpError().unprocessableEntity("Please provide a recipient in '_to' field"))
+      return Promise.reject(new UnprocessableEntityError("Please provide a recipient in '_to' field"))
     }
   }
 
@@ -68,7 +69,7 @@ class Request {
         .forEach((field) => {
           let input = this.userParameters[field]
           if (!this._parseEmail(input, field)) {
-            return reject(new HttpError().unprocessableEntity(`Invalid email in '${field}' field`))
+            return reject(new UnprocessableEntityError(`Invalid email in '${field}' field`))
           }
         })
 
@@ -84,7 +85,7 @@ class Request {
           let inputs = this.userParameters[field].split(';')
           inputs.forEach((input) => {
             if (!this._parseEmail(input, field)) {
-              return reject(new HttpError().unprocessableEntity(`Invalid email in '${field}' field`))
+              return reject(new UnprocessableEntityError(`Invalid email in '${field}' field`))
             }
           })
         })
@@ -96,7 +97,7 @@ class Request {
   _validateRedirect () {
     if ('_redirect' in this.userParameters) {
       if (!validation.isWebsite(this.userParameters['_redirect'])) {
-        return Promise.reject(new HttpError().unprocessableEntity("Invalid website URL in '_redirect'"))
+        return Promise.reject(new UnprocessableEntityError("Invalid website URL in '_redirect'"))
       } else {
         this.responseFormat = 'plain'
         this.redirectUrl = this.userParameters['_redirect']
