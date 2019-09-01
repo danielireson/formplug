@@ -1,11 +1,12 @@
 const querystring = require('querystring')
 
-const HttpError = require('../http/HttpError')
+const HttpError = require('../error/HttpError')
 
-const validation = require('../utils/validation')
+const encryption = require('../../utils/encryption')
+const validation = require('../../utils/validation')
 
 class Request {
-  constructor (event, encrypter) {
+  constructor (event, encryptionKey) {
     this.singleEmailFields = ['_to']
     this.delimeteredEmailFields = ['_cc', '_bcc', '_replyTo']
     this.recipients = {
@@ -21,7 +22,7 @@ class Request {
     this.pathParameters = event.pathParameters || {}
     this.queryStringParameters = event.queryStringParameters || {}
     this.userParameters = querystring.parse(event.body)
-    this.encrypter = encrypter
+    this.encryptionKey = encryptionKey
   }
 
   validate () {
@@ -113,7 +114,7 @@ class Request {
     }
 
     // check for encrypted email addresses
-    let inputDecrypted = this.encrypter.decrypt(input)
+    let inputDecrypted = encryption.decrypt(input, this.encryptionKey)
     if (validation.isEmail(inputDecrypted)) {
       this._addEmail(inputDecrypted, field)
       return true

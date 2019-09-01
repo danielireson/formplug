@@ -1,20 +1,18 @@
 const fs = require('fs')
 const path = require('path')
 
-const Encrypter = require('./encryption/Encrypter')
-const Email = require('./email/Email')
-const Request = require('./request/Request')
-const JsonResponse = require('./response/JsonResponse')
-const HtmlResponse = require('./response/HtmlResponse')
-const RedirectResponse = require('./response/RedirectResponse')
-const PlainTextResponse = require('./response/PlainTextResponse')
+const Email = require('./models/email/Email')
+const Request = require('./models/request/Request')
+const JsonResponse = require('./models/response/JsonResponse')
+const HtmlResponse = require('./models/response/HtmlResponse')
+const RedirectResponse = require('./models/response/RedirectResponse')
+const PlainTextResponse = require('./models/response/PlainTextResponse')
 
 const config = require('./utils/config')
 const logging = require('./utils/logging')
 
 module.exports.handle = async (event, context, callback) => {
-  const encrypter = new Encrypter(config.getValue('ENCRYPTION_KEY'))
-  const request = new Request(event, encrypter)
+  const request = new Request(event, config.getValue('ENCRYPTION_KEY'))
 
   let response = null
 
