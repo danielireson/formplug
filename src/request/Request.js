@@ -2,14 +2,16 @@ const querystring = require('querystring')
 
 const ForbiddenError = require('../error/ForbiddenError')
 const UnprocessableEntityError = require('../error/UnprocessableEntityError')
+const ValidationError = require('../error/ValidationError')
 
 const encryption = require('../utils/encryption')
 const validation = require('../utils/validation')
 
+const SINGLE_EMAIL_FIELDS = ['_to']
+const DELIMETERED_EMAIL_FIELDS = ['_cc', '_bcc', '_replyTo']
+
 class Request {
   constructor (event, encryptionKey) {
-    this.singleEmailFields = ['_to']
-    this.delimeteredEmailFields = ['_cc', '_bcc', '_replyTo']
     this.recipients = {
       to: '',
       cc: [],
@@ -64,7 +66,7 @@ class Request {
 
   _validateSingleEmails () {
     return new Promise((resolve, reject) => {
-      this.singleEmailFields
+      SINGLE_EMAIL_FIELDS
         .filter((field) => field in this.userParameters)
         .forEach((field) => {
           let input = this.userParameters[field]
@@ -79,7 +81,7 @@ class Request {
 
   _validateDelimiteredEmails () {
     return new Promise((resolve, reject) => {
-      this.delimeteredEmailFields
+      DELIMETERED_EMAIL_FIELDS
         .filter((field) => field in this.userParameters)
         .forEach((field) => {
           let inputs = this.userParameters[field].split(';')
@@ -123,7 +125,7 @@ class Request {
   }
 
   _addEmail (email, field) {
-    if (this.delimeteredEmailFields.indexOf(field) === -1) {
+    if (DELIMETERED_EMAIL_FIELDS.indexOf(field) === -1) {
       this.recipients[field.substring(1)] = email
     } else {
       this.recipients[field.substring(1)].push(email)

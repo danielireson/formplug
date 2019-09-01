@@ -20,7 +20,7 @@ class Email {
           Data: this._buildMessageBody(userParameters)
         }
       }
-    }    
+    }
   }
 
   validate () {
