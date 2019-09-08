@@ -1,11 +1,15 @@
 module.exports.info = message => {
-  console.log(message)
+  if (process.env.NODE_ENV !== 'test') {
+    console.log(message)
+  }
 }
 
 module.exports.error = (message, error) => {
-  console.error(message)
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(message)
 
-  if (error) {
-    console.error(error)
+    if (error) {
+      console.error(error)
+    }
   }
 }
