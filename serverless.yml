@@ -15,11 +15,6 @@ provider:
       Resource: "*"
     - Effect: "Allow"
       Action:
-        - "sqs:SendMessage"
-        - "ses:SendEmail"
-      Resource: "*"
-    - Effect: "Allow"
-      Action:
         - "ses:*"
       Resource: ${file(config.json):SENDER_ARN}
 
