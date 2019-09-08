@@ -198,7 +198,7 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com'
+      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true'
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -216,5 +216,17 @@ describe('Request', function () {
     const error = testSubject.validate()
     assert.instanceOf(error, UnprocessableEntityError)
     assert.strictEqual(error.message, "Invalid website URL in '_redirect'")
+  })
+
+  it('should reject validation when there is no custom parameters', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com'
+    }
+    const testSubject = new Request(event, encryptionKey)
+    const error = testSubject.validate()
+    assert.instanceOf(error, UnprocessableEntityError)
+    assert.strictEqual(error.message, "Expected at least one custom field")
   })
 })

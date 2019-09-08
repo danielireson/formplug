@@ -57,6 +57,14 @@ class Request {
     if (this.redirectUrl && !validation.isWebsite(this.redirectUrl)) {
       return new UnprocessableEntityError("Invalid website URL in '_redirect'")
     }
+
+    const customParameters = Object.keys(this.userParameters).filter(param => {
+      return param.substring(0, 1) !== '_'
+    })
+
+    if (customParameters.length < 1) {
+      return new UnprocessableEntityError(`Expected at least one custom field`)
+    }
   }
 
   _buildRecipients (userParameters, encryptionKey) {
