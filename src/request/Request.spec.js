@@ -45,6 +45,18 @@ describe('Request', function () {
     assert.strictEqual(error.message, 'Invalid response format in the query string')
   })
 
+  it("should return true when the query string has 'format=json'", function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {
+        format: 'json'
+      },
+      body: ''
+    }
+    const testSubject = new Request(event, encryptionKey)
+    assert.ok(testSubject.isJsonResponse())
+  })
+
   it('should get user parameters from request body', function () {
     const event = {
       pathParameters: {},
@@ -216,6 +228,18 @@ describe('Request', function () {
     const error = testSubject.validate()
     assert.instanceOf(error, UnprocessableEntityError)
     assert.strictEqual(error.message, "Invalid website URL in '_redirect'")
+  })
+
+  it('should return true when there is a redirect URL', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true'
+    }
+    const testSubject = new Request(event, encryptionKey)
+    const error = testSubject.validate()
+    assert.strictEqual(error, undefined)
+    assert.ok(testSubject.isRedirectResponse())
   })
 
   it('should reject validation when there is no custom parameters', function () {

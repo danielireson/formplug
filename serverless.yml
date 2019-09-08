@@ -25,7 +25,7 @@ provider:
 
 functions:
   receive:
-    handler: src/handler.handle
+    handler: src/index.handler
     events:
       - http:
           path: /

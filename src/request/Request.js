@@ -67,6 +67,14 @@ class Request {
     }
   }
 
+  isJsonResponse() {
+    return this.responseFormat === 'json'
+  }
+
+  isRedirectResponse() {
+    return this.redirectUrl !== null
+  }
+
   _buildRecipients (userParameters, encryptionKey) {
     const recipients = {
       to: '',

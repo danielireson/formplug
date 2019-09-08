@@ -1,26 +1,25 @@
-const fs = require('fs')
-const path = require('path')
-
-const aws = require('aws-sdk')
-const ses = new aws.SES()
-
 const Email = require('./email/Email')
 const Request = require('./request/Request')
+const HttpError = require('./error/HttpError')
 const JsonResponse = require('./response/JsonResponse')
 const HtmlResponse = require('./response/HtmlResponse')
 const RedirectResponse = require('./response/RedirectResponse')
 const PlainTextResponse = require('./response/PlainTextResponse')
 
-const config = require('./utils/config')
-const logging = require('./utils/logging')
+const logging = require('./lib/logging')
 
-module.exports.handle = async (event, context, callback) => {
-  const request = new Request(event, config.getValue('ENCRYPTION_KEY'))
+module.exports = container => async event => {
+  const request = new Request(event, container.config.ENCRYPTION_KEY)
 
-  let response = null
+  let error
+  let response
 
   try {
-    await request.validate()
+    error = request.validate()
+
+    if (error) {
+      throw error
+    }
 
     const recipientCount = [].concat(
       request.recipients.cc,
@@ -30,25 +29,32 @@ module.exports.handle = async (event, context, callback) => {
     logging.info(`sending to '${request.recipients.to}' and ${recipientCount} other recipients`)
 
     const email = new Email(
-      config.getValue('SENDER'),
-      config.getValue('SENDER_ARN'),
-      config.getValueWithDefault('MSG_SUBJECT', 'You have a form submission'))
+      container.config.SENDER,
+      container.config.SENDER_ARN,
+      container.config.MSG_SUBJECT,
+      request.recipients,
+      request.userParameters)
 
-    await sendEmail(email.build(request.recipients, request.userParameters))
+    error = email.validate()
 
-    const message = config.getValueWithDefault(
-      'MSG_RECEIVE_SUCCESS',
-      'Form submission successfully made')
+    if (error) {
+      throw error
+    }
 
-    if (request.responseFormat === 'json') {
+    await container.sendEmail(email)
+
+    const message = container.config.MSG_RECEIVE_SUCCESS
+
+    if (request.isJsonResponse()) {
       response = new JsonResponse(200, message)
-    } else if (request.redirectUrl) {
+    } else if (request.isRedirectResponse()) {
       response = new RedirectResponse(302, message, request.redirectUrl)
     } else {
       try {
-        response = new HtmlResponse(200, message, htmlTemplate())
+        response = new HtmlResponse(200, message, await container.loadTemplate())
       } catch (error) {
-        response = new PlainTextResponse(500, message)
+        logging.error('unable to load template file', error)
+        response = new PlainTextResponse(200, message)
       }
     }
   } catch (error) {
@@ -62,12 +68,13 @@ module.exports.handle = async (event, context, callback) => {
       message = error.message
     }
 
-    if (request.responseFormat === 'json') {
+    if (request.isJsonResponse()) {
       response = new JsonResponse(statusCode, message)
     } else {
       try {
-        response = new HtmlResponse(statusCode, message, htmlTemplate())
+        response = new HtmlResponse(statusCode, message, await container.loadTemplate())
       } catch (error) {
+        logging.error('unable to load template file', error)
         response = new PlainTextResponse(statusCode, message)
       }
     }
@@ -75,17 +82,5 @@ module.exports.handle = async (event, context, callback) => {
 
   logging.info(`returning http ${response.statusCode} response`)
 
-  callback(null, response.build())
-}
-
-function sendEmail (email) {
-  return ses.sendEmail(email).promise()
-}
-
-function htmlTemplate () {
-  return fs.readFileSync(
-    path.resolve(
-      __dirname,
-      'templates',
-      config.getValueWithDefault('TEMPLATE', 'default.html'))).toString()
+  return response.build()
 }

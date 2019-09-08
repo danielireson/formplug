@@ -7,9 +7,7 @@
   "scripts": {
     "encrypt": "node ./scripts/encrypt.js",
     "decrypt": "node ./scripts/decrypt.js",
-    "test:unit": "NODE_ENV=testing mocha ./src/**/*.spec.js",
-    "test:integration": "NODE_ENV=testing mocha test",
-    "test": "npm run test:unit && npm run test:integration"
+    "test": "NODE_ENV=test mocha './src/**/*.spec.js'"
   },
   "dependencies": {
     "aws-sdk": "^2.28.0",
