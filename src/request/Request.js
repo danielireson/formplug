@@ -3,8 +3,8 @@ const querystring = require('querystring')
 const ForbiddenError = require('../error/ForbiddenError')
 const UnprocessableEntityError = require('../error/UnprocessableEntityError')
 
-const encryption = require('../utils/encryption')
-const validation = require('../utils/validation')
+const encryption = require('../lib/encryption')
+const validation = require('../lib/validation')
 
 const SINGLE_EMAIL_FIELDS = ['_to']
 const DELIMETERED_EMAIL_FIELDS = ['_cc', '_bcc', '_replyTo']

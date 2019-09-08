@@ -1,6 +1,6 @@
 const InternalServerError = require('../error/InternalServerError')
 
-const validation = require('../utils/validation')
+const validation = require('../lib/validation')
 
 class Email {
   constructor (sender, senderArn, subject, recipients, userParameters) {
