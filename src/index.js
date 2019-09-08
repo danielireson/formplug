@@ -19,8 +19,9 @@ module.exports.handler = require('./handler')({
     return ses.sendEmail(email).promise()
   },
   loadTemplate: () => {
-    const fileName = getValue('TEMPLATE', config, 'default.html')
-    const filePath = path.resolve(__dirname, 'templates', fileName)
+    const customFilePath = path.resolve(__dirname, 'templates', 'custom.html')
+    const defaultFilePath = path.resolve(__dirname, 'templates', 'default.html')
+    const filePath = fs.existsSync(customFilePath) ? customFilePath : defaultFilePath
     return util.promisify(fs.readFile)(filePath).then(file => file.toString())
   },
 })
