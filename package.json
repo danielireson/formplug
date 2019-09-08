@@ -19,7 +19,7 @@
     "eslint-plugin-node": "^4.2.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^2.1.1",
-    "mocha": "^6.0.2",
+    "mocha": "^6.2.0",
     "serverless-plugin-include-dependencies": "^3.0.0"
   }
 }
