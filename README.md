@@ -84,7 +84,7 @@ ff17d6a0cd474813adc031a9b24855090b5e8b => johndoe@example.com
 Follow the [Serverless Framework AWS installation](https://serverless.com/framework/docs/providers/aws/guide/installation).
 
 ### Setup SES identity
-Amazon SES can only send emails from addresses that you have verified ownership of. Verification can be done using the [AWS Management Console](aws.amazon.com) by visiting the SES Dashboard and heading to Identity Management. AWS also puts new SES accounts under limits which prevent emails from being sent to email addresses that haven't been verified. Check out the relevant [AWS SES documentation](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html) for more information. The limits can be lifted by opening a support ticket as outlined in the docs.
+Amazon SES can only send emails from addresses that you have verified ownership of. Verification can be done using the [AWS Management Console](https://aws.amazon.com) by visiting the SES Dashboard and heading to Identity Management. AWS also puts new SES accounts under limits which prevent emails from being sent to email addresses that haven't been verified. Check out the relevant [AWS SES documentation](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html) for more information. The limits can be lifted by opening a support ticket.
 
 ### Install dependencies
 Run `npm install` to get the NPM dependencies.
@@ -104,3 +104,4 @@ MSG_SUBJECT | The subject line to use in emails. | N
 
 ### Deploy
 Run `serverless deploy` to deploy to AWS.
+  
