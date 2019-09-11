@@ -15,6 +15,8 @@ class Request {
     this.recipients = this._buildRecipients(this.userParameters, encryptionKey)
     this.responseFormat = this._buildResponseFormat(event.queryStringParameters)
     this.redirectUrl = this._buildRedirectUrl(this.userParameters)
+    this.recaptcha = this._buildRecaptcha(this.userParameters)
+    this.sourceIp = this._buildSourceIp(event)
   }
 
   validate (whitelistedRecipients) {
@@ -129,6 +131,25 @@ class Request {
   _buildRedirectUrl (params) {
     if (params && '_redirect' in params) {
       return params['_redirect']
+    } else {
+      return null
+    }
+  }
+
+  _buildRecaptcha (params) {
+    if (params && '_recaptcha' in params) {
+      return params['_recaptcha']
+    } else {
+      return null
+    }
+  }
+
+  _buildSourceIp (event) {
+    if (event &&
+      event.requestContext &&
+      event.requestContext.identity &&
+      event.requestContext.identity.sourceIp) {
+      return event.requestContext.identity.sourceIp
     } else {
       return null
     }

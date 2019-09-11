@@ -288,4 +288,29 @@ describe('Request', function () {
     assert.instanceOf(error, UnprocessableEntityError)
     assert.strictEqual(error.message, "Expected at least one custom field")
   })
+
+  it('should get the recaptcha from the request', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_recaptcha=abc'
+    }
+    const testSubject = new Request(event, encryptionKey)
+    assert.strictEqual(testSubject.recaptcha, 'abc')
+  })
+
+  it('should get the source ip from the request', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
+    }
+    const testSubject = new Request(event, encryptionKey)
+    assert.strictEqual(testSubject.sourceIp, '127.0.0.1')
+  })
 })
