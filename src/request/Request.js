@@ -76,7 +76,7 @@ class Request {
   }
 
   isRedirectResponse() {
-    return this.redirectUrl !== null
+    return this.redirectUrl != null
   }
 
   _buildRecipients (userParameters, encryptionKey) {
