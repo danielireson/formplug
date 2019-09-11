@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const util = require('util')
 
+const request = require('request')
 const aws = require('aws-sdk')
 const ses = new aws.SES()
 
@@ -15,6 +16,20 @@ module.exports.handler = require('./handler')({
     WHITELISTED_RECIPIENTS: getValue('WHITELISTED_RECIPIENTS', config, null),
     MSG_SUBJECT: getValue('MSG_SUBJECT', config, 'You have a form submission'),
     MSG_RECEIVE_SUCCESS: getValue('MSG_RECEIVE_SUCCESS', config, 'Form submission successfully made')
+  },
+  isValidRecaptcha: (req) => {
+    if (!config['RECAPTCHA_SECRET_KEY']) {
+      return Promise.resolve(true)
+    } else {
+      return util.promisify(request.post)('https://www.google.com/recaptcha/api/siteverify', {
+        form:{
+          secret: getValue('RECAPTCHA_SECRET_KEY', config),
+          response: req.recaptcha,
+          remoteip: req.sourceIp
+        },
+        json: true
+      }).then(response => !!response.success)
+    }
   },
   sendEmail: email => {
     return ses.sendEmail(email).promise()
