@@ -21,7 +21,7 @@ Use a `select` if you want to change the recipient based on a user choice withou
   <option value="johndoe@example.com">Recipient option 1</option>
   <option value="janedoe@exmaple.com">Recipient option 2</option>
 </select>
-``` 
+```
 
 Create a custom HTML template at [src/template/custom.html](src/templates/custom.html) and this will be used instead of [default.html](src/templates/default.html).
 
