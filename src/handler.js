@@ -1,6 +1,7 @@
 const Email = require('./email/Email')
 const Request = require('./request/Request')
 const HttpError = require('./error/HttpError')
+const ForbiddenError = require('./error/ForbiddenError')
 const JsonResponse = require('./response/JsonResponse')
 const HtmlResponse = require('./response/HtmlResponse')
 const RedirectResponse = require('./response/RedirectResponse')
@@ -15,6 +16,12 @@ module.exports = container => async event => {
   let response
 
   try {
+    const isValidRecaptcha = await container.isValidRecaptcha(request)
+
+    if (!isValidRecaptcha) {
+      throw new ForbiddenError('Form submission failed recaptcha')
+    }
+
     error = request.validate(container.config.WHITELISTED_RECIPIENTS)
 
     if (error) {

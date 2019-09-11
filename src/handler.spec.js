@@ -17,6 +17,9 @@ describe('handler', function () {
   const loadTemplateSuccess = () => Promise.resolve('<!DOCTYPE html><html><body>{{ message }}</body></html>')
   const loadTemplateFailure = error => Promise.reject(error)
 
+  const isValidRecaptchaSuccess = success => Promise.resolve(success)
+  const isValidRecaptchaFailure = error => Promise.reject(error)
+
   it('should return a successful html response', async function () {
     // given
     const event = {
@@ -26,6 +29,7 @@ describe('handler', function () {
     // when
     const response = await require('./handler')({
       config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailSuccess,
       loadTemplate: loadTemplateSuccess
     })(event)
@@ -52,6 +56,7 @@ describe('handler', function () {
     // when
     const response = await require('./handler')({
       config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailSuccess,
       loadTemplate: loadTemplateSuccess
     })(event)
@@ -76,6 +81,7 @@ describe('handler', function () {
     // when
     const response = await require('./handler')({
       config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailSuccess,
       loadTemplate: loadTemplateSuccess
     })(event)
@@ -91,6 +97,28 @@ describe('handler', function () {
     })
   })
 
+  it('should return a 403 response when recaptcha validation fails', async function () {
+    // given
+    const event = {}
+
+    // when
+    const response = await require('./handler')({
+      config,
+      isValidRecaptcha: () => isValidRecaptchaSuccess(false),
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess
+    })(event)
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 403,
+      headers: {
+        'Content-Type': 'text/html'
+      },
+      body: "<!DOCTYPE html><html><body>Form submission failed recaptcha</body></html>"
+    })
+  })
+
   it('should return a 422 response when request validation fails', async function () {
     // given
     const event = {}
@@ -98,6 +126,7 @@ describe('handler', function () {
     // when
     const response = await require('./handler')({
       config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailSuccess,
       loadTemplate: loadTemplateSuccess
     })(event)
@@ -121,6 +150,7 @@ describe('handler', function () {
     // when
     const response = await require('./handler')({
       config: {...config, MSG_SUBJECT: null},
+      isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailSuccess,
       loadTemplate: loadTemplateSuccess
     })(event)
@@ -144,6 +174,7 @@ describe('handler', function () {
     // when
     const response = await require('./handler')({
       config: config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailFailure(new Error('testing')),
       loadTemplate: loadTemplateSuccess
     })(event)
@@ -167,6 +198,7 @@ describe('handler', function () {
     // when
     const response = await require('./handler')({
       config: config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailSuccess,
       loadTemplate: loadTemplateFailure(new Error('testing'))
     })(event)
