@@ -2,6 +2,7 @@ const querystring = require('querystring')
 
 const ForbiddenError = require('../error/ForbiddenError')
 const UnprocessableEntityError = require('../error/UnprocessableEntityError')
+const BadRequestError = require('../error/BadRequestError')
 
 const encryption = require('../lib/encryption')
 const validation = require('../lib/validation')
@@ -16,7 +17,7 @@ class Request {
     this.responseFormat = this._buildResponseFormat(event.queryStringParameters)
     this.redirectUrl = this._buildRedirectUrl(this.userParameters)
     this.recaptcha = this._buildRecaptcha(this.userParameters)
-    this.sourceIp = this._buildSourceIp(event)
+    this.sourceIp = this._buildSourceIp(event.requestContext)
   }
 
   validate (whitelistedRecipients) {
@@ -70,6 +71,10 @@ class Request {
 
     if (customParameters.length < 1) {
       return new UnprocessableEntityError(`Expected at least one custom field`)
+    }
+
+    if (!this.sourceIp) {
+      return new BadRequestError('Expected request to include source ip')
     }
   }
 
@@ -140,12 +145,11 @@ class Request {
     }
   }
 
-  _buildSourceIp (event) {
-    if (event &&
-      event.requestContext &&
-      event.requestContext.identity &&
-      event.requestContext.identity.sourceIp) {
-      return event.requestContext.identity.sourceIp
+  _buildSourceIp (requestContext) {
+    if (requestContext &&
+      requestContext.identity &&
+      requestContext.identity.sourceIp) {
+      return requestContext.identity.sourceIp
     }
   }
 }

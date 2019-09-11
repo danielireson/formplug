@@ -23,7 +23,12 @@ describe('handler', function () {
   it('should return a successful html response', async function () {
     // given
     const event = {
-      body: '_to=test%40example.com&testing=true'
+      body: '_to=test%40example.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
 
     // when
@@ -50,7 +55,12 @@ describe('handler', function () {
       'queryStringParameters': {
         format: 'json'
       },
-      body: '_to=test%40example.com&testing=true'
+      body: '_to=test%40example.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
 
     // when
@@ -75,7 +85,12 @@ describe('handler', function () {
   it('should return a successful redirect response', async function () {
     // given
     const event = {
-      body: '_to=test%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true'
+      body: '_to=test%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
 
     // when
@@ -144,7 +159,12 @@ describe('handler', function () {
   it('should return a 500 response when email validation fails', async function () {
     // given
     const event = {
-      body: '_to=test%40example.com&testing=true'
+      body: '_to=test%40example.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
 
     // when
@@ -168,7 +188,12 @@ describe('handler', function () {
   it('should return a 500 response when email sending fails', async function () {
     // given
     const event = {
-      body: '_to=test%40example.com&testing=true'
+      body: '_to=test%40example.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
 
     // when
@@ -192,7 +217,12 @@ describe('handler', function () {
   it('should handle template loading failures', async function () {
     // given
     const event = {
-      body: '_to=test%40example.com&testing=true'
+      body: '_to=test%40example.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
 
     // when

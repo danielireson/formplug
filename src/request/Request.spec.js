@@ -5,6 +5,7 @@ const assert = require('chai').assert
 const Request = require('./Request')
 const UnprocessableEntityError = require('../error/UnprocessableEntityError')
 const ForbiddenError = require('../error/ForbiddenError')
+const BadRequestError = require('../error/BadRequestError')
 
 describe('Request', function () {
   const encryptionKey = 'testing'
@@ -13,7 +14,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: ''
+      body: '',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.strictEqual(testSubject.responseFormat, 'html')
@@ -25,7 +31,12 @@ describe('Request', function () {
       queryStringParameters: {
         format: 'json'
       },
-      body: ''
+      body: '',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.strictEqual(testSubject.responseFormat, 'json')
@@ -37,7 +48,12 @@ describe('Request', function () {
       queryStringParameters: {
         format: 'invalid'
       },
-      body: '_to=johndoe%40example.com'
+      body: '_to=johndoe%40example.com',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -51,7 +67,12 @@ describe('Request', function () {
       queryStringParameters: {
         format: 'json'
       },
-      body: ''
+      body: '',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.ok(testSubject.isJsonResponse())
@@ -61,7 +82,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: 'one=var1&two=var2&three=var3'
+      body: 'one=var1&two=var2&three=var3',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.deepEqual(testSubject.userParameters, {one: 'var1', two: 'var2', three: 'var3'})
@@ -71,7 +97,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com'
+      body: '_to=johndoe%40example.com',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.strictEqual(testSubject.recipients.to, 'johndoe@example.com')
@@ -81,7 +112,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
+      body: '_to=d9d3764d8215e758a7fb2b6df34bf94f9ba058',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.strictEqual(testSubject.recipients.to, 'johndoe@example.com')
@@ -91,7 +127,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: ''
+      body: '',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -103,7 +144,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_replyTo=johndoe%40example.com'
+      body: '_replyTo=johndoe%40example.com',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.deepEqual(testSubject.recipients.replyTo, ['johndoe@example.com'])
@@ -113,7 +159,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_replyTo=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
+      body: '_replyTo=d9d3764d8215e758a7fb2b6df34bf94f9ba058',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.deepEqual(testSubject.recipients.replyTo, ['johndoe@example.com'])
@@ -123,7 +174,13 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_replyTo=johndoe'
+      body: '_to=johndoe%40example.com&_replyTo=johndoe',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
+
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -135,7 +192,13 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe%40example.com'
+      body: '_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe%40example.com',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
+
     }
     const testSubject = new Request(event, encryptionKey)
     assert.deepEqual(testSubject.recipients.cc, ['johndoe@example.com', 'janedoe@example.com'])
@@ -145,7 +208,13 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_cc=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
+      body: '_to=johndoe%40example.com&_cc=d9d3764d8215e758a7fb2b6df34bf94f9ba058',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
+
     }
     const testSubject = new Request(event, encryptionKey)
     assert.deepEqual(testSubject.recipients.cc, ['johndoe@example.com'])
@@ -155,7 +224,13 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_cc=johndoe'
+      body: '_to=johndoe%40example.com&_cc=johndoe',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
+
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -167,7 +242,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe%40example.com'
+      body: '_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe%40example.com',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.deepEqual(testSubject.recipients.bcc, ['johndoe@example.com', 'janedoe@example.com'])
@@ -177,7 +257,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_bcc=d9d3764d8215e758a7fb2b6df34bf94f9ba058'
+      body: '_to=johndoe%40example.com&_bcc=d9d3764d8215e758a7fb2b6df34bf94f9ba058',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     assert.deepEqual(testSubject.recipients.bcc, ['johndoe@example.com'])
@@ -187,7 +272,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_bcc=johndoe'
+      body: '_to=johndoe%40example.com&_bcc=johndoe',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -199,7 +289,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&testing=true'
+      body: '_to=johndoe%40example.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate(null)
@@ -210,7 +305,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com'
+      body: '_to=johndoe%40example.com',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate(['janedoe@example.com'])
@@ -222,7 +322,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_cc=janedoe%40example.com'
+      body: '_to=johndoe%40example.com&_cc=janedoe%40example.com',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate(['johndoe@example.com'])
@@ -234,7 +339,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_honeypot=testing'
+      body: '_to=johndoe%40example.com&_honeypot=testing',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -245,7 +355,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true'
+      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -257,7 +372,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_redirect=invalid'
+      body: '_to=johndoe%40example.com&_redirect=invalid',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -269,7 +389,12 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true'
+      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
@@ -281,12 +406,29 @@ describe('Request', function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com'
+      body: '_to=johndoe%40example.com',
+      requestContext: {
+        identity: {
+          sourceIp: '127.0.0.1'
+        }
+      }
     }
     const testSubject = new Request(event, encryptionKey)
     const error = testSubject.validate()
     assert.instanceOf(error, UnprocessableEntityError)
     assert.strictEqual(error.message, "Expected at least one custom field")
+  })
+
+  it('should reject validation when there is no source ip', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&testing=true'
+    }
+    const testSubject = new Request(event, encryptionKey)
+    const error = testSubject.validate()
+    assert.instanceOf(error, BadRequestError)
+    assert.strictEqual(error.message, 'Expected request to include source ip')
   })
 
   it('should get the recaptcha from the request', function () {
