@@ -17,7 +17,7 @@ class Request {
     this.redirectUrl = this._buildRedirectUrl(this.userParameters)
   }
 
-  validate () {
+  validate (whitelistedRecipients) {
     if ('_honeypot' in this.userParameters && this.userParameters._honeypot !== '') {
       return new ForbiddenError()
     }
@@ -30,28 +30,32 @@ class Request {
       return new UnprocessableEntityError("Invalid '_to' recipient")
     }
 
-    const invalidSingleEmailField = SINGLE_EMAIL_FIELDS.find(field => {
+    for (const field of SINGLE_EMAIL_FIELDS) {
       if (field in this.userParameters) {
-        return !validation.isEmail(this.recipients[field.substring(1)])
-      } else {
-        return false
-      }
-    })
+        const email = this.recipients[field.substring(1)].toLowerCase()
+        
+        if (!validation.isEmail(email)) {
+          return new UnprocessableEntityError(`Invalid email in '${field}' field`)
+        }
 
-    if (invalidSingleEmailField) {
-      return new UnprocessableEntityError(`Invalid email in '${invalidSingleEmailField}' field`)
+        if (whitelistedRecipients && !whitelistedRecipients.includes(email)) {
+          return new UnprocessableEntityError(`Non-whitelisted email in '${field}' field`) 
+        }
+      }
     }
 
-    const invalidDelimeteredEmailField = DELIMETERED_EMAIL_FIELDS.find(field => {
+    for (const field of DELIMETERED_EMAIL_FIELDS) {
       if (field in this.userParameters) {
-        return this.recipients[field.substring(1)].some(e => !validation.isEmail(e))
-      } else {
-        return false
-      }
-    })
+        const emails = this.recipients[field.substring(1)].map(e => e.toLowerCase())
 
-    if (invalidDelimeteredEmailField) {
-      return new UnprocessableEntityError(`Invalid email in '${invalidDelimeteredEmailField}' field`)
+        if (emails.some(e => !validation.isEmail(e))) {
+          return new UnprocessableEntityError(`Invalid email in '${field}' field`)
+        }
+
+        if (whitelistedRecipients && emails.some(e => !whitelistedRecipients.includes(e))) {
+          return new UnprocessableEntityError(`Non-whitelisted email in '${field}' field`)
+        }
+      }
     }
 
     if (this.redirectUrl && !validation.isWebsite(this.redirectUrl)) {

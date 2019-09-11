@@ -12,6 +12,7 @@ module.exports.handler = require('./handler')({
     ENCRYPTION_KEY: getValue('ENCRYPTION_KEY', config),
     SENDER_ARN: getValue('SENDER_ARN', config),
     SENDER: getValue('SENDER', config, 'Formplug'),
+    WHITELISTED_RECIPIENTS: getValue('WHITELISTED_RECIPIENTS', config, null),
     MSG_SUBJECT: getValue('MSG_SUBJECT', config, 'You have a form submission'),
     MSG_RECEIVE_SUCCESS: getValue('MSG_RECEIVE_SUCCESS', config, 'Form submission successfully made')
   },
@@ -29,7 +30,7 @@ module.exports.handler = require('./handler')({
 function getValue (key, obj, defaultValue) {
   const value = obj[key]
 
-  if (value == null || value === '') {
+  if (value === undefined || value === '') {
     if (!defaultValue) {
       throw new Error(`Required config not found: ${key}`)
     } else {

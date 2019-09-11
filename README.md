@@ -101,7 +101,7 @@ STAGE | The AWS stage to deploy to (it's common to use *dev* or *prod*). | Y
 SENDER_ARN | The [ARN](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html) of the sender email address. | Y
 MSG_RECEIVE_SUCCESS | This is returned to the user on a successful form submission if a redirect URL isn't provided. | N
 MSG_SUBJECT | The subject line to use in emails. | N
+WHITELISTED_RECIPIENTS | Only allow emails to be sent to specific addresses. | N
 
 ### Deploy
 Run `serverless deploy` to deploy to AWS.
-  

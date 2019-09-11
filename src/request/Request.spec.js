@@ -195,6 +195,41 @@ describe('Request', function () {
     assert.strictEqual(error.message, "Invalid email in '_bcc' field")
   })
 
+  it('should not check for whitelisted emails by default', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&testing=true'
+    }
+    const testSubject = new Request(event, encryptionKey)
+    const error = testSubject.validate(null)
+    assert.strictEqual(error, undefined)
+  })
+
+  it('should reject a non-whitelisted email in a single email field', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com'
+    }
+    const testSubject = new Request(event, encryptionKey)
+    const error = testSubject.validate(['janedoe@example.com'])
+    assert.instanceOf(error, UnprocessableEntityError)
+    assert.strictEqual(error.message, "Non-whitelisted email in '_to' field")
+  })
+
+  it('should reject a non-whitelisted email in a delimetered email field', function () {
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: '_to=johndoe%40example.com&_cc=janedoe%40example.com'
+    }
+    const testSubject = new Request(event, encryptionKey)
+    const error = testSubject.validate(['johndoe@example.com'])
+    assert.instanceOf(error, UnprocessableEntityError)
+    assert.strictEqual(error.message, "Non-whitelisted email in '_cc' field")
+  })
+
   it('should reject validation if the honeypot field has been filled', function () {
     const event = {
       pathParameters: {},

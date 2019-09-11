@@ -15,7 +15,7 @@ module.exports = container => async event => {
   let response
 
   try {
-    error = request.validate()
+    error = request.validate(container.config.WHITELISTED_RECIPIENTS)
 
     if (error) {
       throw error
