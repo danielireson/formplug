@@ -131,16 +131,12 @@ class Request {
   _buildRedirectUrl (params) {
     if (params && '_redirect' in params) {
       return params['_redirect']
-    } else {
-      return null
     }
   }
 
   _buildRecaptcha (params) {
     if (params && '_recaptcha' in params) {
       return params['_recaptcha']
-    } else {
-      return null
     }
   }
 
@@ -150,8 +146,6 @@ class Request {
       event.requestContext.identity &&
       event.requestContext.identity.sourceIp) {
       return event.requestContext.identity.sourceIp
-    } else {
-      return null
     }
   }
 }
