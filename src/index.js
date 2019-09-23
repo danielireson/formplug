@@ -46,7 +46,7 @@ function getValue (key, obj, defaultValue) {
   const value = obj[key]
 
   if (value === undefined || value === '') {
-    if (!defaultValue) {
+    if (defaultValue === undefined) {
       throw new Error(`Required config not found: ${key}`)
     } else {
       return defaultValue
