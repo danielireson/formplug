@@ -12,13 +12,13 @@ describe('handler', function () {
   }
 
   const sendEmailSuccess = email => Promise.resolve()
-  const sendEmailFailure = error => Promise.reject(error)
+  const sendEmailFailure = error => Promise.reject(error).catch(() => {})
 
   const loadTemplateSuccess = () => Promise.resolve('<!DOCTYPE html><html><body>{{ message }}</body></html>')
-  const loadTemplateFailure = error => Promise.reject(error)
+  const loadTemplateFailure = error => Promise.reject(error).catch(() => {})
 
   const isValidRecaptchaSuccess = success => Promise.resolve(success)
-  const isValidRecaptchaFailure = error => Promise.reject(error)
+  const isValidRecaptchaFailure = error => Promise.reject(error).catch(() => {})
 
   it('should return a successful html response', async function () {
     // given
