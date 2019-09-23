@@ -28,7 +28,7 @@ module.exports.handler = require('./handler')({
           remoteip: req.sourceIp
         },
         json: true
-      }).then(response => !!response.success)
+      }).then(response => !!response.body.success)
     }
   },
   sendEmail: email => {
