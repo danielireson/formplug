@@ -17,7 +17,7 @@ module.exports.handler = require('./handler')({
     MSG_SUBJECT: getValue('MSG_SUBJECT', config, 'You have a form submission'),
     MSG_RECEIVE_SUCCESS: getValue('MSG_RECEIVE_SUCCESS', config, 'Form submission successfully made')
   },
-  isValidRecaptcha: (req) => {
+  isValidRecaptcha: req => {
     if (!config['RECAPTCHA_SECRET_KEY']) {
       return Promise.resolve(true)
     } else {
