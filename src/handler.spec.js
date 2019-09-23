@@ -134,6 +134,28 @@ describe('handler', function () {
     })
   })
 
+  it('should return a 500 response when recaptcha validation throws an error', async function () {
+    // given
+    const event = {}
+
+    // when
+    const response = await require('./handler')({
+      config,
+      isValidRecaptcha: isValidRecaptchaFailure(new Error('testing')),
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess
+    })(event)
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'text/html'
+      },
+      body: "<!DOCTYPE html><html><body>An unexpected error occurred</body></html>"
+    })
+  })
+
   it('should return a 422 response when request validation fails', async function () {
     // given
     const event = {}
