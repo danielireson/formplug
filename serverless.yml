@@ -5,7 +5,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs12.x
   stage: ${file(config.json):STAGE}
   region: ${file(config.json):REGION}
   iamRoleStatements:
