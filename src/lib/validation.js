@@ -1,7 +1,9 @@
+const VALID_WEBSITE_SCHEMES = new Set(['http:', 'https:'])
+
 module.exports.isWebsite = string => {
   try {
-    new URL(string)
-    return true
+    const parsed = new URL(string)
+    return VALID_WEBSITE_SCHEMES.has(parsed.protocol)
   } catch (e) {
     // Keeping the regex validation as a fallback to avoid
     // a backwards-incompatible behavior change.
