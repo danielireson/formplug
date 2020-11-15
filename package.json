@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "aws-sdk": "^2.28.0",
-    "fast-check": "^2.6.1",
     "request": "^2.88.0"
   },
   "devDependencies": {
@@ -21,6 +20,7 @@
     "eslint-plugin-node": "^4.2.1",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^2.1.1",
+    "fast-check": "^2.6.1",
     "mocha": "^6.2.0",
     "serverless-plugin-include-dependencies": "^3.0.0"
   }
