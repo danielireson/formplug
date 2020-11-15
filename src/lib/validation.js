@@ -1,7 +1,7 @@
 module.exports.isWebsite = string => {
   try {
-    new URL(string);
-    return true;
+    new URL(string)
+    return true
   } catch (e) {
     // Keeping the regex validation as a fallback to avoid
     // a backwards-incompatible behavior change.
