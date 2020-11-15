@@ -1,6 +1,5 @@
 const describe = require('mocha').describe
 const it = require('mocha').it
-const assert = require('chai').assert
 const fc = require('fast-check')
 
 const validation = require('./validation')
