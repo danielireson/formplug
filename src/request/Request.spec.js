@@ -1,458 +1,543 @@
-const describe = require('mocha').describe
-const it = require('mocha').it
-const assert = require('chai').assert
+const describe = require("mocha").describe;
+const it = require("mocha").it;
+const assert = require("chai").assert;
 
-const Request = require('./Request')
-const UnprocessableEntityError = require('../error/UnprocessableEntityError')
-const ForbiddenError = require('../error/ForbiddenError')
-const BadRequestError = require('../error/BadRequestError')
+const Request = require("./Request");
+const UnprocessableEntityError = require("../error/UnprocessableEntityError");
+const ForbiddenError = require("../error/ForbiddenError");
+const BadRequestError = require("../error/BadRequestError");
 
-describe('Request', function () {
-  const encryptionKey = 'testing'
+describe("Request", function () {
+  const encryptionKey = "testing";
 
   it("should set the response format to 'html' by default", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '',
+      body: "",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.strictEqual(testSubject.responseFormat, 'html')
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.strictEqual(testSubject.responseFormat, "html");
+  });
 
   it("should set the response format to 'json' if the query string has 'format=json'", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {
-        format: 'json'
+        format: "json",
       },
-      body: '',
+      body: "",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.strictEqual(testSubject.responseFormat, 'json')
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.strictEqual(testSubject.responseFormat, "json");
+  });
 
   it("should reject a query string response format that isn't 'json' or 'html'", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {
-        format: 'invalid'
+        format: "invalid",
       },
-      body: '_to=johndoe%40example.com',
+      body: "_to=johndoe%40example.com",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, 'Invalid response format in the query string')
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(
+      error.message,
+      "Invalid response format in the query string"
+    );
+  });
 
   it("should return true when the query string has 'format=json'", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {
-        format: 'json'
+        format: "json",
       },
-      body: '',
+      body: "",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.ok(testSubject.isJsonResponse())
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should get user parameters from request body', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.ok(testSubject.isJsonResponse());
+  });
+
+  it("should get user parameters from request body", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: 'one=var1&two=var2&three=var3',
+      body: "one=var1&two=var2&three=var3",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.deepEqual(testSubject.userParameters, {one: 'var1', two: 'var2', three: 'var3'})
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.deepEqual(testSubject.userParameters, {
+      one: "var1",
+      two: "var2",
+      three: "var3",
+    });
+  });
 
   it("should parse the 'to' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com',
+      body: "_to=johndoe%40example.com",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.strictEqual(testSubject.recipients.to, 'johndoe@example.com')
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.strictEqual(testSubject.recipients.to, "johndoe@example.com");
+  });
 
   it("should parse an encrypted 'to' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=d9d3764d8215e758a7fb2b6df34bf94f9ba058',
+      body: "_to=d9d3764d8215e758a7fb2b6df34bf94f9ba058",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.strictEqual(testSubject.recipients.to, 'johndoe@example.com')
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.strictEqual(testSubject.recipients.to, "johndoe@example.com");
+  });
 
   it("should reject an invalid 'to' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '',
+      body: "",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, "Invalid '_to' recipient")
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(error.message, "Invalid '_to' recipient");
+  });
 
   it("should parse 'replyTo' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_replyTo=johndoe%40example.com',
+      body: "_replyTo=johndoe%40example.com",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.deepEqual(testSubject.recipients.replyTo, ['johndoe@example.com'])
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.deepEqual(testSubject.recipients.replyTo, ["johndoe@example.com"]);
+  });
 
   it("should parse encrypted 'replyTo' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_replyTo=d9d3764d8215e758a7fb2b6df34bf94f9ba058',
+      body: "_replyTo=d9d3764d8215e758a7fb2b6df34bf94f9ba058",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.deepEqual(testSubject.recipients.replyTo, ['johndoe@example.com'])
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.deepEqual(testSubject.recipients.replyTo, ["johndoe@example.com"]);
+  });
 
   it("should reject an invalid 'replyTo' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_replyTo=johndoe',
+      body: "_to=johndoe%40example.com&_replyTo=johndoe",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, "Invalid email in '_replyTo' field")
-  })
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(error.message, "Invalid email in '_replyTo' field");
+  });
 
   it("should parse 'cc' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe%40example.com',
+      body:
+        "_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe%40example.com",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.deepEqual(testSubject.recipients.cc, ['johndoe@example.com', 'janedoe@example.com'])
-  })
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.deepEqual(testSubject.recipients.cc, [
+      "johndoe@example.com",
+      "janedoe@example.com",
+    ]);
+  });
 
   it("should parse encrypted 'cc' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_cc=d9d3764d8215e758a7fb2b6df34bf94f9ba058',
+      body:
+        "_to=johndoe%40example.com&_cc=d9d3764d8215e758a7fb2b6df34bf94f9ba058",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.deepEqual(testSubject.recipients.cc, ['johndoe@example.com'])
-  })
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.deepEqual(testSubject.recipients.cc, ["johndoe@example.com"]);
+  });
 
   it("should reject an invalid 'cc' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_cc=johndoe',
+      body: "_to=johndoe%40example.com&_cc=johndoe",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, "Invalid email in '_cc' field")
-  })
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(error.message, "Invalid email in '_cc' field");
+  });
 
   it("should parse the 'bcc' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe%40example.com',
+      body:
+        "_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe%40example.com",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.deepEqual(testSubject.recipients.bcc, ['johndoe@example.com', 'janedoe@example.com'])
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.deepEqual(testSubject.recipients.bcc, [
+      "johndoe@example.com",
+      "janedoe@example.com",
+    ]);
+  });
 
   it("should parse encrypted 'bcc' recipients", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_bcc=d9d3764d8215e758a7fb2b6df34bf94f9ba058',
+      body:
+        "_to=johndoe%40example.com&_bcc=d9d3764d8215e758a7fb2b6df34bf94f9ba058",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.deepEqual(testSubject.recipients.bcc, ['johndoe@example.com'])
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.deepEqual(testSubject.recipients.bcc, ["johndoe@example.com"]);
+  });
 
   it("should reject an invalid 'bcc' recipient", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_bcc=johndoe',
+      body: "_to=johndoe%40example.com&_bcc=johndoe",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, "Invalid email in '_bcc' field")
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should not check for whitelisted emails by default', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(error.message, "Invalid email in '_bcc' field");
+  });
+
+  it("should not check for whitelisted emails by default", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&testing=true',
+      body: "_to=johndoe%40example.com&testing=true",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate(null)
-    assert.strictEqual(error, undefined)
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should reject a non-whitelisted email in a single email field', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate(null);
+
+    assert.strictEqual(error, undefined);
+  });
+
+  it("should reject a non-whitelisted email in a single email field", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com',
+      body: "_to=johndoe%40example.com",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate(['janedoe@example.com'])
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, "Non-whitelisted email in '_to' field")
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should reject a non-whitelisted email in a delimetered email field', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate(["janedoe@example.com"]);
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(error.message, "Non-whitelisted email in '_to' field");
+  });
+
+  it("should reject a non-whitelisted email in a delimetered email field", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_cc=janedoe%40example.com',
+      body: "_to=johndoe%40example.com&_cc=janedoe%40example.com",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate(['johndoe@example.com'])
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, "Non-whitelisted email in '_cc' field")
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should reject validation if the honeypot field has been filled', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate(["johndoe@example.com"]);
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(error.message, "Non-whitelisted email in '_cc' field");
+  });
+
+  it("should reject validation if the honeypot field has been filled", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_honeypot=testing',
+      body: "_to=johndoe%40example.com&_honeypot=testing",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, ForbiddenError)
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should validate a redirect URL', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, ForbiddenError);
+  });
+
+  it("should validate a redirect URL", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true',
+      body:
+        "_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.strictEqual(error, undefined)
-    assert.strictEqual(testSubject.redirectUrl, 'http://example.com')
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should reject an invalid redirect URL', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.strictEqual(error, undefined);
+    assert.strictEqual(testSubject.redirectUrl, "http://example.com");
+  });
+
+  it("should reject an invalid redirect URL", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_redirect=invalid',
+      body: "_to=johndoe%40example.com&_redirect=invalid",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, "Invalid website URL in '_redirect'")
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should return true when there is a redirect URL', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(error.message, "Invalid website URL in '_redirect'");
+  });
+
+  it("should return true when there is a redirect URL", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true',
+      body:
+        "_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.strictEqual(error, undefined)
-    assert.ok(testSubject.isRedirectResponse())
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should reject validation when there is no custom parameters', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.strictEqual(error, undefined);
+    assert.ok(testSubject.isRedirectResponse());
+  });
+
+  it("should reject validation when there is no custom parameters", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com',
+      body: "_to=johndoe%40example.com",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, UnprocessableEntityError)
-    assert.strictEqual(error.message, "Expected at least one custom field")
-  })
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
-  it('should reject validation when there is no source ip', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, UnprocessableEntityError);
+    assert.strictEqual(error.message, "Expected at least one custom field");
+  });
+
+  it("should reject validation when there is no source ip", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_to=johndoe%40example.com&testing=true'
-    }
-    const testSubject = new Request(event, encryptionKey)
-    const error = testSubject.validate()
-    assert.instanceOf(error, BadRequestError)
-    assert.strictEqual(error.message, 'Expected request to include source ip')
-  })
+      body: "_to=johndoe%40example.com&testing=true",
+    };
 
-  it('should get the recaptcha from the request', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    const error = testSubject.validate();
+
+    assert.instanceOf(error, BadRequestError);
+    assert.strictEqual(error.message, "Expected request to include source ip");
+  });
+
+  it("should get the recaptcha from the request", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '_recaptcha=abc'
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.strictEqual(testSubject.recaptcha, 'abc')
-  })
+      body: "_recaptcha=abc",
+    };
 
-  it('should get the source ip from the request', function () {
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.strictEqual(testSubject.recaptcha, "abc");
+  });
+
+  it("should get the source ip from the request", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: '',
+      body: "",
       requestContext: {
         identity: {
-          sourceIp: '127.0.0.1'
-        }
-      }
-    }
-    const testSubject = new Request(event, encryptionKey)
-    assert.strictEqual(testSubject.sourceIp, '127.0.0.1')
-  })
-})
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    const testSubject = new Request(event, encryptionKey);
+
+    assert.strictEqual(testSubject.sourceIp, "127.0.0.1");
+  });
+});

@@ -1,18 +1,18 @@
 class PlainTextResponse {
-  constructor (statusCode, message) {
-    this.statusCode = statusCode
-    this.message = message
+  constructor(statusCode, message) {
+    this.statusCode = statusCode;
+    this.message = message;
   }
 
-  build () {
+  build() {
     return {
       statusCode: this.statusCode,
       headers: {
-        'Content-Type': 'text/plain'
+        "Content-Type": "text/plain",
       },
-      body: this.message
-    }
+      body: this.message,
+    };
   }
 }
 
-module.exports = PlainTextResponse
+module.exports = PlainTextResponse;

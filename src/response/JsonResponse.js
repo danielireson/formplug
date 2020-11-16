@@ -1,22 +1,22 @@
 class JsonResponse {
-  constructor (statusCode, message) {
-    this.statusCode = statusCode
-    this.message = message
+  constructor(statusCode, message) {
+    this.statusCode = statusCode;
+    this.message = message;
   }
 
-  build () {
+  build() {
     return {
       statusCode: this.statusCode,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         statusCode: this.statusCode,
-        message: this.message
-      })
-    }
+        message: this.message,
+      }),
+    };
   }
 }
 
-module.exports = JsonResponse
+module.exports = JsonResponse;

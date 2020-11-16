@@ -1,19 +1,19 @@
 class HtmlResponse {
-  constructor (statusCode, message, template) {
-    this.statusCode = statusCode
-    this.message = message
-    this.template = template
+  constructor(statusCode, message, template) {
+    this.statusCode = statusCode;
+    this.message = message;
+    this.template = template;
   }
 
-  build () {
+  build() {
     return {
       statusCode: this.statusCode,
       headers: {
-        'Content-Type': 'text/html'
+        "Content-Type": "text/html",
       },
-      body: this.template.replace(/{{ message }}/g, this.message)
-    }
+      body: this.template.replace(/{{ message }}/g, this.message),
+    };
   }
 }
 
-module.exports = HtmlResponse
+module.exports = HtmlResponse;
