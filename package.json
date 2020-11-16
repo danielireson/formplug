@@ -9,7 +9,8 @@
     "decrypt": "node ./scripts/decrypt.js",
     "lint": "eslint src",
     "mocha": "NODE_ENV=test mocha src/**/*.spec.js --exit",
-    "test": "npm run lint && npm run mocha"
+    "test": "npm run lint && npm run mocha",
+    "prettier": "prettier src --write"
   },
   "engines": {
     "node": "12.x"
