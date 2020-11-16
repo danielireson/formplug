@@ -7,7 +7,12 @@
   "scripts": {
     "encrypt": "node ./scripts/encrypt.js",
     "decrypt": "node ./scripts/decrypt.js",
-    "test": "NODE_ENV=test mocha './src/**/*.spec.js'"
+    "lint": "eslint src",
+    "mocha": "NODE_ENV=test mocha src/**/*.spec.js --exit",
+    "test": "npm run lint && npm run mocha"
+  },
+  "engines": {
+    "node": "12.x"
   },
   "dependencies": {
     "aws-sdk": "^2.28.0",
@@ -15,13 +20,11 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "eslint": "^4.18.2",
-    "eslint-config-standard": "^7.0.1",
-    "eslint-plugin-node": "^4.2.1",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^2.1.1",
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
     "fast-check": "^2.6.1",
     "mocha": "^6.2.0",
+    "prettier": "^2.1.2",
     "serverless-plugin-include-dependencies": "^3.0.0"
   }
 }
