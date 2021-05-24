@@ -23,7 +23,6 @@
     "chai": "^4.3.4",
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^8.3.0",
-    "fast-check": "^2.14.0",
     "mocha": "^8.4.0",
     "prettier": "^2.3.0"
   }
