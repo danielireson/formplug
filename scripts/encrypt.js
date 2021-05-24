@@ -1,5 +1,5 @@
 const config = require("../config.json");
-const { encrypt } = require("../src/lib/encryption.js");
+const { encrypt } = require("../src/lib/encryption");
 
 const args = process.argv.slice(2);
 
