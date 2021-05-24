@@ -103,7 +103,7 @@ describe("Request", function () {
 
     const testSubject = new Request(event, encryptionKey);
 
-    assert.deepEqual(testSubject.userParameters, {
+    assert.deepEqual(testSubject.body, {
       one: "var1",
       two: "var2",
       three: "var3",
@@ -432,7 +432,7 @@ describe("Request", function () {
     const error = testSubject.validate();
 
     assert.strictEqual(error, undefined);
-    assert.strictEqual(testSubject.redirectUrl, "http://example.com");
+    assert.strictEqual(testSubject.redirect, "http://example.com");
   });
 
   it("should reject an invalid redirect URL", function () {

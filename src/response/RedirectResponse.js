@@ -1,8 +1,8 @@
 class RedirectResponse {
-  constructor(statusCode, message, redirectUrl) {
+  constructor(statusCode, message, redirect) {
     this.statusCode = statusCode;
     this.message = message;
-    this.redirectUrl = redirectUrl;
+    this.redirect = redirect;
   }
 
   build() {
@@ -10,7 +10,7 @@ class RedirectResponse {
       statusCode: this.statusCode,
       headers: {
         "Content-Type": "text/plain",
-        Location: this.redirectUrl,
+        Location: this.redirect,
       },
       body: this.message,
     };

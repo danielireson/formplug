@@ -2,8 +2,8 @@ const { isEmail } = require("validator");
 const InternalServerError = require("../error/InternalServerError");
 
 class Email {
-  constructor(sender, senderArn, subject, recipients, userParameters) {
-    this.Source = this._buildSenderSource(sender, senderArn);
+  constructor(sender, senderArn, subject, recipients, params) {
+    this.Source = this._source(sender, senderArn);
     this.ReplyToAddresses = recipients.replyTo;
     this.Destination = {
       ToAddresses: [recipients.to],
@@ -16,7 +16,7 @@ class Email {
       },
       Body: {
         Text: {
-          Data: this._buildMessageBody(userParameters),
+          Data: this._messageBody(params),
         },
       },
     };
@@ -77,21 +77,21 @@ class Email {
     }
   }
 
-  _buildSenderSource(sender, senderArn) {
-    const senderArnAsArray = (senderArn || "").split("/");
+  _source(sender, senderArn) {
+    const senderArnAsArray = (senderArn ?? "").split("/");
     const email = senderArnAsArray[senderArnAsArray.length - 1];
     return `${sender} <${email}>`;
   }
 
-  _buildMessageBody(userParameters) {
-    return Object.keys(userParameters || {})
+  _messageBody(requestBody) {
+    return Object.keys(requestBody ?? {})
       .filter(function (param) {
         // don't send private variables
         return param.substring(0, 1) !== "_";
       })
       .reduce(function (message, param) {
         // uppercase the field names and add each parameter value
-        message += param.toUpperCase() + ": " + userParameters[param] + "\r\n";
+        message += param.toUpperCase() + ": " + requestBody[param] + "\r\n";
         return message;
       }, "");
   }
