@@ -1,9 +1,9 @@
 const querystring = require("querystring");
+const { isEmail, isURL } = require("validator");
 const ForbiddenError = require("../error/ForbiddenError");
 const UnprocessableEntityError = require("../error/UnprocessableEntityError");
 const BadRequestError = require("../error/BadRequestError");
 const encryption = require("../lib/encryption");
-const validation = require("../lib/validation");
 
 const SINGLE_EMAIL_FIELDS = ["_to"];
 const DELIMETERED_EMAIL_FIELDS = ["_cc", "_bcc", "_replyTo"];
@@ -42,7 +42,7 @@ class Request {
       if (field in this.userParameters) {
         const email = this.recipients[field.substring(1)].toLowerCase();
 
-        if (!validation.isEmail(email)) {
+        if (!isEmail(email)) {
           return new UnprocessableEntityError(
             `Invalid email in '${field}' field`
           );
@@ -62,7 +62,7 @@ class Request {
           e.toLowerCase()
         );
 
-        if (emails.some((e) => !validation.isEmail(e))) {
+        if (emails.some((e) => !isEmail(e))) {
           return new UnprocessableEntityError(
             `Invalid email in '${field}' field`
           );
@@ -79,7 +79,10 @@ class Request {
       }
     }
 
-    if (this.redirectUrl && !validation.isWebsite(this.redirectUrl)) {
+    if (
+      this.redirectUrl &&
+      !isURL(this.redirectUrl, { protocols: ["http", "https"] })
+    ) {
       return new UnprocessableEntityError("Invalid website URL in '_redirect'");
     }
 
@@ -118,7 +121,7 @@ class Request {
       if (field in userParameters) {
         const potentialEmail = userParameters[field];
 
-        if (validation.isEmail(potentialEmail)) {
+        if (isEmail(potentialEmail)) {
           recipients[field.substring(1)] = potentialEmail;
         } else {
           const decryptedPotentialEmail = encryption.decrypt(
@@ -135,7 +138,7 @@ class Request {
         const potentialEmails = userParameters[field].split(";");
 
         potentialEmails.forEach((potentialEmail) => {
-          if (validation.isEmail(potentialEmail)) {
+          if (isEmail(potentialEmail)) {
             recipients[field.substring(1)].push(potentialEmail);
           } else {
             const decryptedPotentialEmail = encryption.decrypt(
