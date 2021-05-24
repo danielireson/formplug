@@ -25,7 +25,6 @@
     "eslint-config-prettier": "^8.3.0",
     "fast-check": "^2.14.0",
     "mocha": "^8.4.0",
-    "prettier": "^2.3.0",
-    "serverless-plugin-include-dependencies": "^4.1.0"
+    "prettier": "^2.3.0"
   }
 }

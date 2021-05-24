@@ -1,8 +1,5 @@
 service: ${file(config.json):SERVICE_NAME}
 
-plugins:
-  - serverless-plugin-include-dependencies
-
 provider:
   name: aws
   runtime: nodejs12.x
