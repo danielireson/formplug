@@ -1,9 +1,7 @@
 const querystring = require("querystring");
-
 const ForbiddenError = require("../error/ForbiddenError");
 const UnprocessableEntityError = require("../error/UnprocessableEntityError");
 const BadRequestError = require("../error/BadRequestError");
-
 const encryption = require("../lib/encryption");
 const validation = require("../lib/validation");
 

@@ -1,5 +1,4 @@
 const InternalServerError = require("../error/InternalServerError");
-
 const validation = require("../lib/validation");
 
 class Email {

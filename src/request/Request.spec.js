@@ -1,7 +1,6 @@
 const describe = require("mocha").describe;
 const it = require("mocha").it;
 const assert = require("chai").assert;
-
 const Request = require("./Request");
 const UnprocessableEntityError = require("../error/UnprocessableEntityError");
 const ForbiddenError = require("../error/ForbiddenError");

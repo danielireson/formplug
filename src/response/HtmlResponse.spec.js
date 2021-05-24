@@ -1,7 +1,6 @@
 const describe = require("mocha").describe;
 const it = require("mocha").it;
 const assert = require("chai").assert;
-
 const HtmlResponse = require("./HtmlResponse");
 
 describe("HtmlResponse", function () {

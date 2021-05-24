@@ -1,11 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const util = require("util");
-
 const request = require("request");
 const aws = require("aws-sdk");
 const ses = new aws.SES();
-
 const config = require("../config.json");
 
 module.exports.handler = require("./handler")({

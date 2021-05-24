@@ -6,7 +6,6 @@ const JsonResponse = require("./response/JsonResponse");
 const HtmlResponse = require("./response/HtmlResponse");
 const RedirectResponse = require("./response/RedirectResponse");
 const PlainTextResponse = require("./response/PlainTextResponse");
-
 const logging = require("./lib/logging");
 
 module.exports = (container) => async (event) => {
