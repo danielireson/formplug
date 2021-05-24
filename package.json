@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.912.0",
-    "request": "^2.88.2",
+    "node-fetch": "^2.6.1",
     "validator": "^13.6.0"
   },
   "devDependencies": {
