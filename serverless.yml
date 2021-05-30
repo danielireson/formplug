@@ -5,15 +5,18 @@ provider:
   runtime: nodejs14.x
   stage: ${file(config.json):STAGE}
   region: ${file(config.json):REGION}
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "lambda:InvokeFunction"
-      Resource: "*"
-    - Effect: "Allow"
-      Action:
-        - "ses:*"
-      Resource: ${file(config.json):SENDER_ARN}
+  lambdaHashingVersion: 20201221
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "lambda:InvokeFunction"
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "ses:*"
+          Resource: ${file(config.json):SENDER_ARN}
 
 functions:
   receive:
