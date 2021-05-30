@@ -11,10 +11,6 @@ provider:
       statements:
         - Effect: "Allow"
           Action:
-            - "lambda:InvokeFunction"
-          Resource: "*"
-        - Effect: "Allow"
-          Action:
             - "ses:*"
           Resource: ${file(config.json):SENDER_ARN}
 
