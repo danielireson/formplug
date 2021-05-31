@@ -15,8 +15,7 @@ if (!config.ENCRYPTION_KEY) {
 
 args.forEach((encryptedEmail) => {
   try {
-    let plainTextEmail = decrypt(encryptedEmail, config.ENCRYPTION_KEY);
-    console.log(`${encryptedEmail} => ${plainTextEmail}`);
+    console.log(decrypt(encryptedEmail, config.ENCRYPTION_KEY));
   } catch (error) {
     console.error(`An error occurred: ${error.message}`);
   }
