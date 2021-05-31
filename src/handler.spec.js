@@ -88,8 +88,7 @@ describe("handler", function () {
   it("should return a successful redirect response", async function () {
     // given
     const event = {
-      body:
-        "_to=test%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
+      body: "_to=test%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",
@@ -134,8 +133,7 @@ describe("handler", function () {
       headers: {
         "Content-Type": "text/html",
       },
-      body:
-        "<!DOCTYPE html><html><body>Form submission failed recaptcha</body></html>",
+      body: "<!DOCTYPE html><html><body>Form submission failed recaptcha</body></html>",
     });
   });
 
@@ -157,8 +155,7 @@ describe("handler", function () {
       headers: {
         "Content-Type": "text/html",
       },
-      body:
-        "<!DOCTYPE html><html><body>An unexpected error occurred</body></html>",
+      body: "<!DOCTYPE html><html><body>An unexpected error occurred</body></html>",
     });
   });
 
@@ -238,8 +235,7 @@ describe("handler", function () {
       headers: {
         "Content-Type": "text/html",
       },
-      body:
-        "<!DOCTYPE html><html><body>An unexpected error occurred</body></html>",
+      body: "<!DOCTYPE html><html><body>An unexpected error occurred</body></html>",
     });
   });
 
