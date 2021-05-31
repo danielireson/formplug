@@ -1,23 +1,22 @@
+const { isEmail } = require("validator");
 const InternalServerError = require("../error/InternalServerError");
 
-const validation = require("../lib/validation");
-
 class Email {
-  constructor(sender, senderArn, subject, recipients, userParameters) {
-    this.Source = this._buildSenderSource(sender, senderArn);
-    (this.ReplyToAddresses = recipients.replyTo),
-      (this.Destination = {
-        ToAddresses: [recipients.to],
-        CcAddresses: recipients.cc,
-        BccAddresses: recipients.bcc,
-      });
+  constructor(sender, senderArn, subject, recipients, params) {
+    this.Source = this._source(sender, senderArn);
+    this.ReplyToAddresses = recipients.replyTo;
+    this.Destination = {
+      ToAddresses: [recipients.to],
+      CcAddresses: recipients.cc,
+      BccAddresses: recipients.bcc,
+    };
     this.Message = {
       Subject: {
         Data: subject,
       },
       Body: {
         Text: {
-          Data: this._buildMessageBody(userParameters),
+          Data: this._messageBody(params),
         },
       },
     };
@@ -43,9 +42,7 @@ class Email {
       return new InternalServerError("Body is invalid");
     }
 
-    const invalidReplyToEmail = this.ReplyToAddresses.find(
-      (e) => !validation.isEmail(e)
-    );
+    const invalidReplyToEmail = this.ReplyToAddresses.find((e) => !isEmail(e));
 
     if (invalidReplyToEmail) {
       return new InternalServerError(
@@ -54,7 +51,7 @@ class Email {
     }
 
     const invalidToEmail = this.Destination.ToAddresses.find(
-      (e) => !validation.isEmail(e)
+      (e) => !isEmail(e)
     );
 
     if (invalidToEmail) {
@@ -62,7 +59,7 @@ class Email {
     }
 
     const invalidCcEmail = this.Destination.CcAddresses.find(
-      (e) => !validation.isEmail(e)
+      (e) => !isEmail(e)
     );
 
     if (invalidCcEmail) {
@@ -70,7 +67,7 @@ class Email {
     }
 
     const invalidBccEmail = this.Destination.BccAddresses.find(
-      (e) => !validation.isEmail(e)
+      (e) => !isEmail(e)
     );
 
     if (invalidBccEmail) {
@@ -80,21 +77,21 @@ class Email {
     }
   }
 
-  _buildSenderSource(sender, senderArn) {
-    const senderArnAsArray = (senderArn || "").split("/");
+  _source(sender, senderArn) {
+    const senderArnAsArray = (senderArn ?? "").split("/");
     const email = senderArnAsArray[senderArnAsArray.length - 1];
     return `${sender} <${email}>`;
   }
 
-  _buildMessageBody(userParameters) {
-    return Object.keys(userParameters || {})
+  _messageBody(requestBody) {
+    return Object.keys(requestBody ?? {})
       .filter(function (param) {
         // don't send private variables
         return param.substring(0, 1) !== "_";
       })
       .reduce(function (message, param) {
         // uppercase the field names and add each parameter value
-        message += param.toUpperCase() + ": " + userParameters[param] + "\r\n";
+        message += param.toUpperCase() + ": " + requestBody[param] + "\r\n";
         return message;
       }, "");
   }

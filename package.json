@@ -13,19 +13,18 @@
     "prettier": "prettier src --write"
   },
   "engines": {
-    "node": "12.x"
+    "node": "14.x"
   },
   "dependencies": {
-    "aws-sdk": "^2.793.0",
-    "request": "^2.88.2"
+    "aws-sdk": "^2.912.0",
+    "node-fetch": "^2.6.1",
+    "validator": "^13.6.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "eslint": "^7.13.0",
-    "eslint-config-prettier": "^6.15.0",
-    "fast-check": "^2.7.0",
-    "mocha": "^8.2.1",
-    "prettier": "^2.1.2",
-    "serverless-plugin-include-dependencies": "^3.0.0"
+    "chai": "^4.3.4",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^8.3.0",
+    "mocha": "^8.4.0",
+    "prettier": "^2.3.0"
   }
 }

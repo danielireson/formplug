@@ -1,11 +1,11 @@
 const describe = require("mocha").describe;
 const it = require("mocha").it;
 const assert = require("chai").assert;
-
 const Request = require("./Request");
 const UnprocessableEntityError = require("../error/UnprocessableEntityError");
 const ForbiddenError = require("../error/ForbiddenError");
 const BadRequestError = require("../error/BadRequestError");
+const { encrypt } = require("../lib/encryption");
 
 describe("Request", function () {
   const encryptionKey = "testing";
@@ -104,7 +104,7 @@ describe("Request", function () {
 
     const testSubject = new Request(event, encryptionKey);
 
-    assert.deepEqual(testSubject.userParameters, {
+    assert.deepEqual(testSubject.body, {
       one: "var1",
       two: "var2",
       three: "var3",
@@ -129,10 +129,11 @@ describe("Request", function () {
   });
 
   it("should parse an encrypted 'to' recipient", function () {
+    const toEmail = encrypt("johndoe@example.com", encryptionKey);
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: "_to=d9d3764d8215e758a7fb2b6df34bf94f9ba058",
+      body: `_to=${toEmail}`,
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",
@@ -183,10 +184,11 @@ describe("Request", function () {
   });
 
   it("should parse encrypted 'replyTo' recipients", function () {
+    const replyToEmail = encrypt("johndoe@example.com", encryptionKey);
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body: "_replyTo=d9d3764d8215e758a7fb2b6df34bf94f9ba058",
+      body: `_replyTo=${replyToEmail}`,
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",
@@ -223,8 +225,7 @@ describe("Request", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body:
-        "_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe%40example.com",
+      body: "_to=johndoe%40example.com&_cc=johndoe%40example.com;janedoe%40example.com",
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",
@@ -241,11 +242,11 @@ describe("Request", function () {
   });
 
   it("should parse encrypted 'cc' recipients", function () {
+    const ccEmail = encrypt("johndoe@example.com", encryptionKey);
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body:
-        "_to=johndoe%40example.com&_cc=d9d3764d8215e758a7fb2b6df34bf94f9ba058",
+      body: `_to=johndoe%40example.com&_cc=${ccEmail}`,
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",
@@ -282,8 +283,7 @@ describe("Request", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body:
-        "_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe%40example.com",
+      body: "_to=johndoe%40example.com&_bcc=johndoe%40example.com;janedoe%40example.com",
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",
@@ -300,11 +300,11 @@ describe("Request", function () {
   });
 
   it("should parse encrypted 'bcc' recipients", function () {
+    const bccEmail = encrypt("johndoe@example.com", encryptionKey);
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body:
-        "_to=johndoe%40example.com&_bcc=d9d3764d8215e758a7fb2b6df34bf94f9ba058",
+      body: `_to=johndoe%40example.com&_bcc=${bccEmail}`,
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",
@@ -419,8 +419,7 @@ describe("Request", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body:
-        "_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
+      body: "_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",
@@ -433,7 +432,7 @@ describe("Request", function () {
     const error = testSubject.validate();
 
     assert.strictEqual(error, undefined);
-    assert.strictEqual(testSubject.redirectUrl, "http://example.com");
+    assert.strictEqual(testSubject.redirect, "http://example.com");
   });
 
   it("should reject an invalid redirect URL", function () {
@@ -460,8 +459,7 @@ describe("Request", function () {
     const event = {
       pathParameters: {},
       queryStringParameters: {},
-      body:
-        "_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
+      body: "_to=johndoe%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
       requestContext: {
         identity: {
           sourceIp: "127.0.0.1",

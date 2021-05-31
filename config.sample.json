@@ -4,5 +4,6 @@
   "REGION": "eu-west-1",
   "STAGE": "dev",
   "SENDER_ARN": "",
-  "WHITELISTED_RECIPIENTS": []
+  "WHITELISTED_RECIPIENTS": null,
+  "RECAPTCHA_SECRET_KEY": null
 }

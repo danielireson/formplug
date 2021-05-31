@@ -1,11 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 const util = require("util");
-
-const request = require("request");
+const { URLSearchParams } = require("url");
+const fetch = require("node-fetch");
 const aws = require("aws-sdk");
 const ses = new aws.SES();
-
 const config = require("../config.json");
 
 module.exports.handler = require("./handler")({
@@ -25,19 +24,17 @@ module.exports.handler = require("./handler")({
     if (!config["RECAPTCHA_SECRET_KEY"]) {
       return Promise.resolve(true);
     } else {
-      return util
-        .promisify(request.post)(
-          "https://www.google.com/recaptcha/api/siteverify",
-          {
-            form: {
-              secret: getValue("RECAPTCHA_SECRET_KEY", config),
-              response: req.recaptcha,
-              remoteip: req.sourceIp,
-            },
-            json: true,
-          }
-        )
-        .then((response) => !!response.body.success);
+      const fetchParams = new URLSearchParams();
+      fetchParams.append("secret", getValue("RECAPTCHA_SECRET_KEY", config));
+      fetchParams.append("response", req.recaptcha);
+      fetchParams.append("remoteip", req.sourceIp);
+
+      return fetch("https://www.google.com/recaptcha/api/siteverify", {
+        method: "POST",
+        body: fetchParams,
+      })
+        .then((res) => res.json())
+        .then((data) => data.success ?? false);
     }
   },
   sendEmail: (email) => {

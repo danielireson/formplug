@@ -1,22 +1,18 @@
 service: ${file(config.json):SERVICE_NAME}
 
-plugins:
-  - serverless-plugin-include-dependencies
-
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: ${file(config.json):STAGE}
   region: ${file(config.json):REGION}
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "lambda:InvokeFunction"
-      Resource: "*"
-    - Effect: "Allow"
-      Action:
-        - "ses:*"
-      Resource: ${file(config.json):SENDER_ARN}
+  lambdaHashingVersion: 20201221
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "ses:*"
+          Resource: ${file(config.json):SENDER_ARN}
 
 functions:
   receive:

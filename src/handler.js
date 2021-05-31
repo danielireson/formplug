@@ -6,7 +6,6 @@ const JsonResponse = require("./response/JsonResponse");
 const HtmlResponse = require("./response/HtmlResponse");
 const RedirectResponse = require("./response/RedirectResponse");
 const PlainTextResponse = require("./response/PlainTextResponse");
-
 const logging = require("./lib/logging");
 
 module.exports = (container) => async (event) => {
@@ -43,7 +42,7 @@ module.exports = (container) => async (event) => {
       container.config.SENDER_ARN,
       container.config.MSG_SUBJECT,
       request.recipients,
-      request.userParameters
+      request.body
     );
 
     error = email.validate();
@@ -59,7 +58,7 @@ module.exports = (container) => async (event) => {
     if (request.isJsonResponse()) {
       response = new JsonResponse(200, message);
     } else if (request.isRedirectResponse()) {
-      response = new RedirectResponse(302, message, request.redirectUrl);
+      response = new RedirectResponse(302, message, request.redirect);
     } else {
       try {
         response = new HtmlResponse(

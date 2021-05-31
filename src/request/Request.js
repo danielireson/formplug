@@ -1,32 +1,25 @@
 const querystring = require("querystring");
-
+const { isEmail, isURL } = require("validator");
 const ForbiddenError = require("../error/ForbiddenError");
 const UnprocessableEntityError = require("../error/UnprocessableEntityError");
 const BadRequestError = require("../error/BadRequestError");
-
 const encryption = require("../lib/encryption");
-const validation = require("../lib/validation");
 
 const SINGLE_EMAIL_FIELDS = ["_to"];
 const DELIMETERED_EMAIL_FIELDS = ["_cc", "_bcc", "_replyTo"];
 
 class Request {
   constructor(event, encryptionKey) {
-    this.userParameters = querystring.parse(event.body);
-    this.recipients = this._buildRecipients(this.userParameters, encryptionKey);
-    this.responseFormat = this._buildResponseFormat(
-      event.queryStringParameters
-    );
-    this.redirectUrl = this._buildRedirectUrl(this.userParameters);
-    this.recaptcha = this._buildRecaptcha(this.userParameters);
-    this.sourceIp = this._buildSourceIp(event.requestContext);
+    this.body = querystring.parse(event.body);
+    this.recipients = this._recipients(encryptionKey);
+    this.redirect = this.body?._redirect;
+    this.recaptcha = this.body?._recaptcha;
+    this.responseFormat = event?.queryStringParameters?.format ?? "html";
+    this.sourceIp = event?.requestContext?.identity?.sourceIp;
   }
 
   validate(whitelistedRecipients) {
-    if (
-      "_honeypot" in this.userParameters &&
-      this.userParameters._honeypot !== ""
-    ) {
+    if ("_honeypot" in this.body && this.body._honeypot !== "") {
       return new ForbiddenError();
     }
 
@@ -41,10 +34,10 @@ class Request {
     }
 
     for (const field of SINGLE_EMAIL_FIELDS) {
-      if (field in this.userParameters) {
+      if (field in this.body) {
         const email = this.recipients[field.substring(1)].toLowerCase();
 
-        if (!validation.isEmail(email)) {
+        if (!isEmail(email)) {
           return new UnprocessableEntityError(
             `Invalid email in '${field}' field`
           );
@@ -59,12 +52,12 @@ class Request {
     }
 
     for (const field of DELIMETERED_EMAIL_FIELDS) {
-      if (field in this.userParameters) {
+      if (field in this.body) {
         const emails = this.recipients[field.substring(1)].map((e) =>
           e.toLowerCase()
         );
 
-        if (emails.some((e) => !validation.isEmail(e))) {
+        if (emails.some((e) => !isEmail(e))) {
           return new UnprocessableEntityError(
             `Invalid email in '${field}' field`
           );
@@ -81,15 +74,16 @@ class Request {
       }
     }
 
-    if (this.redirectUrl && !validation.isWebsite(this.redirectUrl)) {
+    if (
+      this.redirect &&
+      !isURL(this.redirect, { protocols: ["http", "https"] })
+    ) {
       return new UnprocessableEntityError("Invalid website URL in '_redirect'");
     }
 
-    const customParameters = Object.keys(this.userParameters).filter(
-      (param) => {
-        return param.substring(0, 1) !== "_";
-      }
-    );
+    const customParameters = Object.keys(this.body).filter((param) => {
+      return param.substring(0, 1) !== "_";
+    });
 
     if (customParameters.length < 1) {
       return new UnprocessableEntityError(`Expected at least one custom field`);
@@ -105,10 +99,10 @@ class Request {
   }
 
   isRedirectResponse() {
-    return this.redirectUrl != null;
+    return this.redirect != null;
   }
 
-  _buildRecipients(userParameters, encryptionKey) {
+  _recipients(encryptionKey) {
     const recipients = {
       to: "",
       cc: [],
@@ -117,10 +111,10 @@ class Request {
     };
 
     SINGLE_EMAIL_FIELDS.forEach((field) => {
-      if (field in userParameters) {
-        const potentialEmail = userParameters[field];
+      if (field in this.body) {
+        const potentialEmail = this.body[field];
 
-        if (validation.isEmail(potentialEmail)) {
+        if (isEmail(potentialEmail)) {
           recipients[field.substring(1)] = potentialEmail;
         } else {
           const decryptedPotentialEmail = encryption.decrypt(
@@ -133,11 +127,11 @@ class Request {
     });
 
     DELIMETERED_EMAIL_FIELDS.forEach((field) => {
-      if (field in userParameters) {
-        const potentialEmails = userParameters[field].split(";");
+      if (field in this.body) {
+        const potentialEmails = this.body[field].split(";");
 
         potentialEmails.forEach((potentialEmail) => {
-          if (validation.isEmail(potentialEmail)) {
+          if (isEmail(potentialEmail)) {
             recipients[field.substring(1)].push(potentialEmail);
           } else {
             const decryptedPotentialEmail = encryption.decrypt(
@@ -151,36 +145,6 @@ class Request {
     });
 
     return recipients;
-  }
-
-  _buildResponseFormat(params) {
-    if (params && "format" in params) {
-      return params.format;
-    } else {
-      return "html";
-    }
-  }
-
-  _buildRedirectUrl(params) {
-    if (params && "_redirect" in params) {
-      return params["_redirect"];
-    }
-  }
-
-  _buildRecaptcha(params) {
-    if (params && "_recaptcha" in params) {
-      return params["_recaptcha"];
-    }
-  }
-
-  _buildSourceIp(requestContext) {
-    if (
-      requestContext &&
-      requestContext.identity &&
-      requestContext.identity.sourceIp
-    ) {
-      return requestContext.identity.sourceIp;
-    }
   }
 }
 
