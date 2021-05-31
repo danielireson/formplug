@@ -34,7 +34,7 @@ module.exports.handler = require("./handler")({
         body: fetchParams,
       })
         .then((res) => res.json())
-        .then((response) => !!response.body.success);
+        .then((data) => data.success ?? false);
     }
   },
   sendEmail: (email) => {
