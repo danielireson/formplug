@@ -110,7 +110,7 @@ class Request {
       replyTo: [],
     };
 
-    SINGLE_EMAIL_FIELDS.forEach((field) => {
+    for (const field of SINGLE_EMAIL_FIELDS) {
       if (field in this.body) {
         const potentialEmail = this.body[field];
 
@@ -124,9 +124,9 @@ class Request {
           recipients[field.substring(1)] = decryptedPotentialEmail;
         }
       }
-    });
+    }
 
-    DELIMETERED_EMAIL_FIELDS.forEach((field) => {
+    for (const field of DELIMETERED_EMAIL_FIELDS) {
       if (field in this.body) {
         const potentialEmails = this.body[field].split(";");
 
@@ -142,7 +142,7 @@ class Request {
           }
         });
       }
-    });
+    }
 
     return recipients;
   }
