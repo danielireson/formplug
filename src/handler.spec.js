@@ -10,6 +10,11 @@ describe("handler", function () {
     SENDER: "Sender",
     MSG_SUBJECT: "Subject",
     MSG_RECEIVE_SUCCESS: "Received",
+    WHITELISTED_RECIPIENTS: [
+      "test@example.com",
+      "johndoe@example.com",
+      "janedoe@example.com",
+    ],
   };
 
   const sendEmailSuccess = (email) => Promise.resolve(email);
@@ -115,6 +120,32 @@ describe("handler", function () {
     });
   });
 
+  it("should return a 400 response when no source ip", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=johndoe%40example.com&testing=true",
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 400,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Expected request to include source ip</body></html>",
+    });
+  });
+
   it("should return a 403 response when recaptcha validation fails", async function () {
     // given
     const event = {};
@@ -159,9 +190,82 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when request validation fails", async function () {
+  it("should return a 403 response when honeypot validation fails", async function () {
     // given
-    const event = {};
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=johndoe%40example.com&_honeypot=testing",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 403,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body></body></html>",
+    });
+  });
+
+  it("should return a 422 response when query string response format isn't 'json' or 'html'", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {
+        format: "invalid",
+      },
+      body: "_to=johndoe%40example.com",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 422,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Invalid response format in the query string</body></html>",
+    });
+  });
+
+  it("should return a 422 response when invalid 'to' recipient", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
 
     // when
     const response = await require("./handler")({
@@ -181,6 +285,223 @@ describe("handler", function () {
     });
   });
 
+  it("should return a 422 response when invalid 'replyTo' recipient", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=johndoe%40example.com&_replyTo=johndoe",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 422,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Invalid email in '_replyTo' field</body></html>",
+    });
+  });
+
+  it("should return a 422 response when invalid 'cc' recipient", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=johndoe%40example.com&_cc=johndoe",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 422,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Invalid email in '_cc' field</body></html>",
+    });
+  });
+
+  it("should return a 422 response when invalid 'bcc' recipient", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=johndoe%40example.com&_bcc=johndoe",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 422,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Invalid email in '_bcc' field</body></html>",
+    });
+  });
+
+  it("should return a 422 response when using non-whitelisted email in delimetered email field", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=johndoe%40example.com&_cc=invalid%40example.com",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 422,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Non-whitelisted email in '_cc' field</body></html>",
+    });
+  });
+
+  it("should return a 422 response when using non-whitelisted email in single email field", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=invalid%40example.com",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 422,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Non-whitelisted email in '_to' field</body></html>",
+    });
+  });
+
+  it("should return a 422 response when invalid redirect URL", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=johndoe%40example.com&_redirect=invalid",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 422,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Invalid website URL in '_redirect'</body></html>",
+    });
+  });
+
+  it("should return a 422 response when no custom fields", async function () {
+    // given
+    const event = {
+      pathParameters: {},
+      queryStringParameters: {},
+      body: "_to=johndoe%40example.com",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateSuccess,
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 422,
+      headers: {
+        "Content-Type": "text/html",
+      },
+      body: "<!DOCTYPE html><html><body>Expected at least one custom field</body></html>",
+    });
+  });
+
   it("should return a 500 response when email sending fails", async function () {
     // given
     const event = {
@@ -194,7 +515,7 @@ describe("handler", function () {
 
     // when
     const response = await require("./handler")({
-      config: config,
+      config,
       isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailFailure(new Error("testing")),
       loadTemplate: loadTemplateSuccess,
@@ -223,7 +544,7 @@ describe("handler", function () {
 
     // when
     const response = await require("./handler")({
-      config: config,
+      config,
       isValidRecaptcha: isValidRecaptchaSuccess,
       sendEmail: sendEmailSuccess,
       loadTemplate: loadTemplateFailure(new Error("testing")),

@@ -2,9 +2,9 @@ const { isEmail, isURL } = require("validator");
 const Email = require("./email/Email");
 const Request = require("./request/Request");
 const HttpError = require("./error/HttpError");
-const ForbiddenError = require("../error/ForbiddenError");
-const UnprocessableEntityError = require("../error/UnprocessableEntityError");
-const BadRequestError = require("../error/BadRequestError");
+const ForbiddenError = require("./error/ForbiddenError");
+const UnprocessableEntityError = require("./error/UnprocessableEntityError");
+const BadRequestError = require("./error/BadRequestError");
 const JsonResponse = require("./response/JsonResponse");
 const HtmlResponse = require("./response/HtmlResponse");
 const RedirectResponse = require("./response/RedirectResponse");
@@ -138,29 +138,23 @@ async function sendEmail(request, sender, senderArn, subject, sendEmailFn) {
 }
 
 async function successResponse(request, msgReceiveSuccess, loadTemplate) {
-  let response;
-
   if (request.isJsonResponse()) {
-    response = new JsonResponse(200, msgReceiveSuccess);
-  } else if (request.isRedirectResponse()) {
-    response = new RedirectResponse(302, msgReceiveSuccess, request.redirect);
-  } else {
-    try {
-      response = new HtmlResponse(200, msgReceiveSuccess, await loadTemplate());
-    } catch (error) {
-      logging.error("unable to load template file", error);
-      response = new PlainTextResponse(200, msgReceiveSuccess);
-    }
+    return new JsonResponse(200, msgReceiveSuccess);
   }
 
-  logging.info(`returning http ${response.statusCode} response`);
+  if (request.isRedirectResponse()) {
+    return new RedirectResponse(302, msgReceiveSuccess, request.redirect);
+  }
 
-  response.build();
+  try {
+    return new HtmlResponse(200, msgReceiveSuccess, await loadTemplate());
+  } catch (error) {
+    logging.error("unable to load template file", error);
+    return new PlainTextResponse(200, msgReceiveSuccess);
+  }
 }
 
 async function errorResponse(request, error, loadTemplate) {
-  let response;
-
   let statusCode = 500;
   let message = "An unexpected error occurred";
 
@@ -170,17 +164,13 @@ async function errorResponse(request, error, loadTemplate) {
   }
 
   if (request.isJsonResponse()) {
-    response = new JsonResponse(statusCode, message);
-  } else {
-    try {
-      response = new HtmlResponse(statusCode, message, await loadTemplate());
-    } catch (error) {
-      logging.error("unable to load template file", error);
-      response = new PlainTextResponse(statusCode, message);
-    }
+    return new JsonResponse(statusCode, message);
   }
 
-  logging.info(`returning http ${response.statusCode} response`);
-
-  response.build();
+  try {
+    return new HtmlResponse(statusCode, message, await loadTemplate());
+  } catch (error) {
+    logging.error("unable to load template file", error);
+    return new PlainTextResponse(statusCode, message);
+  }
 }
