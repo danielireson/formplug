@@ -40,8 +40,8 @@ module.exports = (container) => async (event) => {
   }
 };
 
-async function validateRequest(request, whitelist, recaptchaFn) {
-  const isValidRecaptcha = await recaptchaFn(request);
+async function validateRequest(request, whitelist, isValidRecaptchaFn) {
+  const isValidRecaptcha = await isValidRecaptchaFn(request);
 
   if (!isValidRecaptcha) {
     throw new ForbiddenError("Form submission failed recaptcha");
@@ -137,7 +137,7 @@ async function sendEmail(request, sender, senderArn, subject, sendEmailFn) {
   await sendEmailFn(email);
 }
 
-async function successResponse(request, msgReceiveSuccess, loadTemplate) {
+async function successResponse(request, msgReceiveSuccess, loadTemplateFn) {
   if (request.isJsonResponse()) {
     return new JsonResponse(200, msgReceiveSuccess);
   }
@@ -147,14 +147,14 @@ async function successResponse(request, msgReceiveSuccess, loadTemplate) {
   }
 
   try {
-    return new HtmlResponse(200, msgReceiveSuccess, await loadTemplate());
+    return new HtmlResponse(200, msgReceiveSuccess, await loadTemplateFn());
   } catch (error) {
     logging.error("unable to load template file", error);
     return new PlainTextResponse(200, msgReceiveSuccess);
   }
 }
 
-async function errorResponse(request, error, loadTemplate) {
+async function errorResponse(request, error, loadTemplateFn) {
   let statusCode = 500;
   let message = "An unexpected error occurred";
 
@@ -168,7 +168,7 @@ async function errorResponse(request, error, loadTemplate) {
   }
 
   try {
-    return new HtmlResponse(statusCode, message, await loadTemplate());
+    return new HtmlResponse(statusCode, message, await loadTemplateFn());
   } catch (error) {
     logging.error("unable to load template file", error);
     return new PlainTextResponse(statusCode, message);
