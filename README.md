@@ -5,7 +5,7 @@
 Formplug is a form forwarding service for AWS Lambda. Use it to accept form submissions by email without server-side code. It's built using the Serverless Framework and uses Amazon SES to send emails.
 
 ## Usage
-### Basic
+### HTML forms
 Set the form action to your deployed Formplug endpoint. Email addresses can be passed in plain text (as in the example below) or encrypted as a hexedecimal string (see [encryption](#encryption)).
 ``` html
 <form action="https://apigatewayurl.com" method="post">
@@ -33,6 +33,23 @@ Separate multiple email addresses by a semicolon.
 <input type="hidden" name="_cc" value="ff19d0abcd474813ad;c031a9b24855090b5e8b">
 ```
 
+### AJAX
+Append `format=json` to the query string to get responses back in JSON with a CORS allow all origin header. You can then make requests using a HTTP client.
+```js
+const fetchParams = new URLSearchParams();
+fetchParams.append("_to", "johndoe@example.com");
+fetchParams.append("message", "");
+
+fetch("https://apigatewayurl.com?format=json", {
+  method: "POST",
+  body: fetchParams,
+}).then(() => {
+  // handle success
+}).catch(() => {
+  // handle failure
+})
+```
+
 ### Special inputs
 Name | Description | Multiple emails | Required 
 --- | --- | --- | ---
@@ -43,16 +60,6 @@ _replyTo | Email addresses to set as reply to addresses. | Y | N
 _honeypot | A spam prevention field that should be hidden for regular website users. The submission will be ignored if the the _honeypot input is present and not empty. | / | N
 _recaptcha | User token from Google reCaptcha v3. | / | N
 _redirect | A URL to redirect users to after a successful form submission. | / | N
-
-### AJAX
-Append `format=json` to the query string to get responses back in JSON with a CORS allow all origin header.
-``` html
-<form action="https://apigatewayurl.com?format=json" method="post">
-    <input type="hidden" name="_to" value="johndoe@example.com">
-    <input type="text" name="message">
-    <input type="submit" value="send">
-</form>
-```
 
 ### Spam prevention
 #### Whitelisting
@@ -81,7 +88,7 @@ grecaptcha.ready(function() {
 ```
 
 ### Customisation
-Create a HTML template at [src/template/custom.html](src/templates/custom.html) and this will be used instead of [default.html](src/templates/default.html).
+Create a HTML template at [src/template/custom.html](src/templates/custom.html) and this will be used instead of [default.html](src/templates/default.html) for HTML form usage.
 
 ![readme-screenshot](https://user-images.githubusercontent.com/9462036/123658835-fc1dc400-d829-11eb-8b93-e098d2f799af.png)
 
