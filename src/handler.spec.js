@@ -181,35 +181,6 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 500 response when email validation fails", async function () {
-    // given
-    const event = {
-      body: "_to=test%40example.com&testing=true",
-      requestContext: {
-        identity: {
-          sourceIp: "127.0.0.1",
-        },
-      },
-    };
-
-    // when
-    const response = await require("./handler")({
-      config: { ...config, MSG_SUBJECT: null },
-      isValidRecaptcha: isValidRecaptchaSuccess,
-      sendEmail: sendEmailSuccess,
-      loadTemplate: loadTemplateSuccess,
-    })(event);
-
-    // then
-    assert.deepEqual(response, {
-      statusCode: 500,
-      headers: {
-        "Content-Type": "text/html",
-      },
-      body: "<!DOCTYPE html><html><body>Subject is invalid</body></html>",
-    });
-  });
-
   it("should return a 500 response when email sending fails", async function () {
     // given
     const event = {
