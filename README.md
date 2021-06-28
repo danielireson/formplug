@@ -83,7 +83,7 @@ grecaptcha.ready(function() {
 ### Customisation
 Create a HTML template at [src/template/custom.html](src/templates/custom.html) and this will be used instead of [default.html](src/templates/default.html).
 
-![Submission preview](readme-screenshot.png)
+![readme-screenshot](https://user-images.githubusercontent.com/9462036/123658835-fc1dc400-d829-11eb-8b93-e098d2f799af.png)
 
 ## Encryption
 Email addresses can be encrypted so that they're not visible in the HTML source. Ensure `ENCRYPTION_KEY` in `config.json` is set to a random value as this is used to determine the encrypted values.
