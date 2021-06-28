@@ -8,7 +8,7 @@
     "encrypt": "node ./scripts/encrypt.js",
     "decrypt": "node ./scripts/decrypt.js",
     "lint": "eslint src",
-    "mocha": "NODE_ENV=test mocha src/**/*.spec.js --exit",
+    "mocha": "NODE_ENV=test mocha src/** --exit",
     "test": "npm run lint && npm run mocha",
     "prettier": "prettier src --write"
   },

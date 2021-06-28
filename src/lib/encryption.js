@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const logging = require("./logging");
 
 const ivLength = 16;
 const saltLength = 64;
@@ -19,6 +20,7 @@ module.exports.encrypt = (input, encryptionKey) => {
     const tag = cipher.getAuthTag();
     return Buffer.concat([salt, iv, tag, encrypted]).toString("hex");
   } catch (error) {
+    logging.error("encryption failed", error);
     return "";
   }
 };
@@ -35,6 +37,7 @@ module.exports.decrypt = (output, encryptionKey) => {
     decipher.setAuthTag(tag);
     return decipher.update(encrypted) + decipher.final("utf8");
   } catch (error) {
+    logging.error("decryption failed", error);
     return "";
   }
 };

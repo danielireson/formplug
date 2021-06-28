@@ -7,9 +7,7 @@ describe("JsonResponse", function () {
   it("should build a JSON response", function () {
     const testSubject = new JsonResponse(200, "message");
 
-    const json = testSubject.build();
-
-    assert.deepEqual(json, {
+    assert.deepEqual(testSubject, {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",

@@ -11,9 +11,7 @@ describe("HtmlResponse", function () {
       "<html><body>{{ message }}</body></html>"
     );
 
-    const response = testSubject.build();
-
-    assert.deepEqual(response, {
+    assert.deepEqual(testSubject, {
       statusCode: 200,
       headers: {
         "Content-Type": "text/html",

@@ -11,9 +11,7 @@ describe("RedirectResponse", function () {
       "http://example.com"
     );
 
-    const response = testSubject.build();
-
-    assert.deepEqual(response, {
+    assert.deepEqual(testSubject, {
       statusCode: 301,
       headers: {
         "Content-Type": "text/plain",
