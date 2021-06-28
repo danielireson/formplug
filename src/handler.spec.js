@@ -28,7 +28,7 @@ describe("handler", function () {
   const isValidRecaptchaFailure = (error) =>
     Promise.reject(error).catch(() => {});
 
-  it("should return a successful html response", async function () {
+  it("should return successful html response", async function () {
     // given
     const event = {
       body: "_to=test%40example.com&testing=true",
@@ -57,7 +57,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a successful json response", async function () {
+  it("should return successful json response", async function () {
     // given
     const event = {
       queryStringParameters: {
@@ -90,7 +90,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a successful redirect response", async function () {
+  it("should return successful redirect response", async function () {
     // given
     const event = {
       body: "_to=test%40example.com&_redirect=http%3A%2F%2Fexample.com&testing=true",
@@ -120,7 +120,36 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 400 response when no source ip", async function () {
+  it("should return successful plain text response", async function () {
+    // given
+    const event = {
+      body: "_to=test%40example.com&testing=true",
+      requestContext: {
+        identity: {
+          sourceIp: "127.0.0.1",
+        },
+      },
+    };
+
+    // when
+    const response = await require("./handler")({
+      config,
+      isValidRecaptcha: isValidRecaptchaSuccess,
+      sendEmail: sendEmailSuccess,
+      loadTemplate: loadTemplateFailure(new Error("testing")),
+    })(event);
+
+    // then
+    assert.deepEqual(response, {
+      statusCode: 200,
+      headers: {
+        "Content-Type": "text/plain",
+      },
+      body: "Received",
+    });
+  });
+
+  it("should return 400 response when no source ip", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -146,7 +175,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 403 response when recaptcha validation fails", async function () {
+  it("should return 403 response when recaptcha validation fails", async function () {
     // given
     const event = {};
 
@@ -168,7 +197,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 500 response when recaptcha validation throws an error", async function () {
+  it("should return 500 response when recaptcha validation throws an error", async function () {
     // given
     const event = {};
 
@@ -190,7 +219,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 403 response when honeypot validation fails", async function () {
+  it("should return 403 response when honeypot validation fails", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -221,7 +250,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when query string response format isn't 'json' or 'html'", async function () {
+  it("should return 422 response when query string response format isn't 'json' or 'html'", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -254,7 +283,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when invalid 'to' recipient", async function () {
+  it("should return 422 response when invalid 'to' recipient", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -285,7 +314,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when invalid 'replyTo' recipient", async function () {
+  it("should return 422 response when invalid 'replyTo' recipient", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -316,7 +345,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when invalid 'cc' recipient", async function () {
+  it("should return 422 response when invalid 'cc' recipient", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -347,7 +376,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when invalid 'bcc' recipient", async function () {
+  it("should return 422 response when invalid 'bcc' recipient", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -378,7 +407,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when using non-whitelisted email in delimetered email field", async function () {
+  it("should return 422 response when using non-whitelisted email in delimetered email field", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -409,7 +438,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when using non-whitelisted email in single email field", async function () {
+  it("should return 422 response when using non-whitelisted email in single email field", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -440,7 +469,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when invalid redirect URL", async function () {
+  it("should return 422 response when invalid redirect URL", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -471,7 +500,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 422 response when no custom fields", async function () {
+  it("should return 422 response when no custom fields", async function () {
     // given
     const event = {
       pathParameters: {},
@@ -502,7 +531,7 @@ describe("handler", function () {
     });
   });
 
-  it("should return a 500 response when email sending fails", async function () {
+  it("should return 500 response when email sending fails", async function () {
     // given
     const event = {
       body: "_to=test%40example.com&testing=true",
@@ -528,35 +557,6 @@ describe("handler", function () {
         "Content-Type": "text/html",
       },
       body: "<!DOCTYPE html><html><body>An unexpected error occurred</body></html>",
-    });
-  });
-
-  it("should handle template loading failures", async function () {
-    // given
-    const event = {
-      body: "_to=test%40example.com&testing=true",
-      requestContext: {
-        identity: {
-          sourceIp: "127.0.0.1",
-        },
-      },
-    };
-
-    // when
-    const response = await require("./handler")({
-      config,
-      isValidRecaptcha: isValidRecaptchaSuccess,
-      sendEmail: sendEmailSuccess,
-      loadTemplate: loadTemplateFailure(new Error("testing")),
-    })(event);
-
-    // then
-    assert.deepEqual(response, {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "text/plain",
-      },
-      body: "Received",
     });
   });
 });
