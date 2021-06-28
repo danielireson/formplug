@@ -1,7 +1,10 @@
+const { isEmail, isURL } = require("validator");
 const Email = require("./email/Email");
 const Request = require("./request/Request");
 const HttpError = require("./error/HttpError");
-const ForbiddenError = require("./error/ForbiddenError");
+const ForbiddenError = require("../error/ForbiddenError");
+const UnprocessableEntityError = require("../error/UnprocessableEntityError");
+const BadRequestError = require("../error/BadRequestError");
 const JsonResponse = require("./response/JsonResponse");
 const HtmlResponse = require("./response/HtmlResponse");
 const RedirectResponse = require("./response/RedirectResponse");
@@ -11,87 +14,173 @@ const logging = require("./lib/logging");
 module.exports = (container) => async (event) => {
   const request = new Request(event, container.config.ENCRYPTION_KEY);
 
-  let response;
-
   try {
-    const isValidRecaptcha = await container.isValidRecaptcha(request);
-
-    if (!isValidRecaptcha) {
-      throw new ForbiddenError("Form submission failed recaptcha");
-    }
-
-    const error = request.validate(container.config.WHITELISTED_RECIPIENTS);
-
-    if (error) {
-      throw error;
-    }
-
-    const recipientCount = [].concat(
-      request.recipients.cc,
-      request.recipients.bcc,
-      request.recipients.replyTo
-    ).length;
-
-    logging.info(
-      `sending to '${request.recipients.to}' and ${recipientCount} other recipients`
+    await validateRequest(
+      request,
+      container.config.WHITELISTED_RECIPIENTS,
+      container.isValidRecaptcha
     );
 
-    const email = new Email(
+    await sendEmail(
+      request,
       container.config.SENDER,
       container.config.SENDER_ARN,
       container.config.MSG_SUBJECT,
-      request.recipients,
-      request.body
+      container.sendEmail
     );
 
-    await container.sendEmail(email);
-
-    const message = container.config.MSG_RECEIVE_SUCCESS;
-
-    if (request.isJsonResponse()) {
-      response = new JsonResponse(200, message);
-    } else if (request.isRedirectResponse()) {
-      response = new RedirectResponse(302, message, request.redirect);
-    } else {
-      try {
-        response = new HtmlResponse(
-          200,
-          message,
-          await container.loadTemplate()
-        );
-      } catch (error) {
-        logging.error("unable to load template file", error);
-        response = new PlainTextResponse(200, message);
-      }
-    }
+    return await successResponse(
+      request,
+      container.config.MSG_RECEIVE_SUCCESS,
+      container.loadTemplate
+    );
   } catch (error) {
     logging.error("error was caught while executing receive lambda", error);
+    return await errorResponse(request, error, container.loadTemplate);
+  }
+};
 
-    let statusCode = 500;
-    let message = "An unexpected error occurred";
+async function validateRequest(request, whitelist, recaptchaFn) {
+  const isValidRecaptcha = await recaptchaFn(request);
 
-    if (error instanceof HttpError) {
-      statusCode = error.statusCode;
-      message = error.message;
-    }
+  if (!isValidRecaptcha) {
+    throw new ForbiddenError("Form submission failed recaptcha");
+  }
 
-    if (request.isJsonResponse()) {
-      response = new JsonResponse(statusCode, message);
-    } else {
-      try {
-        response = new HtmlResponse(
-          statusCode,
-          message,
-          await container.loadTemplate()
-        );
-      } catch (error) {
-        logging.error("unable to load template file", error);
-        response = new PlainTextResponse(statusCode, message);
+  if ("_honeypot" in request.body && request.body._honeypot !== "") {
+    throw new ForbiddenError();
+  }
+
+  if (request.responseFormat !== "json" && request.responseFormat !== "html") {
+    throw new UnprocessableEntityError(
+      "Invalid response format in the query string"
+    );
+  }
+
+  if (request.recipients.to === "") {
+    throw new UnprocessableEntityError("Invalid '_to' recipient");
+  }
+
+  ["_to"].forEach((field) => {
+    if (field in request.body) {
+      const email = request.recipients[field.substring(1)].toLowerCase();
+
+      if (!isEmail(email)) {
+        throw new UnprocessableEntityError(`Invalid email in '${field}' field`);
       }
+
+      if (whitelist && !whitelist.includes(email)) {
+        throw new UnprocessableEntityError(
+          `Non-whitelisted email in '${field}' field`
+        );
+      }
+    }
+  });
+
+  ["_cc", "_bcc", "_replyTo"].forEach((field) => {
+    if (field in request.body) {
+      const emails = request.recipients[field.substring(1)].map((e) =>
+        e.toLowerCase()
+      );
+
+      if (emails.some((e) => !isEmail(e))) {
+        throw new UnprocessableEntityError(`Invalid email in '${field}' field`);
+      }
+
+      if (whitelist && emails.some((e) => !whitelist.includes(e))) {
+        throw new UnprocessableEntityError(
+          `Non-whitelisted email in '${field}' field`
+        );
+      }
+    }
+  });
+
+  if (
+    request.redirect &&
+    !isURL(request.redirect, { protocols: ["http", "https"] })
+  ) {
+    throw new UnprocessableEntityError("Invalid website URL in '_redirect'");
+  }
+
+  const customParameters = Object.keys(request.body).filter((param) => {
+    return param.substring(0, 1) !== "_";
+  });
+
+  if (customParameters.length < 1) {
+    throw new UnprocessableEntityError(`Expected at least one custom field`);
+  }
+
+  if (!request.sourceIp) {
+    throw new BadRequestError("Expected request to include source ip");
+  }
+}
+
+async function sendEmail(request, sender, senderArn, subject, sendEmailFn) {
+  const recipientCount = [].concat(
+    request.recipients.cc,
+    request.recipients.bcc,
+    request.recipients.replyTo
+  ).length;
+
+  logging.info(
+    `sending to '${request.recipients.to}' and ${recipientCount} other recipients`
+  );
+
+  const email = new Email(
+    sender,
+    senderArn,
+    subject,
+    request.recipients,
+    request.body
+  );
+
+  await sendEmailFn(email);
+}
+
+async function successResponse(request, msgReceiveSuccess, loadTemplate) {
+  let response;
+
+  if (request.isJsonResponse()) {
+    response = new JsonResponse(200, msgReceiveSuccess);
+  } else if (request.isRedirectResponse()) {
+    response = new RedirectResponse(302, msgReceiveSuccess, request.redirect);
+  } else {
+    try {
+      response = new HtmlResponse(200, msgReceiveSuccess, await loadTemplate());
+    } catch (error) {
+      logging.error("unable to load template file", error);
+      response = new PlainTextResponse(200, msgReceiveSuccess);
     }
   }
 
   logging.info(`returning http ${response.statusCode} response`);
 
-  return response.build();
-};
+  response.build();
+}
+
+async function errorResponse(request, error, loadTemplate) {
+  let response;
+
+  let statusCode = 500;
+  let message = "An unexpected error occurred";
+
+  if (error instanceof HttpError) {
+    statusCode = error.statusCode;
+    message = error.message;
+  }
+
+  if (request.isJsonResponse()) {
+    response = new JsonResponse(statusCode, message);
+  } else {
+    try {
+      response = new HtmlResponse(statusCode, message, await loadTemplate());
+    } catch (error) {
+      logging.error("unable to load template file", error);
+      response = new PlainTextResponse(statusCode, message);
+    }
+  }
+
+  logging.info(`returning http ${response.statusCode} response`);
+
+  response.build();
+}
