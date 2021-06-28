@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const util = require("util");
 const { URLSearchParams } = require("url");
 const fetch = require("node-fetch");
 const aws = require("aws-sdk");
@@ -42,19 +41,13 @@ module.exports.handler = require("./handler")({
     return ses.sendEmail(email).promise();
   },
   loadTemplate: () => {
-    const customFilePath = path.resolve(__dirname, "templates", "custom.html");
-    const defaultFilePath = path.resolve(
-      __dirname,
-      "templates",
-      "default.html"
-    );
+    const customFilePath = path.resolve(__dirname, "templates/custom.html");
+    const defaultFilePath = path.resolve(__dirname, "templates/default.html");
 
     const filePath = fs.existsSync(customFilePath)
       ? customFilePath
       : defaultFilePath;
 
-    return util
-      .promisify(fs.readFile)(filePath)
-      .then((file) => file.toString());
+    return fs.promises.readFile(filePath).then((file) => file.toString());
   },
 });
