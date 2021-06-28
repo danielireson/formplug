@@ -97,12 +97,12 @@ Email addresses can be encrypted so that they're not visible in the HTML source.
 
 ``` bash
 > npm run encrypt johndoe@example.com
-johndoe@example.com => ff17d6a0cd474813adc031a9b24855090b5e8b
+ff17d6a0cd474813adc031a9b24855090b5e8b
 ```
 
 ``` bash
 > npm run decrypt ff17d6a0cd474813adc031a9b24855090b5e8b
-ff17d6a0cd474813adc031a9b24855090b5e8b => johndoe@example.com
+johndoe@example.com
 ```
 
 ## Setup
