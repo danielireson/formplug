@@ -7,9 +7,7 @@ describe("PlainTextResponse", function () {
   it("should build a plain text response", function () {
     const testSubject = new PlainTextResponse(200, "message");
 
-    const response = testSubject.build("http://example.com");
-
-    assert.deepEqual(response, {
+    assert.deepEqual(testSubject, {
       statusCode: 200,
       headers: {
         "Content-Type": "text/plain",
